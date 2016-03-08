@@ -27,11 +27,11 @@ interface Cq {
 
 declare var CQ: Cq;
 
-interface CqWindow extends Window {
+interface Window {
     CQ: any;
 }
 
-declare var window: CqWindow;
+declare var window: Window;
 
 
 export default class CqUtils {
@@ -116,6 +116,10 @@ export default class CqUtils {
 
     private static isAncestor(ancestor: any, element: any): boolean {
         return true;
+    }
+
+    public static getEditables(): any {
+        return window.CQ.getEditables();
     }
 }
 

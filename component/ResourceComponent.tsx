@@ -1,7 +1,6 @@
 import * as React from "react";
 import AemComponent from "./AemComponent";
 import EditDialog from "./EditDialog";
-import CqUtils from "../CqUtils";
 
 export interface Resource {
     "sling:resourceType": string;

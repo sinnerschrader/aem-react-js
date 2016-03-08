@@ -6,6 +6,7 @@ import RootComponent from "./component/RootComponent";
 import {Resource} from "./component/ResourceComponent";
 import {ClientAemContext} from "./AemContext";
 
+declare var window: Window;
 
 /**
  * An Instance wraps a root aem component and provides methods to rerender the component.
@@ -275,8 +276,6 @@ export default class ComponentManager {
         this.editables = {};
         editable.refresh();
         // TODO needs to be done when the new editables are actually created (makeEditable)
-        //window.setTimeout(this.initializeEditablesState.bind(this),100);
-        //this.updateEditablesState();
     }
 
 
@@ -288,11 +287,6 @@ export default class ComponentManager {
         CqUtils.on("editablesready", this.initializeEditablesState.bind(this), this);
         // currently we reinitialize all editables.
         CqUtils.on("editableready", this.updateEditables.bind(this), this);
-        /*        CqUtils.on("afterchildinsert", this.updateEditables.bind(this), this);
-         CqUtils.on("aftercopy", this.updateEditables.bind(this), this);
-         CqUtils.on("afterinsert", this.updateEditables.bind(this), this);
-         CqUtils.on("afterdelete", this.updateEditables.bind(this), this);
-         CqUtils.on("aftercopy", this.updateEditables.bind(this), this);*/
 
         let items = [].slice.call(document.querySelectorAll("[data-react]"));
         console.log(items.length + " react configs found.");
@@ -334,7 +328,7 @@ export default class ComponentManager {
     }
 
     private initializeEditablesState(): void {
-        let editables: {[path: string]: any} = window.CQ.WCM.getEditables();
+        let editables: {[path: string]: any} = CqUtils.getEditables();
         Object.keys(editables).forEach((path: string) => {
             let editable: any = editables[path];
             if (editable) {
