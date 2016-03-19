@@ -12,7 +12,6 @@
   "files": [
     "./ComponentManager.tsx",
     "./component/ResourceComponent.tsx",
-    "./container.tsx",
     "./include.tsx",
     "./CqUtils.tsx",
     "./references.d.ts",

@@ -6,6 +6,11 @@ export interface Resource {
     "sling:resourceType": string;
 }
 
+export interface ResourceState {
+    absolutePath: string;
+    resource: Resource;
+}
+
 export interface ResourceProps<C> {
     resource?: C;
     component?: string;
@@ -19,8 +24,10 @@ export interface ResourceProps<C> {
 /**
  * Provides base functionality for components that are
  */
-export  abstract class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
+export class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S extends ResourceState> extends AemComponent<P, S> {
 
+
+    public static ABSOLUTE_PATH_PATTERN: RegExp = /^\//;
 
     public static childContextTypes: any = {
         wcmmode: React.PropTypes.string, //
@@ -37,6 +44,38 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
 
     }
 
+    public componentWillMount(): void {
+        this.initialize();
+    }
+
+    public componentDidUpdate(prevProps: ResourceProps<any>): void {
+        if (this.props.path && this.props.path !== prevProps.path) {
+            this.initialize();
+        }
+    }
+
+    public initialize(): void {
+        let absolutePath: string;
+        let resource: Resource;
+        if (this.props.path) {
+            if (ResourceComponent.ABSOLUTE_PATH_PATTERN.test(this.props.path)) {
+                absolutePath = this.props.path;
+                this.loadResource(absolutePath);
+            } else {
+                absolutePath = this.context.path + "/" + this.props.path;
+                resource = this.context.resource[this.props.path];
+            }
+
+        } else {
+            absolutePath = this.context.path;
+            resource = this.context.resource;
+        }
+        this.setState(({absolutePath: absolutePath, resource: resource} as S));
+    }
+
+    public loadResource(path: string): void {
+
+    }
 
     public getWcmmode(): string {
         return this.props.wcmmode || this.context.wcmmode;
@@ -48,14 +87,7 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
 
 
     public getPath(): string {
-        if (this.context.path && this.props.path) {
-            return this.context.path + "/" + this.props.path;
-        } else if (this.props.path) {
-            return this.props.path;
-        } else {
-            return this.context.path;
-        }
-
+        return this.state.absolutePath;
     }
 
     public componentDidMount(): void {
@@ -81,7 +113,7 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
     public abstract renderBody(): React.ReactElement<any>;
 
     public getChildren(): any {
-        let resource = this.props.resource;
+        let resource: any = this.state.resource;
         let children: any = {};
         Object.keys(resource).forEach((propertyName: string): void => {
             let child = resource[propertyName];
@@ -93,7 +125,7 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
     }
 
     public getResource(): C {
-        return this.props.resource || this.context.resource[this.props.path] || {};
+        return (this.state.resource as C);
     }
 
     public getResourceType(): string {
