@@ -1,17 +1,22 @@
 {
   "name": "aem-react-js",
-  "version": "0.2.2",
-  "description": "Aem components with React.",
-  "main": "index.js",
+  "version": "0.3.0",
+  "description": "Aem components written in React.",
   "scripts": {
-    "preinstall": "npm install typescript & tsd install",
-    "build": "tsc --declaration",
+    "build": "./node_modules/typescript/bin/tsc",
     "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
     "lint": "eslint . & tslint *.tsx",
-    "postinstall": "npm run build",
     "preversion": "npm test && npm run build",
     "version": "git add .",
     "postversion": "git push && git push --tags && npm publish"
+  },
+  "author": {
+    "name": "Stefan Meyer",
+    "email": "stefan.meyer@sinnerschrader.com"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/sinnerschrader/aem-react/blob/master/LICENSE.md"
   },
   "keywords": [
     "aem",
@@ -26,15 +31,20 @@
     "url": "http://www.github.com/sinnerschrader/aem-react-js"
   },
   "devDependencies": {
-    "typescript": "1.6.2",
-    "tsd": "^0.6.5",
+    "chai": "^3.5.0",
     "eslint": "^1.6.0",
     "espower-typescript": "^3.0.0",
+    "jsdom": "^8.1.0",
     "mocha": "^2.3.4",
     "power-assert": "^1.2.0",
+    "react-addons-test-utils": "^15.3.1",
+    "tsd": "^0.6.5",
     "tslint": "^2.5.1"
   },
   "dependencies": {
-    "react": "^0.13.3"
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1",
+    "react-router": "^2.7.0",
+    "typescript": "^2.1.0-dev.20160828"
   }
 }

@@ -1,12 +1,24 @@
 import * as React from "react";
+import * as ReactDom from "react-dom";
 import CqUtils from "./CqUtils";
 import AemComponent from "./component/AemComponent";
 import RootComponentRegistry from "./RootComponentRegistry";
 import RootComponent from "./component/RootComponent";
 import {Resource} from "./component/ResourceComponent";
 import {ClientAemContext} from "./AemContext";
+import {ResourceComponent} from "./component/ResourceComponent";
+import {Container} from "./di/Container";
+import Cache from "./store/Cache";
 
 declare var window: Window;
+
+export interface ComponentTreeConfig {
+    wcmmode: string;
+    path: string;
+    resourceType: string;
+    cache: Cache;
+    cqHidden?: boolean;
+}
 
 /**
  * An Instance wraps a root aem component and provides methods to rerender the component.
@@ -15,7 +27,7 @@ export class Instance {
     public path: string;
     public component: AemComponent<any, any>;
     public node: any;
-    public props: any;
+    public props: ComponentTreeConfig;
     public componentClass: any;
     public aemContext: ClientAemContext;
 
@@ -26,13 +38,13 @@ export class Instance {
     public rerender(extraProps: any): void {
         let newProps: any = {};
         Object.keys(this.props).forEach((key: string) => {
-            newProps[key] = this.props[key];
+            newProps[key] = (this.props as any)[key];
         });
         Object.keys(extraProps).forEach((key: string) => {
             newProps[key] = extraProps[key];
         });
 
-        React.render(<RootComponent aemContext={this.aemContext} comp={this.componentClass} {...newProps} />, this.node);
+        ReactDom.render(<RootComponent aemContext={this.aemContext} comp={this.componentClass} {...newProps} />, this.node);
     }
 
     /**
@@ -40,8 +52,7 @@ export class Instance {
      */
     public reload(): void {
         let origin: string = window.location.origin;
-        // TODO props.depth should be replaced by special suffix so loading of json can be customized in java class.
-        let url: string = origin + this.props.path + "." + this.props.depth + ".json";
+        let url: string = origin + this.props.path + ".infinity.json";
         (window as FetchWindow).fetch(url, {credentials: "same-origin"}).then((response: any) => {
             return response.json();
         }).then((resource: any) => {
@@ -56,6 +67,10 @@ export class Instance {
      */
     public rerenderByResource(resource: Resource): void {
         this.rerender({resource: resource});
+    }
+
+    public unmount(): void {
+        ReactDom.unmountComponentAtNode(this.node);
     }
 }
 
@@ -73,6 +88,10 @@ class EditableState {
         this.initialized = this.isVisible();
     }
 
+    /**
+     * TODO not reliable
+     * @returns {boolean}
+     */
     public isVisible(): boolean {
         return this.editable.element.dom.getBoundingClientRect().width > 0;
     }
@@ -103,12 +122,15 @@ class EditableState {
  */
 export default class ComponentManager {
 
-    constructor(registry: RootComponentRegistry) {
-        this.instances = {} as {[path: string]:  Instance};
+    constructor(registry: RootComponentRegistry, container: Container) {
+        this.instances = {} as {[path: string]: Instance};
+        this.container = container;
         // TODO fix the dependencies
         CqUtils.on("wcmmodechange", this.onWcmModeChange, this);
         this.registry = registry;
     }
+
+    private container: Container;
 
     private registry: RootComponentRegistry;
 
@@ -142,9 +164,9 @@ export default class ComponentManager {
      * // TODO this only makes sense for root Components?!
      * @param component
      */
-    public addComponent(component: React.Component<any, any>): void {
+    public addComponent(component: ResourceComponent<any, any, any>): void {
         // TODO fix component type - should be ResourceComponent
-        let instance: Instance = this.instances[component.props.path];
+        let instance: Instance = this.instances[component.getPath()];
         if (instance) {
             instance.component = component as AemComponent<any, any>;
 
@@ -159,12 +181,12 @@ export default class ComponentManager {
      * @param props
      * @param node
      */
-    public addInstance(path: string, componentClass: any, props: any, node: any): void {
+    public addInstance(path: string, componentClass: any, props: ComponentTreeConfig, node: any): void {
         let instance: Instance = new Instance();
         instance.props = props;
         instance.node = node;
         instance.componentClass = componentClass;
-        instance.aemContext = {registry: this.registry, componentManager: this};
+        instance.aemContext = {registry: this.registry, componentManager: this, container: null};
         this.instances[path] = instance;
     }
 
@@ -178,7 +200,7 @@ export default class ComponentManager {
     }
 
     /**
-     * find nistances that are nested in the instance given by püath
+     * find nistances that are nested in the instance given by path
      * @param path
      * @returns {any}
      */
@@ -187,7 +209,7 @@ export default class ComponentManager {
         Object.keys(this.instances).forEach((instancePath: string) => {
             let instance: Instance = this.instances[instancePath];
             let subPath: boolean = instancePath && instancePath.length > path.length && instancePath.substring(0, path.length) === path;
-            if (instance.props.root && subPath) {
+            if (subPath) {
                 nested.push(instance);
             }
         }, this);
@@ -202,15 +224,16 @@ export default class ComponentManager {
     public initReactComponent(item: any): void {
         let textarea = document.getElementById(item.getAttribute("data-react-id")) as HTMLTextAreaElement;
         if (textarea) {
-            let props = JSON.parse(textarea.value);
-            props.root = true;
-            let comp = this.registry.getComponent(props.resource["sling:resourceType"]);
+            let props: ComponentTreeConfig = JSON.parse(textarea.value);
+            let comp = this.registry.getComponent(props.resourceType);
             if (comp == null) {
-                console.error("React component '" + props.component + "' does not exist in component list.");
+                console.error("React component '" + props.resourceType + "' does not exist in component list.");
             } else {
-                console.log("Rendering react component '" + props.component + "'.");
-                let ctx: ClientAemContext = {registry: this.registry, componentManager: this};
-                React.render(<RootComponent aemContext={ctx} comp={comp} {...props} />, item);
+                console.log("Rendering react component '" + props.resourceType + "'.");
+                let cache: Cache = this.container.get("cache");
+                cache.mergeCache(props.cache);
+                let ctx: any = {registry: this.registry, componentManager: this, container: this.container};
+                ReactDom.render(<RootComponent aemContext={ctx} comp={comp} path={props.path} wcmmode={props.wcmmode}/>, item);
                 this.addInstance(props.path, comp, props, item);
 
             }
@@ -267,7 +290,14 @@ export default class ComponentManager {
     public reloadRootInCq(path: string): void {
         let parent: Instance = this.getParentInstance(path);
         let parentPath: string = parent.props.path;
-        // TODO why this timeout
+
+        let descendents: Instance[] = this.getNestedInstances(path);
+        descendents.forEach((instance: Instance) => {
+            instance.unmount();
+        });
+        parent.unmount();
+
+        // TODO why this timeout?
         setTimeout(() => {
             CqUtils.removeEditable(path);
         }, 0);
@@ -289,7 +319,6 @@ export default class ComponentManager {
         CqUtils.on("editableready", this.updateEditables.bind(this), this);
 
         let items = [].slice.call(document.querySelectorAll("[data-react]"));
-        console.log(items.length + " react configs found.");
         for (let item of items) {
             this.initReactComponent(item);
         }
@@ -305,13 +334,15 @@ export default class ComponentManager {
             // timeout necessary to make sure that nested instances are ready. This may be called during rendering of react component.
             // TODO improve timing by removing setTimeout
             if (visible) {
-                this.updateEditablesState();
+                this.updateEditables();
+            } else {
+                setTimeout(function (): void {
+                    this.getNestedInstances(path).forEach((instance: Instance) => {
+                        instance.rerender({cqHidden: !visible});
+                    });
+                }.bind(this), 0);
             }
-            setTimeout(function (): void {
-                this.getNestedInstances(path).forEach((instance: Instance) => {
-                    instance.rerender({cqHidden: !visible});
-                });
-            }.bind(this), 0);
+
         }
     }
 
@@ -325,6 +356,7 @@ export default class ComponentManager {
         Object.keys(this.editables).forEach((path: string) => {
             this.editables[path].tryToInitialize();
         }, this);
+
     }
 
     private initializeEditablesState(): void {

@@ -3,22 +3,25 @@ import {AemContext} from "../AemContext";
 
 export interface RootComponentProps {
     comp: typeof React.Component;
-    component: string;
     aemContext: AemContext;
+    path: string;
+    wcmmode?: string;
 }
 
-export default class  RootComponent extends React.Component<RootComponentProps, any> {
+export default class RootComponent extends React.Component<RootComponentProps, any> {
     public static childContextTypes: any = {
-        aemContext: React.PropTypes.any
+        aemContext: React.PropTypes.any, path: React.PropTypes.any,
     };
 
     public getChildContext(): any {
         return {
-            aemContext: this.props.aemContext
+            aemContext: this.props.aemContext, path: this.props.path
         };
     }
 
     public render(): React.ReactElement<any> {
-        return React.createElement(this.props.comp, this.props);
+        let childProps: any = {path: this.props.path, root: true, wcmmode: this.props.wcmmode};
+        return React.createElement(this.props.comp, childProps);
     }
+
 }

@@ -1,5 +1,7 @@
 import * as React from "react";
 import {Mapping} from "./RootComponentRegistry";
+import WrapperFactory from "./component/WrapperFactory";
+import {ComponentConfig} from "./component/WrapperFactory";
 
 export default class ComponentRegistry {
 
@@ -23,6 +25,15 @@ export default class ComponentRegistry {
         /* tsslint:enable:no-string-literal */
         let resourceType: string = this.mapToResourceType(componentClassName);
         this.mappings.push(new Mapping(resourceType, componentClass));
+    }
+
+    public registerVanilla(config: ComponentConfig): void {
+        /* tslint:disable:no-string-literal */
+        let componentClassName: string = (config.component as any)["name"];
+        /* tsslint:enable:no-string-literal */
+        WrapperFactory.createWrapper(config);
+        let resourceType: string = this.mapToResourceType(componentClassName);
+        this.mappings.push(new Mapping(resourceType, config.component));
     }
 
     private mapToResourceType(componentClassName: string): string {

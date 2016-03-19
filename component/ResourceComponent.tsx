@@ -1,42 +1,71 @@
 import * as React from "react";
 import AemComponent from "./AemComponent";
 import EditDialog from "./EditDialog";
+import {Sling} from "../store/Sling";
+import RootComponentRegistry from "../RootComponentRegistry";
+import ResourceUtils from "../ResourceUtils";
 
 export interface Resource {
     "sling:resourceType": string;
 }
 
-export interface ResourceProps<C> {
-    resource?: C;
-    component?: string;
+export enum STATE {
+    LOADING, LOADED, FAILED
+}
+
+export interface ResourceState {
+    absolutePath: string;
+    resource?: any;
+    state: STATE;
+}
+
+export interface ResourceProps {
     path: string;
     root?: boolean;
-    wcmmode?: string;
     cqHidden?: boolean;
+    wcmmode?: string;
 }
 
 
 /**
  * Provides base functionality for components that are
  */
-export  abstract class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S> extends AemComponent<P, S> {
-
+export abstract class ResourceComponent<C extends Resource, P extends ResourceProps, S extends ResourceState> extends AemComponent<P, S> {
 
     public static childContextTypes: any = {
         wcmmode: React.PropTypes.string, //
         path: React.PropTypes.string, //
-        resource: React.PropTypes.any, //
         cqHidden: React.PropTypes.bool
     };
 
-
     public getChildContext(): any {
         return {
-            resource: this.getResource(), wcmmode: this.getWcmmode(), path: this.getPath(), cqHidden: this.isCqHidden()
+            wcmmode: this.getWcmmode(), path: this.getPath(), cqHidden: this.isCqHidden()
         };
 
     }
 
+    public componentWillMount(): void {
+        this.initialize();
+    }
+
+    public componentDidUpdate(prevProps: ResourceProps): void {
+        this.initialize();
+    }
+
+    public initialize(): void {
+        let absolutePath: string;
+        if (ResourceUtils.isAbsolutePath(this.props.path)) {
+            absolutePath = this.props.path;
+        } else {
+            absolutePath = this.context.path + "/" + this.props.path;
+        }
+        if (absolutePath !== this.getPath()) {
+            this.setState(({absolutePath: absolutePath, state: STATE.LOADING} as S));
+            (this.getAemContext().container.get("sling") as Sling).subscribe(this, absolutePath, {depth: this.getDepth()});
+        }
+
+    }
 
     public getWcmmode(): string {
         return this.props.wcmmode || this.context.wcmmode;
@@ -48,40 +77,45 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
 
 
     public getPath(): string {
-        if (this.context.path && this.props.path) {
-            return this.context.path + "/" + this.props.path;
-        } else if (this.props.path) {
-            return this.props.path;
+        if (typeof this.state !== "undefined" && this.state !== null) {
+            return this.state.absolutePath;
         } else {
-            return this.context.path;
+            return null;
         }
-
     }
 
     public componentDidMount(): void {
         this.context.aemContext.componentManager.addComponent(this);
     }
 
+    protected renderLoading(): React.ReactElement<any> {
+        return (<span>Loading</span>);
+    }
 
     public render(): React.ReactElement<any> {
-        if (this.isWcmEditable() && this.props.root !== true) {
-            let editDialog: React.ReactElement<any> = this.props.root ? null : (
-                <EditDialog path={this.getPath()} resourceType={this.getResourceType()}/>);
-            return (
-                <div>
-                    {this.renderBody()}
-                    {editDialog}
-                </div>
-            );
-        } else {
+        let child: React.ReactElement<any>;
+        if (this.state.state === STATE.LOADING) {
+            child = this.renderLoading();
+        } else if (!!this.props.root) {
             return this.renderBody();
+        } else {
+            child = this.renderBody();
         }
+        return (
+            <EditDialog path={this.getPath()} resourceType={this.getResourceType()}>
+                {child}
+            </EditDialog>
+        );
+    }
+
+    public getRegistry(): RootComponentRegistry {
+        return this.context.aemContext.registry;
     }
 
     public abstract renderBody(): React.ReactElement<any>;
 
     public getChildren(): any {
-        let resource = this.props.resource;
+        let resource: any = this.state.resource;
         let children: any = {};
         Object.keys(resource).forEach((propertyName: string): void => {
             let child = resource[propertyName];
@@ -93,27 +127,19 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
     }
 
     public getResource(): C {
-        return this.props.resource || this.context.resource[this.props.path] || {};
+        return (this.state.resource as C);
     }
 
     public getResourceType(): string {
         return this.context.aemContext.registry.getResourceType(this);
     }
 
-    public createNewChildNodeNames(prefix: String, count: number): string[] {
-        let newNodeNames: string[] = [];
-        let existingNodeNames: string[] = Object.keys(this.getChildren());
+    public changedResource(path: string, resource: C): void {
+        this.setState(({state: STATE.LOADED, resource: resource, absolutePath: path}) as any);
+    }
 
-        for (let idx: number = 0; idx < count; idx++) {
-            let nodeName: string = null;
-            let index: number = idx;
-            while (nodeName === null || existingNodeNames.indexOf(nodeName) >= 0) {
-                nodeName = prefix + "_" + (index++);
-            }
-            newNodeNames.push(nodeName);
-            existingNodeNames.push(nodeName);
-        }
-        return newNodeNames;
+    protected getDepth(): number {
+        return 0;
     }
 
 }

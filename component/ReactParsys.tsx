@@ -1,11 +1,15 @@
 import * as React from "react";
-import {ResourceUtils} from "../ResourceUtils";
+import ResourceUtils from "../ResourceUtils";
 import {ResourceComponent, Resource, ResourceProps} from "./ResourceComponent";
 import {ResourceInclude} from "../include";
 import CqUtils from "../CqUtils";
 
+export interface ReactParsysProps extends ResourceProps{
+    className?: string;
+}
 
-export default class ReactParsys extends ResourceComponent<Resource, ResourceProps<Resource>, any> {
+
+export default class ReactParsys extends ResourceComponent<Resource, ReactParsysProps, any> {
 
     public renderBody(): React.ReactElement<any> {
         let content: any = this.getResource();
@@ -15,16 +19,17 @@ export default class ReactParsys extends ResourceComponent<Resource, ResourcePro
         let childComponents: React.ReactElement<any>[] = [];
 
 
+        let className = this.props.className;
         Object.keys(children).forEach((nodeName: string, childIdx: number) => {
             let resource: Resource = children[nodeName];
             let resourceType: string = resource["sling:resourceType"];
             let componentType: typeof React.Component = this.getRegistry().getComponent(resourceType);
-            let path: string =  nodeName;
+            let path: string = nodeName;
             if (componentType) {
-                let props: any = {resource: resource, path: path};
-                childComponents.push(React.createElement(componentType, props));
+                let props: any = {resource: resource, path: path, reactKey: path };
+                childComponents.push(<div key={nodeName} className={className}>{React.createElement(componentType, props)}</div>);
             } else {
-                childComponents.push(<ResourceInclude path={path} resourceType={resourceType}></ResourceInclude>);
+                childComponents.push(<div key={nodeName} className={className}><ResourceInclude path={path} resourceType={resourceType}></ResourceInclude></div>);
             }
         }, this);
 
@@ -47,5 +52,8 @@ export default class ReactParsys extends ResourceComponent<Resource, ResourcePro
             </div>);
     }
 
+    protected getDepth(): number {
+        return 2;
+    }
 
 }

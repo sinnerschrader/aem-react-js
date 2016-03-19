@@ -6,10 +6,34 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "node/node.d.ts": {
-      "commit": "98d3168c2c570352a3a7393788e2ec9fbb08ade6"
+      "commit": "88c0d5f868bc184d70b6799d36b1946787beb48d"
     },
     "react/react.d.ts": {
-      "commit": "98d3168c2c570352a3a7393788e2ec9fbb08ade6"
+      "commit": "415de78bb5108cd2c58078011819c26aa4fac3f9"
+    },
+    "react/react-dom.d.ts": {
+      "commit": "05359f14d10740e532fc0299c8f0e04faf6bda25"
+    },
+    "react-router/react-router.d.ts": {
+      "commit": "415de78bb5108cd2c58078011819c26aa4fac3f9"
+    },
+    "react-router/history.d.ts": {
+      "commit": "415de78bb5108cd2c58078011819c26aa4fac3f9"
+    },
+    "assertion-error/assertion-error.d.ts": {
+      "commit": "95eb7b2527a28281cdbf480c0560744bc5190465"
+    },
+    "chai/chai.d.ts": {
+      "commit": "95eb7b2527a28281cdbf480c0560744bc5190465"
+    },
+    "mocha/mocha.d.ts": {
+      "commit": "88c0d5f868bc184d70b6799d36b1946787beb48d"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "88c0d5f868bc184d70b6799d36b1946787beb48d"
+    },
+    "jsdom/jsdom.d.ts": {
+      "commit": "88c0d5f868bc184d70b6799d36b1946787beb48d"
     }
   }
 }

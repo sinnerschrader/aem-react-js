@@ -1,5 +1,5 @@
 import * as React from "react";
-import {ClientAemContext} from "../AemContext";
+import {ClientAemContext, AemContext} from "../AemContext";
 import RootComponentRegistry from "../RootComponentRegistry";
 
 /**
@@ -11,6 +11,7 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
     public static contextTypes: any = {
         wcmmode: React.PropTypes.string, //
         path: React.PropTypes.string, //
+        rootPath: React.PropTypes.string, //
         resource: React.PropTypes.any, //
         cqHidden: React.PropTypes.bool, //
         aemContext: React.PropTypes.any
@@ -34,7 +35,7 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
     }
 
     public getPath(): string {
-        return this.context.wcmmode;
+        return this.context.path;
     }
 
     public getResource(): any {
@@ -47,6 +48,10 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
 
     public isWcmEditable(): boolean {
         return ["disabled", "preview"].indexOf(this.getWcmmode()) < 0;
+    }
+
+    protected getAemContext(): AemContext {
+        return this.context.aemContext;
     }
 
     public getRegistry(): RootComponentRegistry {
@@ -62,6 +67,22 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
         if (this.context.aemContext.componentManager) {
             this.context.aemContext.componentManager.setNestedInstancesVisible(path, visible);
         }
+    }
+
+    public getComponent(name: string): any {
+        return this.context.aemContext.container.get(name);
+    }
+
+    public getOsgiService(name: string): any {
+        return this.context.aemContext.container.getOsgiService(name);
+    }
+
+    public getResourceModel(name: string): any {
+        return this.context.aemContext.container.getResourceModel(name);
+    }
+
+    public getRequestModel(name: string): any {
+        return this.context.aemContext.container.getRequestModel(name);
     }
 
 }

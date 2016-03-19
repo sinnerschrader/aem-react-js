@@ -1,23 +1,52 @@
 {
-  "compileOnSave": false,
+  "compileOnSave": true,
+  "sortOutput": true,
   "compilerOptions": {
+    "noEmit": false,
     "target": "es5",
     "sourceMap": true,
     "module": "commonjs",
     "jsx": "react",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "removeComments": true,
-    "preserveConstEnums": false
+    "preserveConstEnums": false,
+    "declaration": true
   },
   "files": [
     "./ComponentManager.tsx",
     "./component/ResourceComponent.tsx",
     "./component/ReactParsys.tsx",
-    "./container.tsx",
+    "./component/RootComponent.tsx",
+    "./component/AemComponent.tsx",
+    "./component/EditDialog.tsx",
+    "./component/VanillaWrapper.tsx",
+    "./component/EditMarker.tsx",
+    "./component/WrapperFactory.tsx",
+    "./component/Script.tsx",
+    "./component/ReactParsys.tsx",
+    "./di/Container.tsx",
+    "./di/ServiceProxy.tsx",
+    "./store/Cache.tsx",
+    "./store/Sling.tsx",
+    "./store/ServerSling.tsx",
+    "./store/ClientSling.tsx",
+    "./router/ResourceMapping.tsx",
+    "./router/ResourceMappingImpl.tsx",
+    "./router/ResourceRoute.tsx",
+    "./router/AemLink.tsx",
+    "./AemContext.tsx",
+    "./ComponentManager.tsx",
+    "./ComponentRegistry.tsx",
+    "./RootComponentRegistry.tsx",
     "./include.tsx",
     "./CqUtils.tsx",
+    "./ServerRenderer.tsx",
     "./references.d.ts",
-    "./typings/tsd.d.ts"
-
+    "./typings/tsd.d.ts",
+    "./test/tests.tsx",
+    "./test/ResourceUtilsTest.tsx",
+    "./test/ResourceComponentTest.tsx",
+    "./test/CacheTest.tsx",
+    "./test/setup.tsx"
   ]
 }

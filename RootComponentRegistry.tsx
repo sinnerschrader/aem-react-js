@@ -48,7 +48,6 @@ export default class RootComponentRegistry {
         /* tsslint:enable:no-string-literal */
         this.componentToResourceType[componentClassName] = resourceType;
         this.resourceTypeToComponent[resourceType] = componentClass;
-        console.info("registered component " + resourceType + " " + componentClassName);
     }
 
     public init(): void {

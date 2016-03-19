@@ -57,6 +57,7 @@ export default class CqUtils {
                     }.bind(this);
                     CQ.WCM.on("editablesready", cb, this);
                 } else {
+
                     // This is the add accordion situation: editables already exist but the new editable will be created soon.
                     // TODO handle the timing eithout setTimeout
                     let cb = function (): void {
@@ -99,6 +100,7 @@ export default class CqUtils {
     public static getEditables(): any {
         return window.CQ.WCM.getEditables();
     }
+
     public static refreshNested(path: string): void {
         let rootEditable: any = CQ.WCM.getEditable(path);
         if (rootEditable) {
