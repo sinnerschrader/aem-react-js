@@ -10,6 +10,7 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
     public static contextTypes: any = {
         wcmmode: React.PropTypes.string, //
         path: React.PropTypes.string, //
+        rootPath: React.PropTypes.string, //
         resource: React.PropTypes.any, //
         cqHidden: React.PropTypes.bool, //
         aemContext: React.PropTypes.any

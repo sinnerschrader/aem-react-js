@@ -27,7 +27,7 @@ export default class ServerRenderer {
         }
         console.log("rendering " + rt );
         let ctx: AemContext = {registry: this.registry};
-        return React.renderToString(<RootComponent aemContext={ctx} comp={comp} {...props} />);
+        return React.ReactDOM.renderToString(<RootComponent aemContext={ctx} comp={comp} {...props} />);
     }
 
 }

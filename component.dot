@@ -1,0 +1,12 @@
+digraph graphname
+ {
+rankdir=BT
+ node[shape=rectangle]
+     d1 -> c1 -> b1 -> a;
+     d2 -> c1 ;
+     d3 -> c2 -> b2 -> a;
+     d4 -> c3 -> b2 ;
+
+
+     d4[label="<<sightly>>"]
+ }

@@ -6,10 +6,25 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "node/node.d.ts": {
-      "commit": "98d3168c2c570352a3a7393788e2ec9fbb08ade6"
+      "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
     },
     "react/react.d.ts": {
-      "commit": "98d3168c2c570352a3a7393788e2ec9fbb08ade6"
+      "commit": "4101b65a5b3e72b4a3e3b256d293e2fd11e40840"
+    },
+    "jsdom/jsdom.d.ts": {
+      "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "299b5caa22876ef27dc8e9a5b7fd7bf93457b6f4"
+    },
+    "react-redux/react-redux.d.ts": {
+      "commit": "4101b65a5b3e72b4a3e3b256d293e2fd11e40840"
+    },
+    "redux/redux.d.ts": {
+      "commit": "4101b65a5b3e72b4a3e3b256d293e2fd11e40840"
+    },
+    "redux-promise/redux-promise.d.ts": {
+      "commit": "4101b65a5b3e72b4a3e3b256d293e2fd11e40840"
     }
   }
 }

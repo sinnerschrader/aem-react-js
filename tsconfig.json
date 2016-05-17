@@ -1,5 +1,5 @@
 {
-  "compileOnSave": false,
+  "compileOnSave": true,
   "compilerOptions": {
     "target": "es5",
     "sourceMap": true,
@@ -15,7 +15,14 @@
     "./include.tsx",
     "./CqUtils.tsx",
     "./references.d.ts",
-    "./typings/tsd.d.ts"
+    "./typings/tsd.d.ts",
+    "./test/tests.tsx",
+    "./test/ResourceComponentTest.tsx",
+    "./test/setup.tsx",
+    "./di/ActionQueue.tsx",
+    "./di/ToActionQueue.tsx",
+    "./di/Container.tsx",
+    "./store/connect.tsx"
 
   ]
 }
