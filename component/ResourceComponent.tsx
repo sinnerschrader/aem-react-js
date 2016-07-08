@@ -1,20 +1,29 @@
 import * as React from "react";
 import AemComponent from "./AemComponent";
 import EditDialog from "./EditDialog";
-import {STATE} from "../store/reducers";
+import {Sling} from "../store/Sling";
+
 export interface Resource {
     "sling:resourceType": string;
 }
 
+export enum STATE {
+    LOADING, LOADED, FAILED
+}
+
+export interface ResourceState {
+    absolutePath: string;
+    resource?: Resource;
+    state: STATE;
+}
+
 export interface ResourceProps<C> {
-    resource?: C;
+    //resource?: C;
     component?: string;
     path: string;
-    rootPath: string;
     root?: boolean;
     wcmmode?: string;
     cqHidden?: boolean;
-    loadResource: (path: string) => void;
 }
 
 
@@ -29,21 +38,15 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
     public static childContextTypes: any = {
         wcmmode: React.PropTypes.string, //
         path: React.PropTypes.string, //
-        rootPath: React.PropTypes.string, //
-        cqHidden: React.PropTypes.bool, //
-        store: React.PropTypes.bool
+        cqHidden: React.PropTypes.bool
     };
 
 
     public getChildContext(): any {
         return {
-            wcmmode: "hallo", path: this.props.path, rootPath: this.props.rootPath, cqHidden: this.isCqHidden()
+            wcmmode: this.getWcmmode(), path: this.getPath(), cqHidden: this.isCqHidden()
         };
-    }
 
-    public getPathInfo(path: string): any {
-        let newPath: string = this.props.path ? this.props.path + "/" + path : path;
-        return {rootPath: this.props.rootPath, path: newPath};
     }
 
     public componentWillMount(): void {
@@ -57,13 +60,15 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
     }
 
     public initialize(): void {
-        if ((this.props as any).state === STATE.LOADING) {
-            this.loadResource(this.getPath());
+        let absolutePath: string;
+        if (ResourceComponent.ABSOLUTE_PATH_PATTERN.test(this.props.path)) {
+            absolutePath = this.props.path;
+        } else {
+            absolutePath = this.context.path + "/" + this.props.path;
         }
-    }
 
-    public loadResource(path: string): void {
-        this.props.loadResource(path);
+        this.setState(({absolutePath: absolutePath, state: STATE.LOADING} as S));
+        (this.getAemContext().container.get("sling") as Sling).subscribe(this, absolutePath, {depth: null});
     }
 
     public getWcmmode(): string {
@@ -76,17 +81,13 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 
 
     public getPath(): string {
-        if (ResourceComponent.ABSOLUTE_PATH_PATTERN.test(this.props.path)) {
-            return this.props.path;
-        } else {
-            return this.props.rootPath + "/" + this.props.path;
-        }
-
+        return this.state.absolutePath;
     }
 
     public componentDidMount(): void {
         this.context.aemContext.componentManager.addComponent(this);
     }
+
 
     public render(): React.ReactElement<any> {
         if (this.isWcmEditable() && this.props.root !== true) {
@@ -118,29 +119,15 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
     }
 
     public getResource(): C {
-        return (this.props.resource.resource as C);
+        return (this.state.resource as C);
     }
 
     public getResourceType(): string {
         return this.context.aemContext.registry.getResourceType(this);
     }
 
-    public createNewChildNodeNames(prefix: String, count: number): string[] {
-        let newNodeNames: string[] = [];
-        let existingNodeNames: string[] = Object.keys(this.getChildren());
-
-        for (let idx: number = 0; idx < count; idx++) {
-            let nodeName: string = null;
-            let index: number = idx;
-            while (nodeName === null || existingNodeNames.indexOf(nodeName) >= 0) {
-                nodeName = prefix + "_" + (index++);
-            }
-            newNodeNames.push(nodeName);
-            existingNodeNames.push(nodeName);
-        }
-        return newNodeNames;
+    public changedResource(resource: Resource): void {
+        this.setState({state: STATE.LOADED, resource: resource});
     }
 
 }
-
-

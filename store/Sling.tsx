@@ -1,6 +1,6 @@
-import Promise from "redux-promise";
+import {ResourceComponent} from "../component/ResourceComponent";
 
-export interface Sling {
+export default interface Sling {
 
-    getResource(path: string, options?: any): Promise;
+    subscribe(listener: ResourceComponent, path: string, options?: any);
 }

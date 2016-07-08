@@ -1,17 +1,16 @@
-import {Sling} from "./Sling";
-import {Promise} from "../references";
-interface FetchWindow extends Window {
-    fetch(url: string, options: any): any;
+import Sling from "./Sling";
+
+
+interface ResourceResolver {
+    getResource(path: string): Resource;
 }
 
+export default class ServerSling implements Sling {
+    private resourceResolver: ResourceResolver;
 
-
-export default class ClientSling implements Sling {
-    public getResource(path: string, options: any): Promise {
-        let url: string = origin + path + ".json";
-        return (window as FetchWindow).fetch(url, {credentials: "same-origin"}).then((response: any) => {
-            return response.json();
-        });
+    public subscribe(listener: ResourceComponent, path: string, options?: any): void {
+        let resource: Resource = this.resourceResolver.getResource(path);
+        listener.changedResource(resource);
     }
 
 }

@@ -1,5 +1,5 @@
 import * as React from "react";
-import {ClientAemContext} from "../AemContext";
+import {ClientAemContext, AemContext} from "../AemContext";
 
 /**
  * Provides base functionality for components that are
@@ -47,6 +47,10 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
 
     public isWcmEditable(): boolean {
         return ["disabled", "preview"].indexOf(this.getWcmmode()) < 0;
+    }
+    
+    protected getAemContext(): AemContext {
+        return this.context.aemContext
     }
 
     /**

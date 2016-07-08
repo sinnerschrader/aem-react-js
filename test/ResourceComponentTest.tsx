@@ -1,7 +1,6 @@
 import * as ReactTestUtils from "react-addons-test-utils";
 
 import {expect} from "chai";
-import {STATE} from "../store/reducers";
 
 import "./setup";
 
@@ -12,108 +11,107 @@ import * as React from "react";
 import RootComponentRegistry from "../RootComponentRegistry";
 import ComponentRegistry from "../ComponentRegistry";
 import ComponentManager from "../ComponentManager";
-import connect from "../store/connect";
-import container from "../di/container";
+import {Container} from "../di/Container";
 
 describe("ResourceComponent", () => {
-    class TestComponent extends ResourceComponent<any, any, any> {
+    class Test extends ResourceComponent<any, any, any> {
         public renderBody(): React.ReactElement[] {
             return (<div>{this.props.resource ? this.props.resource.text : "unknown"}</div>);
         }
     }
 
-    const Test: any = connect(TestComponent);
 
-    class EmbeddedComponent extends ResourceComponent<any, any, any> {
+    class Embedded extends ResourceComponent<any, any, any> {
         public renderBody(): React.ReactElement[] {
-            return (<Test path="{this.props.childPath}"{...this.getPathInfo(this.props.childPath)}></Test>);
+            return (<Test path={this.props.childPath}></Test>);
         }
     }
 
-    const Embedded: any = connect(EmbeddedComponent);
 
     let testRegistry: ComponentRegistry = new ComponentRegistry();
-    testRegistry.register(TestComponent);
+    testRegistry.register(Test);
     let registry: RootComponentRegistry = new RootComponentRegistry();
     registry.add(testRegistry);
 
     let componentManager: ComponentManager = new ComponentManager(registry);
 
+    let container = new Container();
+
     let aemContext: AemContext = {
-        registry: registry, componentManager: componentManager
+        registry: registry, componentManager: componentManager, container: container
     };
 
     it("should get resource directly", () => {
 
-        const resource: any = {"sling:resourceType": "test", text: "Hallo"};
+
+        container.register("sling", {
+            subscribe: function (listener: ResourceComponent, path: string, options?: any): void {
+                if (path === "/content/embed") {
+                    listener.changedResource({embed: "Hallo"});
+                } else if (path === "/content/embed/test") {
+                    listener.changedResource({text: "Hallo"});
+                }
+            }
+        });
         const item: any = ReactTestUtils.renderIntoDocument(
-            <RootComponent aemContext={aemContext} comp={Test} rootPath="/content" resource={resource}/>
+            <RootComponent aemContext={aemContext} comp={Embedded} rootPath="/content" childPath="test" path="embed"/>
         );
 
-        let test: TestComponent = ReactTestUtils.findRenderedComponentWithType(item, TestComponent);
+        let test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
 
-        expect(test.props.rootPath).to.equal("/content");
-        expect(test.props.resource.text).to.equal("Hallo");
+        expect(test.getPath()).to.equal("/content/embed/test");
+        expect(test.props.path).to.equal("test");
+        expect(test.getResource().text).to.equal("Hallo");
 
 
     });
 
-    it("should get resource from relativePath", () => {
+    it("should get resource from absolute Path", () => {
 
         container.register("sling", {
-            getResource: function (path: string, options?: any) {
-                if (path == "/content/test") {
-                    return {
-                        then: function (cb: Function) {
-                            cb({text: "Hallo"});
-                        }
-                    };
+            subscribe: function (listener: ResourceComponent, path: string, options?: any) {
+                if (path === "/content/test") {
+                    listener.changedResource({text: "Hallo"});
                 }
             }
         })
 
         const resource: any = {"test": null};
         const item: any = ReactTestUtils.renderIntoDocument(
-            <RootComponent aemContext={aemContext} comp={EmbeddedComponent} childPath="test" rootPath="/content" resource={resource}/>
+            <RootComponent aemContext={aemContext} comp={Test} path="/content/test" resource={resource}/>
         );
 
-        let test: TestComponent = ReactTestUtils.findRenderedComponentWithType(item, TestComponent);
+        let test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
 
-        expect(test.props.rootPath).to.equal("/content");
-        expect(test.props.path).to.equal("test");
-        expect(test.props.resource.resource.text).to.equal("Hallo");
+        expect(test.getPath()).to.equal("/content/test");
+        expect(test.props.path).to.equal("/content/test");
+        expect(test.getResource().text).to.equal("Hallo");
 
     });
 
-
-    it("should load resource from absolutePath", () => {
+    it("should get resource from relative Path", () => {
 
         container.register("sling", {
-            getResource: function (path: string, options?: any) {
-                return {
-                    then: function (cb: Function) {
-                        cb({text: "bye"});
-                    }
-                };
+            subscribe: function (listener: ResourceComponent, path: string, options?: any) {
+                if (path === "/content/test") {
+                    listener.changedResource({text: "Hallo"});
+                }
             }
         })
-        const resource: any = {};
-        let item: any = ReactTestUtils.renderIntoDocument(
-            <RootComponent aemContext={aemContext} comp={EmbeddedComponent} childPath="/x/oops" rootPath="/content" resource={resource}/>
-        );
-        item = ReactTestUtils.renderIntoDocument(
-            <RootComponent aemContext={aemContext} comp={EmbeddedComponent} childPath="/x/oops" rootPath="/content" resource={resource}/>
+
+        const resource: any = {"test": null};
+        const item: any = ReactTestUtils.renderIntoDocument(
+            <RootComponent aemContext={aemContext} rootPath="/content" comp={Test} path="test" resource={resource}/>
         );
 
-        let test: TestComponent = ReactTestUtils.findRenderedComponentWithType(item, TestComponent);
+        let test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
 
-        let store: any = container.get("reduxStore");
-
-        expect(test.props.path).to.equal("/x/oops");
-        expect(test.props.state).to.equal(STATE.LOADED);
-        expect(test.props.resource.resource.text).to.equal("bye");
+        expect(test.getPath()).to.equal("/content/test");
+        expect(test.props.path).to.equal("test");
+        expect(test.getResource().text).to.equal("Hallo");
 
     });
+
 
 });
 

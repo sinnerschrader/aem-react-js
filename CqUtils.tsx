@@ -55,8 +55,9 @@ export default class CqUtils {
                         CqUtils.setVisible(path, visible, recursive);
                         CQ.WCM.removeListener("editablesready", cb);
                     }.bind(this);
-                    CQ.WCM.on("editablesready", cb, this);
+                        CQ.WCM.on("editablesready", cb, this);
                 } else {
+
                     // This is the add accordion situation: editables already exist but the new editable will be created soon.
                     // TODO handle the timing eithout setTimeout
                     let cb = function (): void {
