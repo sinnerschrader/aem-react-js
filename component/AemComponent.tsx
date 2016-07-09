@@ -34,7 +34,7 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
     }
 
     public getPath(): string {
-        return this.context.wcmmode;
+        return this.context.path;
     }
 
     public getResource(): any {
@@ -48,9 +48,9 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
     public isWcmEditable(): boolean {
         return ["disabled", "preview"].indexOf(this.getWcmmode()) < 0;
     }
-    
+
     protected getAemContext(): AemContext {
-        return this.context.aemContext
+        return this.context.aemContext;
     }
 
     /**

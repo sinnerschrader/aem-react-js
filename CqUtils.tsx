@@ -120,7 +120,7 @@ export default class CqUtils {
     }
 
     public static getEditables(): any {
-        return window.CQ.getEditables();
+        return window.CQ.WCM.getEditables();
     }
 }
 

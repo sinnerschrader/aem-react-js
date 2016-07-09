@@ -1,10 +1,14 @@
 import * as React from "react";
+import * as ReactDom from "react-dom";
 import CqUtils from "./CqUtils";
 import AemComponent from "./component/AemComponent";
 import RootComponentRegistry from "./RootComponentRegistry";
 import RootComponent from "./component/RootComponent";
 import {Resource} from "./component/ResourceComponent";
 import {ClientAemContext} from "./AemContext";
+import Container from "./di/Container";
+import {ResourceComponent} from "./component/ResourceComponent";
+import Cache from "./store/Cache";
 
 declare var window: Window;
 
@@ -32,7 +36,7 @@ export class Instance {
             newProps[key] = extraProps[key];
         });
 
-        React.render(<RootComponent aemContext={this.aemContext} comp={this.componentClass} {...newProps} />, this.node);
+        ReactDom.render(<RootComponent aemContext={this.aemContext} comp={this.componentClass} {...newProps} />, this.node);
     }
 
     /**
@@ -65,8 +69,8 @@ interface FetchWindow extends Window {
 }
 
 class EditableState {
-    public initialized: boolean
-    private editable: any
+    public initialized: boolean;
+    private editable: any;
 
     constructor(editable: any) {
         this.editable = editable;
@@ -103,12 +107,15 @@ class EditableState {
  */
 export default class ComponentManager {
 
-    constructor(registry: RootComponentRegistry) {
+    constructor(registry: RootComponentRegistry, container: Container) {
         this.instances = {} as {[path: string]:  Instance};
+        this.container = container;
         // TODO fix the dependencies
         CqUtils.on("wcmmodechange", this.onWcmModeChange, this);
         this.registry = registry;
     }
+
+    private container: Container;
 
     private registry: RootComponentRegistry;
 
@@ -142,9 +149,9 @@ export default class ComponentManager {
      * // TODO this only makes sense for root Components?!
      * @param component
      */
-    public addComponent(component: React.Component<any, any>): void {
+    public addComponent(component: ResourceComponent<any, any, any>): void {
         // TODO fix component type - should be ResourceComponent
-        let instance: Instance = this.instances[component.props.path];
+        let instance: Instance = this.instances[component.getPath()];
         if (instance) {
             instance.component = component as AemComponent<any, any>;
 
@@ -164,7 +171,7 @@ export default class ComponentManager {
         instance.props = props;
         instance.node = node;
         instance.componentClass = componentClass;
-        instance.aemContext = {registry: this.registry, componentManager: this};
+        instance.aemContext = {registry: this.registry, componentManager: this, container: null};
         this.instances[path] = instance;
     }
 
@@ -209,8 +216,15 @@ export default class ComponentManager {
                 console.error("React component '" + props.component + "' does not exist in component list.");
             } else {
                 console.log("Rendering react component '" + props.component + "'.");
-                let ctx: ClientAemContext = {registry: this.registry, componentManager: this};
-                React.render(<RootComponent aemContext={ctx} comp={comp} {...props} />, item);
+                let cache: Cache = this.container.get("cache");
+                //cache.put(props.path, props.resource);
+                if (props.cache) {
+                    Object.keys(props.cache).forEach((path: string) => {
+                        cache.put(path, props.cache[path]);
+                    });
+                }
+                let ctx: any = {registry: this.registry, componentManager: this, container: this.container};
+                ReactDom.render(<RootComponent aemContext={ctx} comp={comp} {...props} />, item);
                 this.addInstance(props.path, comp, props, item);
 
             }

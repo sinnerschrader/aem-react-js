@@ -5,6 +5,8 @@ export interface RootComponentProps {
     comp: typeof React.Component;
     component: string;
     aemContext: AemContext;
+    path: string;
+    resource: any;
 }
 
 export default class  RootComponent extends React.Component<RootComponentProps, any> {
@@ -16,7 +18,7 @@ export default class  RootComponent extends React.Component<RootComponentProps, 
     public getChildContext(): any {
         return {
             aemContext: this.props.aemContext,
-            path: this.props.rootPath
+            path: this.props.path
         };
     }
 

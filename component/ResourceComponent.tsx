@@ -13,12 +13,12 @@ export enum STATE {
 
 export interface ResourceState {
     absolutePath: string;
-    resource?: Resource;
+    resource?: any;
     state: STATE;
 }
 
 export interface ResourceProps<C> {
-    //resource?: C;
+    resource?: C;
     component?: string;
     path: string;
     root?: boolean;
@@ -90,7 +90,9 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 
 
     public render(): React.ReactElement<any> {
-        if (this.isWcmEditable() && this.props.root !== true) {
+        if (this.state.state === STATE.LOADING) {
+            return (<span>Loading</span>);
+        } else if (this.isWcmEditable() && this.props.root !== true) {
             let editDialog: React.ReactElement<any> = this.props.root ? null : (
                 <EditDialog path={this.getPath()} resourceType={this.getResourceType()}/>);
             return (
@@ -126,8 +128,10 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
         return this.context.aemContext.registry.getResourceType(this);
     }
 
-    public changedResource(resource: Resource): void {
-        this.setState({state: STATE.LOADED, resource: resource});
+    public changedResource(path: string, resource: C): void {
+        console.log(" changed Resource" + resource);
+
+        this.setState({state: STATE.LOADED, resource: resource, absolutePath: path});
     }
 
 }

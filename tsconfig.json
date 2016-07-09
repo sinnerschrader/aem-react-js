@@ -1,6 +1,8 @@
 {
   "compileOnSave": true,
+  "sortOutput": true,
   "compilerOptions": {
+    "noEmit": true,
     "target": "es5",
     "sourceMap": true,
     "module": "commonjs",
@@ -12,17 +14,27 @@
   "files": [
     "./ComponentManager.tsx",
     "./component/ResourceComponent.tsx",
+    "./component/RootComponent.tsx",
+    "./component/AemComponent.tsx",
+    "./component/EditDialog.tsx",
+    "./component/EditMarker.tsx",
+    "./component/Script.tsx",
+    "./di/Container.tsx",
+    "./store/Cache.tsx",
+    "./store/Sling.tsx",
+    "./store/ServerSling.tsx",
+    "./store/ClientSling.tsx",
+    "./AemContext.tsx",
+    "./ComponentManager.tsx",
+    "./ComponentRegistry.tsx",
+    "./RootComponentRegistry.tsx",
     "./include.tsx",
     "./CqUtils.tsx",
+    "./ServerRenderer.tsx",
     "./references.d.ts",
     "./typings/tsd.d.ts",
     "./test/tests.tsx",
     "./test/ResourceComponentTest.tsx",
-    "./test/setup.tsx",
-    "./di/ActionQueue.tsx",
-    "./di/ToActionQueue.tsx",
-    "./di/Container.tsx",
-    "./store/connect.tsx"
-
+    "./test/setup.tsx"
   ]
 }

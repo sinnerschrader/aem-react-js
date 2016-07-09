@@ -22,19 +22,26 @@ declare module "warning" {
   export = warning;
 }
 
-export interface Promise {
-  then(success: (result: any) => void, error: (e: any) => void): Promise;
+export interface ResourceResolver {
+  getResource(path: string, depth: number): any;
 }
 
-export interface Sling {
+export interface JavaSling {
   includeResource(path: string, resourceType: string): string;
   currentResource(depth: number): any;
+  getResource(path: string, depth: number): any;
+
+}
+
+export interface Promise {
+  then(success: (result: any) => void, error: (e: any) => void): Promise;
 }
 
 export interface Cq {
   objects: {
     currentResource: any;
+    path: string;
   };
-  sling: Sling;
+  sling: JavaSling;
 }
 declare var Cqx: Cq;
