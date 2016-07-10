@@ -7,7 +7,6 @@
     "preinstall": "npm install typescript & tsd install",
     "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
     "lint": "eslint . & tslint *.tsx",
-    "postinstall": "npm run build",
     "prepublish": "tsc --declaration && npm test",
     "preversion": "npm test",
     "version": "git add ."
@@ -34,6 +33,7 @@
     "tslint": "^2.5.1"
   },
   "dependencies": {
-    "react": "^0.13.3"
+    "react": "latest",
+    "react-dom": "latest"
   }
 }
