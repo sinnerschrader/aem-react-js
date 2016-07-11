@@ -17,7 +17,7 @@
     "./include.tsx",
     "./CqUtils.tsx",
     "./references.d.ts",
-    "./typings/tsd.d.ts",
+    "./typings/index.d.ts",
     "./ServerRenderer.tsx"
   ]
 }

@@ -4,9 +4,7 @@
   "description": "Aem components with React.",
   "main": "index.js",
   "scripts": {
-    "preinstall": "npm install typescript & tsd install",
-    "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
-    "lint": "eslint . & tslint *.tsx",
+    "preinstall": "npm install typescript & typings install",
     "prepublish": "tsc --declaration && npm test",
     "preversion": "npm test",
     "version": "git add ."
@@ -24,13 +22,13 @@
     "url": "http://www.github.com/sinnerschrader/aem-react-js"
   },
   "devDependencies": {
-    "typescript": "1.6.2",
-    "tsd": "^0.6.5",
-    "eslint": "^1.6.0",
-    "espower-typescript": "^3.0.0",
-    "mocha": "^2.3.4",
-    "power-assert": "^1.2.0",
-    "tslint": "^2.5.1"
+    "typescript": "latest",
+    "typings": "latest",
+    "eslint": "latest",
+    "espower-typescript": "latest",
+    "mocha": "latest",
+    "power-assert": "latest",
+    "tslint": "latest"
   },
   "dependencies": {
     "react": "latest",
