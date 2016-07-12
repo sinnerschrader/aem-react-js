@@ -31,35 +31,38 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
 
 
     public getChildContext(): any {
-        return {
+        let result:any = {
             resource: this.getResource(), wcmmode: this.getWcmmode(), path: this.getPath(), cqHidden: this.isCqHidden()
         };
-
+        return result;
     }
 
 
     public getWcmmode(): string {
-        return this.props.wcmmode || this.context.wcmmode;
+        return this.props.wcmmode || (this.context ? this.context.wcmmode : null);
     }
 
     public isCqHidden(): boolean {
-        return this.props.cqHidden || this.context.cqHidden;
+        return this.props.cqHidden || (this.context ? this.context.cqHidden : false);
     }
 
 
     public getPath(): string {
-        if (this.context.path && this.props.path) {
+        if (this.context && this.context.path && this.props.path) {
             return this.context.path + "/" + this.props.path;
         } else if (this.props.path) {
             return this.props.path;
-        } else {
+        } else if (this.context) {
             return this.context.path;
         }
 
+        return '';
     }
 
     public componentDidMount(): void {
-        this.context.aemContext.componentManager.addComponent(this);
+        if( this.context && this.context.aemContext && this.context.aemContext.componentManager ) {
+            this.context.aemContext.componentManager.addComponent(this);
+        }
     }
 
 
@@ -93,11 +96,22 @@ export  abstract class ResourceComponent<C extends Resource, P extends ResourceP
     }
 
     public getResource(): C {
-        return this.props.resource || this.context.resource[this.props.path] || {};
+        if( this.props.resource ) {
+            return this.props.resource;
+        } else {
+            if( this.context && this.context.resource && this.props.path ) {
+                return this.context.resource[this.props.path]
+            }
+        }
+
+        return null
     }
 
     public getResourceType(): string {
-        return this.context.aemContext.registry.getResourceType(this);
+        if( this.context && this.context.aemContext && this.context.aemContext.registry ) {
+            return this.context.aemContext.registry.getResourceType(this);
+        }
+        return '';
     }
 
     public createNewChildNodeNames(prefix: String, count: number): string[] {

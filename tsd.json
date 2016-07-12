@@ -9,7 +9,10 @@
       "commit": "98d3168c2c570352a3a7393788e2ec9fbb08ade6"
     },
     "react/react.d.ts": {
-      "commit": "98d3168c2c570352a3a7393788e2ec9fbb08ade6"
+      "commit": "473232e5dbd179e9ee682fab12f796720f37b118"
+    },
+    "react/react-dom.d.ts": {
+      "commit": "473232e5dbd179e9ee682fab12f796720f37b118"
     }
   }
 }

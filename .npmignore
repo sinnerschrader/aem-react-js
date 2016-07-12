@@ -1,2 +1,8 @@
 npm-debug.log
 test
+*.png
+*.puml
+src
+*.json
+*.js.map
+typings

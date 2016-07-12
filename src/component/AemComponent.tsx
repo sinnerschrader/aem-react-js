@@ -26,19 +26,19 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
 
 
     public getWcmmode(): string {
-        return this.context.wcmmode;
+        return (this.context ? this.context.wcmmode : '');
     }
 
     public isCqHidden(): boolean {
-        return this.context.cqHidden;
+        return (this.context ? this.context.cqHidden : false);
     }
 
     public getPath(): string {
-        return this.context.wcmmode;
+        return (this.context ? this.context.wcmmode : '');
     }
 
     public getResource(): any {
-        return this.context.resource;
+        return (this.context ? this.context.resource : {});
     }
 
     public isWcmEnabled(): boolean {
@@ -50,7 +50,7 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
     }
 
     public getRegistry(): RootComponentRegistry {
-        return this.context.aemContext.registry;
+        return (this.context ? (this.context.aemContext ? this.context.aemContext.registry : null) : null);
     }
 
     /**
