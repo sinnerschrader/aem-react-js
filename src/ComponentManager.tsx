@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import CqUtils from "./CqUtils";
 import AemComponent from "./component/AemComponent";
 import RootComponentRegistry from "./RootComponentRegistry";
@@ -32,7 +33,7 @@ export class Instance {
             newProps[key] = extraProps[key];
         });
 
-        React.render(<RootComponent aemContext={this.aemContext} comp={this.componentClass} {...newProps} />, this.node);
+        ReactDOM.render(<RootComponent aemContext={this.aemContext} comp={this.componentClass} {...newProps} />, this.node);
     }
 
     /**
@@ -210,7 +211,7 @@ export default class ComponentManager {
             } else {
                 console.log("Rendering react component '" + props.component + "'.");
                 let ctx: ClientAemContext = {registry: this.registry, componentManager: this};
-                React.render(<RootComponent aemContext={ctx} comp={comp} {...props} />, item);
+                ReactDOM.render(<RootComponent aemContext={ctx} comp={comp} {...props} />, item);
                 this.addInstance(props.path, comp, props, item);
 
             }
@@ -339,4 +340,3 @@ export default class ComponentManager {
 
 
 }
-

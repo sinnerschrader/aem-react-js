@@ -1,39 +1,35 @@
 {
-  "name": "aem-react-js",
-  "version": "0.2.2",
+  "name": "aem-with-react",
+  "version": "0.4.0",
   "description": "Aem components with React.",
-  "main": "index.js",
+  "author": "Panos Voudouris <panosvoudouris@gmail.com> (https://github.com/panosvoudouris)",
+  "licence": "MIT",
   "scripts": {
-    "preinstall": "npm install typescript & tsd install",
-    "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
-    "lint": "eslint . & tslint *.tsx",
-    "postinstall": "npm run build",
-    "prepublish": "tsc --declaration && npm test",
-    "preversion": "npm test",
-    "version": "git add ."
+    "prepublish": "tsd install && tsc",
+    "test": "mocha --compilers ts:espower-typescript/guess test/*.ts",
+    "build": "tsd install && tsc",
+    "clean": "rm -fr *.js *.js.map component typings"
   },
   "keywords": [
     "aem",
     "cq5",
     "react",
-    "cms",
-    "typescript",
-    "node"
+    "typescript"
   ],
   "repository": {
     "type": "git",
-    "url": "http://www.github.com/sinnerschrader/aem-react-js"
+    "url": "https://github.com/panosvoudouris/aem-with-react"
   },
   "devDependencies": {
-    "typescript": "1.6.2",
-    "tsd": "^0.6.5",
-    "eslint": "^1.6.0",
     "espower-typescript": "^3.0.0",
     "mocha": "^2.3.4",
     "power-assert": "^1.2.0",
-    "tslint": "^2.5.1"
+    "tsd": "^0.6.5",
+    "typescript": "^1.8.10"
   },
   "dependencies": {
-    "react": "^0.13.3"
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1",
+    "react-frame-component": "^0.6.1"
   }
 }
