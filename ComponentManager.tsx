@@ -6,9 +6,9 @@ import RootComponentRegistry from "./RootComponentRegistry";
 import RootComponent from "./component/RootComponent";
 import {Resource} from "./component/ResourceComponent";
 import {ClientAemContext} from "./AemContext";
-import Container from "./di/Container";
 import {ResourceComponent} from "./component/ResourceComponent";
 import Cache from "./store/Cache";
+import {Container} from "./di/Container";
 
 declare var window: Window;
 
@@ -60,6 +60,10 @@ export class Instance {
      */
     public rerenderByResource(resource: Resource): void {
         this.rerender({resource: resource});
+    }
+
+    public unmount(): void {
+        ReactDom.unmountComponentAtNode(this.node);
     }
 }
 
@@ -217,12 +221,7 @@ export default class ComponentManager {
             } else {
                 console.log("Rendering react component '" + props.component + "'.");
                 let cache: Cache = this.container.get("cache");
-                //cache.put(props.path, props.resource);
-                if (props.cache) {
-                    Object.keys(props.cache).forEach((path: string) => {
-                        cache.put(path, props.cache[path]);
-                    });
-                }
+                cache.mergeCache(props.cache);
                 let ctx: any = {registry: this.registry, componentManager: this, container: this.container};
                 ReactDom.render(<RootComponent aemContext={ctx} comp={comp} {...props} />, item);
                 this.addInstance(props.path, comp, props, item);
@@ -281,7 +280,14 @@ export default class ComponentManager {
     public reloadRootInCq(path: string): void {
         let parent: Instance = this.getParentInstance(path);
         let parentPath: string = parent.props.path;
-        // TODO why this timeout
+
+        let descendents: Instance[] = this.getNestedInstances(path);
+        descendents.forEach((instance) => {
+            instance.unmount();
+        });
+        parent.unmount();
+
+        // TODO why this timeout?
         setTimeout(() => {
             CqUtils.removeEditable(path);
         }, 0);
@@ -333,6 +339,11 @@ export default class ComponentManager {
     private updateEditables(): void {
         this.initializeEditablesState();
         this.updateEditablesState();
+    }
+
+    private unmount(instance: Instance): void {
+        instance.unmount();
+        delete this.instances[instance.path];
     }
 
     private updateEditablesState(): void {

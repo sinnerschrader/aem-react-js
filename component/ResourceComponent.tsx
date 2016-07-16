@@ -2,6 +2,8 @@ import * as React from "react";
 import AemComponent from "./AemComponent";
 import EditDialog from "./EditDialog";
 import {Sling} from "../store/Sling";
+import ComponentRegistry from "../ComponentRegistry";
+import RootComponentRegistry from "../RootComponentRegistry";
 
 export interface Resource {
     "sling:resourceType": string;
@@ -24,6 +26,7 @@ export interface ResourceProps<C> {
     root?: boolean;
     wcmmode?: string;
     cqHidden?: boolean;
+    resourceType: string;
 }
 
 
@@ -54,9 +57,9 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
     }
 
     public componentDidUpdate(prevProps: ResourceProps<any>): void {
-        if (this.props.path && this.props.path !== prevProps.path) {
-            this.initialize();
-        }
+        //if (this.props.path && this.props.path !== prevProps.path) {
+        this.initialize();
+        //}
     }
 
     public initialize(): void {
@@ -66,9 +69,11 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
         } else {
             absolutePath = this.context.path + "/" + this.props.path;
         }
+        if (absolutePath !== this.getPath()) {
+            this.setState(({absolutePath: absolutePath, state: STATE.LOADING} as S));
+            (this.getAemContext().container.get("sling") as Sling).subscribe(this, absolutePath, {depth: null});
+        }
 
-        this.setState(({absolutePath: absolutePath, state: STATE.LOADING} as S));
-        (this.getAemContext().container.get("sling") as Sling).subscribe(this, absolutePath, {depth: null});
     }
 
     public getWcmmode(): string {
@@ -81,7 +86,11 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 
 
     public getPath(): string {
-        return this.state.absolutePath;
+        if (typeof this.state !== "undefined" && this.state !== null) {
+            return this.state.absolutePath;
+        } else {
+            return null;
+        }
     }
 
     public componentDidMount(): void {
@@ -104,6 +113,10 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
         } else {
             return this.renderBody();
         }
+    }
+
+    public getRegistry(): RootComponentRegistry {
+        return this.context.aemContext.registry;
     }
 
     public abstract renderBody(): React.ReactElement<any>;
@@ -131,7 +144,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
     public changedResource(path: string, resource: C): void {
         console.log(" changed Resource" + resource);
 
-        this.setState({state: STATE.LOADED, resource: resource, absolutePath: path});
+        this.setState(({state: STATE.LOADED, resource: resource, absolutePath: path}) as any);
     }
 
 }

@@ -7,12 +7,14 @@ export class ResourceUtils {
      */
     public static getChildren(resource: any): any {
         let children: any = {};
-        Object.keys(resource).forEach((propertyName: string): void => {
-            let child = resource[propertyName];
-            if (child["jcr:primaryType"]) {
-                children[propertyName] = child;
-            }
-        });
+        if (resource) {
+            Object.keys(resource).forEach((propertyName: string): void => {
+                let child = resource[propertyName];
+                if (child["jcr:primaryType"]) {
+                    children[propertyName] = child;
+                }
+            });
+        }
         return children;
     }
 

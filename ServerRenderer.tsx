@@ -7,7 +7,7 @@ import ServerSling from "./store/ServerSling";
 import container from "./di/Container";
 import Cache from "./store/Cache";
 import * as ReactDom from  "react-dom/server";
-import Container from "./di/Container";
+import {Container} from "./di/Container";
 
 interface ServerResponse {
     html: string;
@@ -35,7 +35,8 @@ export default class ServerRenderer {
     public renderReactComponent(path: string, resourceType: string, props: ResourceProps<Resource>): ServerResponse {
 
         console.log("render react on path " + path);
-        let rt: string = props.resource["sling:resourceType"];
+        let rt: string = props.resourceType;
+        console.log("render react component " + rt);
 
 
         let comp: typeof React.Component = this.registry.getComponent(rt);
@@ -44,11 +45,11 @@ export default class ServerRenderer {
         }
         console.log("rendering " + rt);
 
-        let cache = new Cache();
+        let cache: Cache = this.container.get("cache");
         cache.put(path, props.resource);
         let serverSling = new ServerSling(cache, this.container.get("javaSling"));
-        container.register("sling", serverSling);
-        let ctx: AemContext = {registry: this.registry, container: container};
+        this.container.register("sling", serverSling);
+        let ctx: AemContext = {registry: this.registry, container: this.container};
         let html: string = ReactDom.renderToString(<RootComponent aemContext={ctx} comp={comp} {...props} />);
 
         return {html: html, state: JSON.stringify(cache.getFullState())};

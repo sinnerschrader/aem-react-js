@@ -6,21 +6,10 @@ interface Window {
   ReactComponents: {
     [name: string]: any
   };
-  initReactComponents(): void;
   AemGlobal: any;
+  initReactComponents(): void;
 }
 
-declare module "invariant" {
-  function invariant(): void;
-
-  export = invariant;
-}
-
-declare module "warning" {
-  function warning(): void;
-
-  export = warning;
-}
 
 export interface ResourceResolver {
   getResource(path: string, depth: number): any;
@@ -30,7 +19,8 @@ export interface JavaSling {
   includeResource(path: string, resourceType: string): string;
   currentResource(depth: number): any;
   getResource(path: string, depth: number): any;
-
+  renderDialogScript(path: string, resourceType: string): string;
+  getPagePath(): string;
 }
 
 export interface Promise {

@@ -30,10 +30,11 @@
     "react-addons-test-utils": "^0.14.7",
     "tsd": "^0.6.5",
     "tslint": "^2.5.1",
-    "typescript": "1.7.5"
+    "typescript": "^1.8.10"
   },
   "dependencies": {
     "react": "^0.14.7",
-    "react-dom": "^0.14.7"
+    "react-dom": "^0.14.7",
+    "react-router": "^1.0.3"
   }
 }
