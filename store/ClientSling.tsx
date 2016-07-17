@@ -53,7 +53,7 @@ export default class ClientSling implements Sling {
         return this.cache.getIncluded(path);
     }
 
-    public getPagePath(): string {
+    public getRequestPath(): string {
         return window.location.pathname;
     }
 }

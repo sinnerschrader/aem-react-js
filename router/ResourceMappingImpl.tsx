@@ -1,4 +1,4 @@
-export default class ResourceMapping {
+export default class ResourceMappingImpl {
 
     constructor(extension: string) {
         this.extension = extension;

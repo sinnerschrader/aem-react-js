@@ -1,5 +1,5 @@
 import * as React from "react";
-import {ResourceUtils} from "../ResourceUtils";
+import ResourceUtils from "../ResourceUtils";
 import {ResourceComponent, Resource, ResourceProps} from "./ResourceComponent";
 import {ResourceInclude} from "../include";
 import CqUtils from "../CqUtils";

@@ -9,5 +9,5 @@ export interface Sling {
     subscribe(listener: ResourceComponent<any, any, any>, path: string, options?: SlingResourceOptions): void;
     renderDialogScript(path: string, resourceType: string): string;
     includeResource(path: string, resourceType: string): string;
-    getPagePath(): string;
+    getRequestPath(): string;
 }

@@ -33,5 +33,6 @@ export interface Cq {
     path: string;
   };
   sling: JavaSling;
+  getOsgiService(name: string): any;
 }
 declare var Cqx: Cq;

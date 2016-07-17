@@ -26,7 +26,7 @@ export interface ResourceProps<C> {
     root?: boolean;
     wcmmode?: string;
     cqHidden?: boolean;
-    resourceType: string;
+    resourceType?: string;
 }
 
 

@@ -40,7 +40,7 @@ export default class ServerSling implements Sling {
         return included;
     }
     
-    public getPagePath(): string {
+    public getRequestPath(): string {
         return this.sling.getPagePath();
     }
 

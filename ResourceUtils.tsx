@@ -1,4 +1,4 @@
-export class ResourceUtils {
+export default class ResourceUtils {
 
     /**
      * returns only the properties of the given object whoe have a property named jcr:primaryType
@@ -16,6 +16,14 @@ export class ResourceUtils {
             });
         }
         return children;
+    }
+
+    public static findAncestor(resourcePath: string, depth: number): string {
+        for (let i = 0; i < depth; i++) {
+            resourcePath = resourcePath.substring(0, resourcePath.lastIndexOf("/"));
+        }
+        return resourcePath;
+
     }
 
 }

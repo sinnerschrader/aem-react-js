@@ -2,14 +2,15 @@
   "compileOnSave": true,
   "sortOutput": true,
   "compilerOptions": {
-    "noEmit": true,
+    "noEmit": false,
     "target": "es5",
     "sourceMap": true,
     "module": "commonjs",
     "jsx": "react",
     "noImplicitAny": true,
     "removeComments": true,
-    "preserveConstEnums": false
+    "preserveConstEnums": false,
+    "declaration": true
   },
   "files": [
     "./ComponentManager.tsx",

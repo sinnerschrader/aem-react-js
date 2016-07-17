@@ -1,3 +1,6 @@
+import {Cq} from "../references";
+declare var Cqx: Cq;
+
 export class Container {
 
     private services: any;
@@ -12,6 +15,10 @@ export class Container {
 
     public get(name: string): any {
         return this.services[name];
+    }
+
+    public getOsgiService(name: string): any {
+        return Cqx.getOsgiService(name);
     }
 
 }
