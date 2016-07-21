@@ -41,6 +41,7 @@
     "./typings/tsd.d.ts",
     "./test/tests.tsx",
     "./test/ResourceComponentTest.tsx",
+    "./test/CacheTest.tsx",
     "./test/setup.tsx"
   ]
 }

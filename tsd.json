@@ -19,6 +19,12 @@
     },
     "react-router/history.d.ts": {
       "commit": "415de78bb5108cd2c58078011819c26aa4fac3f9"
+    },
+    "assertion-error/assertion-error.d.ts": {
+      "commit": "95eb7b2527a28281cdbf480c0560744bc5190465"
+    },
+    "chai/chai.d.ts": {
+      "commit": "95eb7b2527a28281cdbf480c0560744bc5190465"
     }
   }
 }

@@ -2,8 +2,8 @@ import * as React from "react";
 import AemComponent from "./AemComponent";
 import EditDialog from "./EditDialog";
 import {Sling} from "../store/Sling";
-import ComponentRegistry from "../ComponentRegistry";
 import RootComponentRegistry from "../RootComponentRegistry";
+import ResourceUtils from "../ResourceUtils";
 
 export interface Resource {
     "sling:resourceType": string;
@@ -36,8 +36,6 @@ export interface ResourceProps<C> {
 export abstract class ResourceComponent<C extends Resource, P extends ResourceProps<any>, S extends ResourceState> extends AemComponent<P, S> {
 
 
-    public static ABSOLUTE_PATH_PATTERN: RegExp = /^\//;
-
     public static childContextTypes: any = {
         wcmmode: React.PropTypes.string, //
         path: React.PropTypes.string, //
@@ -64,7 +62,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 
     public initialize(): void {
         let absolutePath: string;
-        if (ResourceComponent.ABSOLUTE_PATH_PATTERN.test(this.props.path)) {
+        if (ResourceUtils.isAbsolutePath(this.props.path)) {
             absolutePath = this.props.path;
         } else {
             absolutePath = this.context.path + "/" + this.props.path;

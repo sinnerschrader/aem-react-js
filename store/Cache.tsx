@@ -1,3 +1,9 @@
+import ResourceUtils from "../ResourceUtils";
+interface ResourceEntry {
+    depth: number;
+    data: any;
+}
+
 export default class Cache {
 
     constructor() {
@@ -7,7 +13,7 @@ export default class Cache {
         this.serviceCalls = {};
     }
 
-    private resources: {[path: string]: any};
+    private resources: {[path: string]: ResourceEntry};
     private scripts: {[path: string]: string};
     private included: {[path: string]: string};
     private serviceCalls: {[path: string]: any};
@@ -43,13 +49,37 @@ export default class Cache {
         }
     }
 
-
-    public put(path: string, resource: any): void {
-        this.resources[path] = resource;
+    public put(path: string, resource: any, depth?: number): void {
+        this.resources[path] = {data: resource, depth: this.normalizeDepth(depth)};
     }
 
-    public get(path: string): void {
-        return this.resources[path];
+    public get(path: string, depth?: number): void {
+        let normalizedDepth: number = this.normalizeDepth(depth);
+        let subPath: string[] = [];
+        let resource: ResourceEntry = this.resources[path];
+        while (!resource && path != null) {
+            let result = ResourceUtils.findAncestor(path, 1);
+            if (result !== null) {
+                path = result.path;
+                subPath.splice(0, 0, result.subPath[0]);
+                resource = this.resources[result.path];
+            } else {
+                break;
+            }
+        }
+
+        if (typeof resource === "undefined" || resource === null) {
+            return null;
+        } else if (resource.depth === 0) {
+            return this.getProperty(resource.data, subPath);
+        } else if (normalizedDepth === 0) {
+            return null;
+        } else if (subPath.length + normalizedDepth <= resource.depth) {
+            return this.getProperty(resource.data, subPath);
+        } else {
+            return null;
+        }
+
     }
 
     public putServiceCall(key: string, serviceCall: any): void {
@@ -89,5 +119,22 @@ export default class Cache {
             });
         }
     }
+
+    private normalizeDepth(depth?: number): number {
+        if (depth <= 0 || depth === null || typeof depth === "undefined") {
+            return 0;
+        }
+        return depth;
+    }
+
+    private getProperty(data: any, path: string[]): any {
+        let subData: any = ResourceUtils.getProperty(data, path);
+        if (typeof subData === "undefined" || subData === null) {
+            return {};
+        } else {
+            return subData;
+        }
+    }
+
 
 }

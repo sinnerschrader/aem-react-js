@@ -1,117 +1,96 @@
-import * as ReactTestUtils from "react-addons-test-utils";
-
 import {expect} from "chai";
 
 import "./setup";
 
-import {AemContext} from "../AemContext";
-import {ResourceComponent} from "../component/ResourceComponent";
-import RootComponent from "../component/RootComponent";
-import * as React from "react";
-import RootComponentRegistry from "../RootComponentRegistry";
-import ComponentRegistry from "../ComponentRegistry";
-import ComponentManager from "../ComponentManager";
-import {Container} from "../di/Container";
+import Cache from "../store/Cache";
 
-describe("ResourceComponent", () => {
-    class Test extends ResourceComponent<any, any, any> {
-        public renderBody(): React.ReactElement[] {
-            return (<div>{this.props.resource ? this.props.resource.text : "unknown"}</div>);
-        }
-    }
+describe("Cache", () => {
+
+    it("should return direct match", () => {
 
 
-    class Embedded extends ResourceComponent<any, any, any> {
-        public renderBody(): React.ReactElement[] {
-            return (<Test path={this.props.childPath}></Test>);
-        }
-    }
+        let cache: Cache = new Cache();
+        cache.put("/content", {test: "Test"});
+        let result: any = cache.get("/content");
 
-
-    let testRegistry: ComponentRegistry = new ComponentRegistry();
-    testRegistry.register(Test);
-    let registry: RootComponentRegistry = new RootComponentRegistry();
-    registry.add(testRegistry);
-
-    let componentManager: ComponentManager = new ComponentManager(registry);
-
-    let container = new Container();
-
-    let aemContext: AemContext = {
-        registry: registry, componentManager: componentManager, container: container
-    };
-
-    it("should get resource directly", () => {
-
-
-        container.register("sling", {
-            subscribe: function (listener: ResourceComponent, path: string, options?: any): void {
-                if (path === "/content/embed") {
-                    listener.changedResource({embed: "Hallo"});
-                } else if (path === "/content/embed/test") {
-                    listener.changedResource({text: "Hallo"});
-                }
-            }
-        });
-        const item: any = ReactTestUtils.renderIntoDocument(
-            <RootComponent aemContext={aemContext} comp={Embedded} rootPath="/content" childPath="test" path="embed"/>
-        );
-
-        let test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
-
-        expect(test.getPath()).to.equal("/content/embed/test");
-        expect(test.props.path).to.equal("test");
-        expect(test.getResource().text).to.equal("Hallo");
+        expect(result).to.exist;
 
 
     });
 
-    it("should get resource from absolute Path", () => {
+    it("should return sub match", () => {
 
-        container.register("sling", {
-            subscribe: function (listener: ResourceComponent, path: string, options?: any) {
-                if (path === "/content/test") {
-                    listener.changedResource({text: "Hallo"});
-                }
-            }
-        })
 
-        const resource: any = {"test": null};
-        const item: any = ReactTestUtils.renderIntoDocument(
-            <RootComponent aemContext={aemContext} comp={Test} path="/content/test" resource={resource}/>
-        );
+        let cache: Cache = new Cache();
+        cache.put("/content", {test: {text: "Hallo"}});
+        let result: any = cache.get("/content/test");
 
-        let test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
+        expect(result).to.exist;
+        expect(result.text).to.equal("Hallo");
 
-        expect(test.getPath()).to.equal("/content/test");
-        expect(test.props.path).to.equal("/content/test");
-        expect(test.getResource().text).to.equal("Hallo");
 
     });
 
-    it("should get resource from relative Path", () => {
+    it("should not return insufficiently deep match", () => {
 
-        container.register("sling", {
-            subscribe: function (listener: ResourceComponent, path: string, options?: any) {
-                if (path === "/content/test") {
-                    listener.changedResource({text: "Hallo"});
-                }
-            }
-        })
 
-        const resource: any = {"test": null};
-        const item: any = ReactTestUtils.renderIntoDocument(
-            <RootComponent aemContext={aemContext} rootPath="/content" comp={Test} path="test" resource={resource}/>
-        );
+        let cache: Cache = new Cache();
+        cache.put("/content", {test: {text: "Hallo"}}, 1);
+        let result: any = cache.get("/content/test");
 
-        let test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
+        expect(result).to.not.exist;
 
-        expect(test.getPath()).to.equal("/content/test");
-        expect(test.props.path).to.equal("test");
-        expect(test.getResource().text).to.equal("Hallo");
 
     });
 
+    it("should return sufficiently deep match", () => {
+
+
+        let cache: Cache = new Cache();
+        cache.put("/content", {test: {text: "Hallo"}});
+        let result: any = cache.get("/content", 2);
+
+        expect(result).to.exist;
+
+
+    });
+
+    it("should return sufficiently deep sub match", () => {
+
+
+        let cache: Cache = new Cache();
+        cache.put("/content", {test: {text: "Hallo"}}, 2);
+        let result: any = cache.get("/content/test", 1);
+
+        expect(result).to.exist;
+        expect(result.text).to.equal("Hallo");
+
+
+    });
+
+    it("should return null if no match", () => {
+
+
+        let cache: Cache = new Cache();
+        cache.put("/content", {test: {text: "Hallo"}}, 2);
+        let result: any = cache.get("/something", 1);
+
+        expect(result).to.not.exist;
+
+
+    });
+
+    it("should return match of depth 2", () => {
+
+
+        let cache: Cache = new Cache();
+        cache.put("/content", {level1: {level2: "Hallo"}});
+        let result: any = cache.get("/content/level1/level2", 0);
+
+        expect(result).to.equals("Hallo");
+
+
+    });
 
 });
 
