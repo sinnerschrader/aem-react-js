@@ -46,7 +46,7 @@ export default class ServerRenderer {
         console.log("rendering " + rt);
 
         let cache: Cache = this.container.get("cache");
-        cache.put(path, props.resource);
+        cache.put(path, props.resource, props.depth);
         let serverSling = new ServerSling(cache, this.container.get("javaSling"));
         this.container.register("sling", serverSling);
         let ctx: AemContext = {registry: this.registry, container: this.container};
