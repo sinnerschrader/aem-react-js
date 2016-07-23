@@ -31,7 +31,7 @@ export default class ResourceUtils {
     }
 
     public static isAbsolutePath(path: string): boolean {
-       return ResourceUtils.ABSOLUTE_PATH_PATTERN.test(path);
+        return ResourceUtils.ABSOLUTE_PATH_PATTERN.test(path);
     }
 
     public static findAncestor(resourcePath: string, depth: number): PathResult {
@@ -45,6 +45,15 @@ export default class ResourceUtils {
             resourcePath = resourcePath.substring(0, index);
         }
         return {path: resourcePath, subPath: subPath};
+    }
+
+    public static getContainingPagePath(requestPath: string): string {
+        let index: number = requestPath.indexOf("jcr:content");
+        if (index < 0) {
+            return requestPath;
+        }
+        let dot: number = requestPath.indexOf(".");
+        return requestPath.substring(0, index - 1) + requestPath.substring(dot, requestPath.length);
     }
 
 }

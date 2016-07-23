@@ -1,4 +1,4 @@
-import {Sling, SlingResourceOptions} from "./Sling";
+import {SlingResourceOptions, AbstractSling} from "./Sling";
 import Cache from "./Cache";
 import {ResourceComponent} from "../component/ResourceComponent";
 interface FetchWindow extends Window {
@@ -6,8 +6,9 @@ interface FetchWindow extends Window {
 }
 
 
-export default class ClientSling implements Sling {
+export default class ClientSling extends AbstractSling {
     constructor(cache: Cache, origin: string) {
+        super();
         this.cache = cache;
         this.origin = origin;
     }

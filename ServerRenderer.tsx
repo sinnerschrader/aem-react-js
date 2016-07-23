@@ -47,8 +47,7 @@ export default class ServerRenderer {
 
         let cache: Cache = this.container.get("cache");
         cache.put(path, props.resource, props.depth);
-        let serverSling = new ServerSling(cache, this.container.get("javaSling"));
-        this.container.register("sling", serverSling);
+
         let ctx: AemContext = {registry: this.registry, container: this.container};
         let html: string = ReactDom.renderToString(<RootComponent aemContext={ctx} comp={comp} {...props} />);
 

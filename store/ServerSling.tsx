@@ -1,10 +1,12 @@
 import Cache from "./Cache";
-import {Sling, SlingResourceOptions} from "./Sling";
+import {SlingResourceOptions, AbstractSling} from "./Sling";
 import {ResourceComponent} from "../component/ResourceComponent";
 import {JavaSling} from "../references";
 
-export default class ServerSling implements Sling {
+export default class ServerSling extends AbstractSling {
+
     constructor(cache: Cache, sling: JavaSling) {
+        super();
         this.cache = cache;
         this.sling = sling;
     }
@@ -39,7 +41,7 @@ export default class ServerSling implements Sling {
         this.cache.putIncluded(path, included);
         return included;
     }
-    
+
     public getRequestPath(): string {
         return this.sling.getPagePath();
     }
