@@ -1,4 +1,6 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
+import * as ReactDOMServer from "react-dom/server";
 import RootComponent from "./component/RootComponent";
 import RootComponentRegistry from "./RootComponentRegistry";
 import {AemContext} from "./AemContext";
@@ -27,7 +29,7 @@ export default class ServerRenderer {
         }
         console.log("rendering " + rt );
         let ctx: AemContext = {registry: this.registry};
-        return React.renderToString(<RootComponent aemContext={ctx} comp={comp} {...props} />);
+        return ReactDOMServer.renderToString(<RootComponent aemContext={ctx} comp={comp} {...props} />);
     }
 
 }

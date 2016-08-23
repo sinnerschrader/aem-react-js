@@ -17,20 +17,24 @@ export default class ComponentRegistry {
         this.mapping = mapping;
     }
 
-    public register(componentClass: typeof React.Component): void {
+    public register(componentClass: typeof React.Component, subTree?: string): void {
         /* tslint:disable:no-string-literal */
         let componentClassName: string = (componentClass as any)["name"];
         /* tsslint:enable:no-string-literal */
-        let resourceType: string = this.mapToResourceType(componentClassName);
+        let resourceType: string = this.mapToResourceType(componentClassName, subTree);
         this.mappings.push(new Mapping(resourceType, componentClass));
     }
 
-    private mapToResourceType(componentClassName: string): string {
+    private mapToResourceType(componentClassName: string, subTree: string): string {
         let resourceType: string = null;
         if (typeof this.mapping === "function") {
             resourceType = this.mapping(componentClassName);
         } else if (typeof this.mapping === "string") {
-            resourceType = this.mapping + "/" + this.mapClassToResourceType(componentClassName);
+            resourceType = this.mapping + "/";
+            if( subTree && subTree.length > 0 ) {
+                resourceType += subTree + "/";
+            }
+            resourceType += this.mapClassToResourceType(componentClassName);
         } else {
             resourceType = this.mapClassToResourceType(componentClassName);
         }
