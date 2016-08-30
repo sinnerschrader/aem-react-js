@@ -233,8 +233,8 @@ export default class ComponentManager {
                 let cache: Cache = this.container.get("cache");
                 cache.mergeCache(props.cache);
                 let ctx: any = {registry: this.registry, componentManager: this, container: this.container};
-                ReactDom.render(<RootComponent aemContext={ctx} comp={comp} path={props.path} wcmmode={props.wcmmode}/>, item);
                 this.addInstance(props.path, comp, props, item);
+                ReactDom.render(<RootComponent aemContext={ctx} comp={comp} path={props.path} wcmmode={props.wcmmode}/>, item);
 
             }
         } else {

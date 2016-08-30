@@ -3,11 +3,13 @@ import ComponentRegistry from "./ComponentRegistry";
 
 export class Mapping {
     public resourceType: string;
+    public vanilla: boolean;
     public componentClass: typeof React.Component;
 
-    constructor(resourceType: string, componentClass: typeof React.Component) {
+    constructor(resourceType: string, componentClass: typeof React.Component, vanilla: boolean) {
         this.resourceType = resourceType;
         this.componentClass = componentClass;
+        this.vanilla = vanilla;
     }
 }
 
@@ -42,18 +44,21 @@ export default class RootComponentRegistry {
         return this.resourceTypeToComponent[resourceType];
     }
 
-    public register(resourceType: string, componentClass: typeof React.Component): void {
+    public register(mapping: Mapping): void {
         /* tslint:disable:no-string-literal */
-        let componentClassName: string = (componentClass as any)["name"];
+        let componentClassName: string = (mapping.componentClass as any)["name"];
         /* tsslint:enable:no-string-literal */
-        this.componentToResourceType[componentClassName] = resourceType;
-        this.resourceTypeToComponent[resourceType] = componentClass;
+        if (!mapping.vanilla) {
+            // vanilla component's class all have the same name
+            this.componentToResourceType[componentClassName] = mapping.resourceType;
+        }
+        this.resourceTypeToComponent[mapping.resourceType] = mapping.componentClass;
     }
 
     public init(): void {
         this.registries.forEach((registry: ComponentRegistry) => {
             registry.mappings.forEach((mapping: Mapping) => {
-                this.register(mapping.resourceType, mapping.componentClass);
+                this.register(mapping);
             }, this);
         }, this);
     }

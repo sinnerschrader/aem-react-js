@@ -20,7 +20,7 @@ export interface JavaSling {
   includeResource(path: string, resourceType: string): string;
   currentResource(depth: number): any;
   getResource(path: string, depth: number): any;
-  renderDialogScript(path: string, resourceType: string): EditDialogData;
+  renderDialogScript(path: string, resourceType: string): string;
   getPagePath(): string;
 }
 

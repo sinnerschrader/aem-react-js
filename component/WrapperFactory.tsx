@@ -9,10 +9,14 @@ export interface ComponentConfig {
 }
 
 export default class WrapperFactory {
-    public static createWrapper(config: ComponentConfig): React.ComponentClass<any> {
+    public static createWrapper(config: ComponentConfig, resourceType: string): React.ComponentClass<any> {
         return class TheWrapper extends Wrapper {
             constructor(props?: any, context?: any) {
                 super(config, props, context);
+            }
+
+            public getResourceType(): string {
+                return resourceType;
             }
         };
     }

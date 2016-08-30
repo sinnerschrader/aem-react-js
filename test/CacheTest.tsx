@@ -43,6 +43,18 @@ describe("Cache", () => {
 
     });
 
+    it("should return inifinity deep match", () => {
+
+
+        let cache: Cache = new Cache();
+        cache.put("/content", {test: {text: "Hallo"}}, -1);
+        let result: any = cache.get("/content/test/text");
+
+        expect(result).to.exist;
+
+
+    });
+
     it("should return sufficiently deep match", () => {
 
 
@@ -72,7 +84,7 @@ describe("Cache", () => {
 
 
         let cache: Cache = new Cache();
-        cache.put("/content", {test: {text: "Hallo"}}, 2);
+        cache.put("/content", {test: {text: "Hallo"}}, 1);
         let result: any = cache.get("/something", 1);
 
         expect(result).to.not.exist;
@@ -80,11 +92,11 @@ describe("Cache", () => {
 
     });
 
-    it("should return match of depth 2", () => {
+    it("should return match of depth 1", () => {
 
 
         let cache: Cache = new Cache();
-        cache.put("/content", {level1: {level2: "Hallo"}});
+        cache.put("/content", {level1: {level2: "Hallo"}}, 1);
         let result: any = cache.get("/content/level1/level2", 0);
 
         expect(result).to.equals("Hallo");

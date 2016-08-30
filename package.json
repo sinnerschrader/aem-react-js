@@ -39,12 +39,12 @@
     "power-assert": "^1.2.0",
     "react-addons-test-utils": "^15.3.1",
     "tsd": "^0.6.5",
-    "tslint": "^2.5.1"
+    "tslint": "^2.5.1",
+    "typescript": "^2.1.0-dev.20160828"
   },
   "dependencies": {
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
-    "react-router": "^2.7.0",
-    "typescript": "^2.1.0-dev.20160828"
+    "react-router": "^2.7.0"
   }
 }

@@ -15,24 +15,28 @@ export default class ServerSling extends AbstractSling {
     private cache: Cache;
 
     public subscribe(listener: ResourceComponent<any, any, any>, path: string, options?: SlingResourceOptions): void {
-        let resource: any = this.cache.get(path);
-        let depth: number = options ? options.depth || null : null;
+        let depth: number = options ? options.depth || -1 : -1;
+        let resource: any = this.cache.get(path, depth);
         if (!resource) {
             console.log(" ServerSling has no resource" + path);
             resource = JSON.parse(this.sling.getResource(path, depth));
             if (!resource) {
                 resource = {};
             }
-            this.cache.put(path, resource);
+            this.cache.put(path, resource, depth);
         }
         console.log(" ServerSling resource is loaded " + path + "   " + resource);
         listener.changedResource(path, resource);
     }
 
     public renderDialogScript(path: string, resourceType: string): EditDialogData {
-        let script: EditDialogData = this.sling.renderDialogScript(path, resourceType);
-        this.cache.putScript(path, script);
-        return script;
+        let script: string = this.sling.renderDialogScript(path, resourceType);
+        let dialog: EditDialogData = null;
+        if (script) {
+            dialog = JSON.parse(script);
+        }
+        this.cache.putScript(path, dialog);
+        return dialog;
     }
 
 

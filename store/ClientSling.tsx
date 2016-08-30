@@ -31,7 +31,7 @@ export default class ClientSling extends AbstractSling {
         let resource: any = this.cache.get(path, depth);
         if (resource === null || typeof resource === "undefined") {
             let depthAsString: string;
-            if (depth <= 0) {
+            if (depth < 0) {
                 depthAsString = "infinity";
             } else {
                 depthAsString = options.depth + "";

@@ -73,11 +73,11 @@ export default class Cache {
 
         if (typeof resource === "undefined" || resource === null) {
             return null;
-        } else if (resource.depth === 0) {
+        } else if (resource.depth < 0) {
             return this.getProperty(resource.data, subPath);
-        } else if (normalizedDepth === 0) {
+        } else if (normalizedDepth < 0) {
             return null;
-        } else if (subPath.length + normalizedDepth <= resource.depth) {
+        } else if (subPath.length  + normalizedDepth - 1 <= resource.depth) {
             return this.getProperty(resource.data, subPath);
         } else {
             return null;
@@ -115,6 +115,13 @@ export default class Cache {
         };
     }
 
+    public clear(): void {
+        this.resources = {};
+        this.scripts = {};
+        this.included = {};
+        this.serviceCalls = {};
+    }
+
     private merge(target: any, source: any): void {
         if (source) {
             Object.keys(source).forEach((key: string) => {
@@ -124,8 +131,8 @@ export default class Cache {
     }
 
     private normalizeDepth(depth?: number): number {
-        if (depth <= 0 || depth === null || typeof depth === "undefined") {
-            return 0;
+        if (depth < 0 || depth === null || typeof depth === "undefined") {
+            return -1;
         }
         return depth;
     }
