@@ -39,7 +39,6 @@
     "./ComponentRegistry.tsx",
     "./RootComponentRegistry.tsx",
     "./include.tsx",
-    "./CqUtils.tsx",
     "./ServerRenderer.tsx",
     "./references.d.ts",
     "./typings/tsd.d.ts",
