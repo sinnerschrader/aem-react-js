@@ -7,8 +7,9 @@ export interface SlingResourceOptions {
 
 export interface EditDialogData {
     element: string;
-    script?: string;
-    attributes?: {[name: string]: string};
+    html?: string;
+    attributes?: {[name: string]: any};
+    child?: EditDialogData;
 }
 
 /**
