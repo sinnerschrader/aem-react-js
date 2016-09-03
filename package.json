@@ -8,7 +8,7 @@
     "lint": "eslint . & tslint *.tsx",
     "preversion": "npm test && npm run build",
     "version": "git add .",
-    "postversion": "git push && git push --tags && npm publish"
+    "postversion": "git push origin master --tags && npm publish"
   },
   "author": {
     "name": "Stefan Meyer",
