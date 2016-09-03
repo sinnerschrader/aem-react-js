@@ -2,9 +2,8 @@ import * as React from "react";
 import ResourceUtils from "../ResourceUtils";
 import {ResourceComponent, Resource, ResourceProps} from "./ResourceComponent";
 import {ResourceInclude} from "../include";
-import CqUtils from "../CqUtils";
 
-export interface ReactParsysProps extends ResourceProps{
+export interface ReactParsysProps extends ResourceProps {
     className?: string;
 }
 
@@ -32,15 +31,9 @@ export default class ReactParsys extends ResourceComponent<Resource, ReactParsys
                 childComponents.push(<div key={nodeName} className={className}><ResourceInclude path={path} resourceType={resourceType}></ResourceInclude></div>);
             }
         }, this);
-
-        if (this.isWcmEditable()) {
-            let visible: boolean = !this.isCqHidden();
-            CqUtils.setVisible(this.getPath() + "/*", visible, true);
-        }
-
-
+        
         let newZone: React.ReactElement<any> = null;
-        if (this.isWcmEditable()) {
+        if (this.isWcmEnabled()) {
             let resourceType = this.getResourceType() + "/new";
             newZone = <ResourceInclude element="div" path={ this.getPath() + "/*" }
                                        resourceType={ resourceType }></ResourceInclude>;

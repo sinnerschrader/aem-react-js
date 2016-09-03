@@ -35,12 +35,11 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
     public static childContextTypes: any = {
         wcmmode: React.PropTypes.string, //
         path: React.PropTypes.string, //
-        cqHidden: React.PropTypes.bool
     };
 
     public getChildContext(): any {
         return {
-            wcmmode: this.getWcmmode(), path: this.getPath(), cqHidden: this.isCqHidden()
+            wcmmode: this.getWcmmode(), path: this.getPath()
         };
 
     }
@@ -71,21 +70,12 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
         return this.props.wcmmode || this.context.wcmmode;
     }
 
-    public isCqHidden(): boolean {
-        return this.props.cqHidden || this.context.cqHidden;
-    }
-
-
     public getPath(): string {
         if (typeof this.state !== "undefined" && this.state !== null) {
             return this.state.absolutePath;
         } else {
             return null;
         }
-    }
-
-    public componentDidMount(): void {
-        this.context.aemContext.componentManager.addComponent(this);
     }
 
     protected renderLoading(): React.ReactElement<any> {

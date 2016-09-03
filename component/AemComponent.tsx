@@ -13,7 +13,6 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
         path: React.PropTypes.string, //
         rootPath: React.PropTypes.string, //
         resource: React.PropTypes.any, //
-        cqHidden: React.PropTypes.bool, //
         aemContext: React.PropTypes.any
     };
 
@@ -21,17 +20,12 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
         wcmmode: string;
         path: string;
         resource: any;
-        cqHidden: boolean;
         aemContext: ClientAemContext;
     };
 
 
     public getWcmmode(): string {
         return this.context.wcmmode;
-    }
-
-    public isCqHidden(): boolean {
-        return this.context.cqHidden;
     }
 
     public getPath(): string {
@@ -46,27 +40,12 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
         return !this.getWcmmode() || this.getWcmmode() !== "disabled";
     }
 
-    public isWcmEditable(): boolean {
-        return ["disabled", "preview"].indexOf(this.getWcmmode()) < 0;
-    }
-
     protected getAemContext(): AemContext {
         return this.context.aemContext;
     }
 
     public getRegistry(): RootComponentRegistry {
         return this.context.aemContext.registry;
-    }
-
-    /**
-     * change visibility of all nested react component roots.
-     * @param path
-     * @param visible
-     */
-    public setAllEditableVisible(path: string, visible: boolean): void {
-        if (this.context.aemContext.componentManager) {
-            this.context.aemContext.componentManager.setNestedInstancesVisible(path, visible);
-        }
     }
 
     public getComponent(name: string): any {
