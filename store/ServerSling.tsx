@@ -15,7 +15,7 @@ export default class ServerSling extends AbstractSling {
     private cache: Cache;
 
     public subscribe(listener: ResourceComponent<any, any, any>, path: string, options?: SlingResourceOptions): void {
-        let depth: number = options ? options.depth || -1 : -1;
+        let depth: number = !options || typeof options.depth !== "number" ? -1 : options.depth;
         let resource: any = this.cache.get(path, depth);
         if (!resource) {
             console.log(" ServerSling has no resource" + path);
