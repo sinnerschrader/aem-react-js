@@ -46,7 +46,7 @@ export default class ReactParsys extends ResourceComponent<Resource, ReactParsys
     }
 
     protected getDepth(): number {
-        return 2;
+        return 1;
     }
 
 }
