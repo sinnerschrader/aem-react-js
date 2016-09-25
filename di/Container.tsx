@@ -49,10 +49,10 @@ export class Container {
      * @param name fully qualified java class name
      * @returns {ServiceProxy}
      */
-    public getRequestModel(name: string): ServiceProxy {
+    public getRequestModel(path: string, name: string): ServiceProxy {
         return new ServiceProxy(this.get("cache"), (): any => {
             return Cqx.getRequestModel(name);
-        }, name);
+        }, path + "_" + name);
     }
 
     /**
@@ -60,12 +60,11 @@ export class Container {
      * @param name fully qualified java class name
      * @returns {ServiceProxy}
      */
-    public getResourceModel(name: string): ServiceProxy {
+    public getResourceModel(path: string, name: string): ServiceProxy {
         return new ServiceProxy(this.get("cache"), (): any => {
             return Cqx.getResourceModel(name);
-        }, name);
+        }, path + "_" + name);
     }
-
 
 
 }

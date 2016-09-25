@@ -57,11 +57,11 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
     }
 
     public getResourceModel(name: string): any {
-        return this.context.aemContext.container.getResourceModel(name);
+        return this.context.aemContext.container.getResourceModel(this.getPath(), name);
     }
 
     public getRequestModel(name: string): any {
-        return this.context.aemContext.container.getRequestModel(name);
+        return this.context.aemContext.container.getRequestModel(this.getPath(), name);
     }
 
 }

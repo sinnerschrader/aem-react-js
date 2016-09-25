@@ -31,7 +31,7 @@ export default class ReactParsys extends ResourceComponent<Resource, ReactParsys
                 childComponents.push(<div key={nodeName} className={className}><ResourceInclude path={path} resourceType={resourceType}></ResourceInclude></div>);
             }
         }, this);
-        
+
         let newZone: React.ReactElement<any> = null;
         if (this.isWcmEnabled()) {
             let resourceType = this.getResourceType() + "/new";
