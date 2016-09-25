@@ -1,6 +1,6 @@
 {
   "name": "aem-react-js",
-  "version": "0.3.2",
+  "version": "0.3.1",
   "description": "Aem components written in React.",
   "scripts": {
     "build": "./node_modules/typescript/bin/tsc",
