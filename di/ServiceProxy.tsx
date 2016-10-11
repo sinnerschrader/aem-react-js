@@ -26,7 +26,7 @@ export default class ServiceProxy {
      * @returns {any}
      */
     public invoke(method: string, ...args: any[]): any {
-        let cacheKey: string = this.cache.generateServiceCacheKey(this.name, method, arguments);
+        let cacheKey: string = this.cache.generateServiceCacheKey(this.name, method, args);
         return this.cache.wrapServiceCall(cacheKey, (): any => {
             let service: JsProxy = this.locator();
             let result: any = service.invoke(method, args);

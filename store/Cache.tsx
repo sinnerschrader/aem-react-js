@@ -22,7 +22,7 @@ export default class Cache {
     private included: {[path: string]: string};
     private serviceCalls: {[path: string]: any};
 
-    public generateServiceCacheKey(service: string, method: string, args: IArguments): string {
+    public generateServiceCacheKey(service: string, method: string, args: any[]): string {
         let cacheKey: string = service + "." + method + "(";
         for (let i = 0; i < args.length; i++) {
             cacheKey += args[i] + "";
@@ -30,6 +30,7 @@ export default class Cache {
                 cacheKey += ",";
             }
         }
+        cacheKey += ")";
         return cacheKey;
     }
 
@@ -77,7 +78,7 @@ export default class Cache {
             return this.getProperty(resource.data, subPath);
         } else if (normalizedDepth < 0) {
             return null;
-        } else if (subPath.length  + normalizedDepth - 1 <= resource.depth) {
+        } else if (subPath.length + normalizedDepth - 1 <= resource.depth) {
             return this.getProperty(resource.data, subPath);
         } else {
             return null;
