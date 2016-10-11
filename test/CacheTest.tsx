@@ -104,5 +104,29 @@ describe("Cache", () => {
 
     });
 
+    it("should create a cache key that resembles the method invocation", () => {
+
+        let cache: Cache = new Cache();
+
+        function test(x: string, y: string): string {
+            return cache.generateServiceCacheKey("javaClass", "make", [x, y]);
+        }
+
+        let key: string = test("do", "it");
+        expect(key).to.equals("javaClass.make(do,it)");
+    });
+
+    it("should create a cache key that resembles the method invocation", () => {
+
+        let cache: Cache = new Cache();
+
+        function test(x: string, y: string): string {
+            return cache.generateServiceCacheKey("javaClass", "make", [x, y]);
+        }
+
+        let key: string = test("do", "it");
+        expect(key).to.equals("javaClass.make(do,it)");
+    });
+
 });
 

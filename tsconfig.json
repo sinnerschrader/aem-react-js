@@ -46,6 +46,7 @@
     "./test/ResourceUtilsTest.tsx",
     "./test/ResourceComponentTest.tsx",
     "./test/CacheTest.tsx",
+    "./test/ServiceProxyTest.tsx",
     "./test/setup.tsx"
   ]
 }

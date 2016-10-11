@@ -4,6 +4,7 @@ import EditDialog from "./EditDialog";
 import {Sling} from "../store/Sling";
 import RootComponentRegistry from "../RootComponentRegistry";
 import ResourceUtils from "../ResourceUtils";
+import {ResourceInclude} from "../include";
 
 export interface Resource {
     "sling:resourceType": string;
@@ -22,8 +23,8 @@ export interface ResourceState {
 export interface ResourceProps {
     path: string;
     root?: boolean;
-    cqHidden?: boolean;
     wcmmode?: string;
+    className?: string;
 }
 
 
@@ -92,7 +93,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
             child = this.renderBody();
         }
         return (
-            <EditDialog path={this.getPath()} resourceType={this.getResourceType()}>
+            <EditDialog path={this.getPath()} resourceType={this.getResourceType()} className={this.props.className}>
                 {child}
             </EditDialog>
         );
@@ -132,4 +133,46 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
         return 0;
     }
 
+    protected renderChildren(content: Resource, path: string, childClassName?: string, childElementName?: string): React.ReactElement<any>[] {
+
+        let children: any = ResourceUtils.getChildren(content);
+
+        let childComponents: React.ReactElement<any>[] = [];
+
+        // TODO alternatively create a div for each child and set className/elementName there
+
+        Object.keys(children).forEach((nodeName: string, childIdx: number) => {
+            let resource: Resource = children[nodeName];
+            let resourceType: string = resource["sling:resourceType"];
+            let componentType: typeof React.Component = this.getRegistry().getComponent(resourceType);
+            if (childElementName) {
+                if (componentType) {
+                    let props: any = {resource: resource, path: nodeName, reactKey: path, key: nodeName};
+                    childComponents.push(React.createElement(childElementName, {
+                        key: nodeName, className: childClassName
+                    }, React.createElement(componentType, props)));
+                } else {
+                    childComponents.push(React.createElement(childElementName, {
+                        key: nodeName, className: childClassName
+                    }, React.createElement(ResourceInclude, {path: nodeName, key: nodeName, resourceType: resourceType})));
+                }
+            } else {
+                if (componentType) {
+                    let props: any = {resource: resource, path: nodeName, reactKey: path, key: nodeName, className: childClassName};
+                    childComponents.push(React.createElement(componentType, props));
+                } else {
+                    childComponents.push(<ResourceInclude path={nodeName} key={nodeName} resourceType={resourceType}></ResourceInclude>);
+                }
+            }
+        }, this);
+
+        let newZone: React.ReactElement<any> = null;
+        if (this.isWcmEnabled()) {
+            let resourceType = "foundation/components/parsys/new";
+            newZone = <ResourceInclude key="newZone" element="div" path="*"
+                                       resourceType={ resourceType }></ResourceInclude>;
+            childComponents.push(newZone);
+        }
+        return childComponents;
+    }
 }

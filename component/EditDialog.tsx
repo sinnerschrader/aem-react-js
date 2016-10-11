@@ -7,13 +7,14 @@ export interface EditDialogProps {
     path: string;
     resourceType: string;
     hidden?: boolean;
+    className?: string;
 }
 
 
 export default class EditDialog extends AemComponent<EditDialogProps, any> {
 
     public render(): React.ReactElement<any> {
-        let sling: Sling = this.context.aemContext.container.get("sling");
+        let sling: Sling = this.getComponent("sling");
         let dialog: EditDialogData = sling.renderDialogScript(this.props.path, this.props.resourceType);
 
         if (dialog) {
@@ -24,7 +25,18 @@ export default class EditDialog extends AemComponent<EditDialogProps, any> {
     }
 
     private createWrapperElement(dialog: EditDialogData): React.ReactElement<any> {
-        return React.createElement(dialog.element, dialog.attributes, this.props.children, this.createAuthorElement(dialog.child));
+        let attributes: {[name: string]: any} = {};
+        if (dialog.attributes) {
+            Object.keys(dialog.attributes).forEach((key: string) => attributes[key] = dialog.attributes[key]);
+            if (this.props.className) {
+                if (typeof attributes["className"] !== "undefined" && attributes["className"] !== null) {
+                    attributes["className"] += " " + this.props.className;
+                } else {
+                    attributes["className"] = this.props.className;
+                }
+            }
+        }
+        return React.createElement(dialog.element, attributes, this.props.children, this.createAuthorElement(dialog.child));
     }
 
     private createAuthorElement(dialog: EditDialogData): React.ReactElement<any> {
