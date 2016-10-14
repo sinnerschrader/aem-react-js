@@ -51,7 +51,7 @@ export class Container {
      */
     public getRequestModel(path: string, name: string): ServiceProxy {
         return new ServiceProxy(this.get("cache"), (): any => {
-            return Cqx.getRequestModel(name);
+            return Cqx.getRequestModel(path, name);
         }, path + "_" + name);
     }
 
@@ -62,7 +62,7 @@ export class Container {
      */
     public getResourceModel(path: string, name: string): ServiceProxy {
         return new ServiceProxy(this.get("cache"), (): any => {
-            return Cqx.getResourceModel(name);
+            return Cqx.getResourceModel(path, name);
         }, path + "_" + name);
     }
 

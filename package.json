@@ -4,7 +4,7 @@
   "description": "Aem components written in React.",
   "scripts": {
     "build": "./node_modules/typescript/bin/tsc",
-    "test": "npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.ts",
+    "test": "npm run build && npm run lint &&  mocha --compilers ts:espower-typescript/guess test/*.js",
     "lint": "eslint . & tslint *.tsx",
     "preversion": "npm test && npm run build",
     "version": "git add .",
