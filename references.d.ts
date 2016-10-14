@@ -1,5 +1,4 @@
 // globals
-import {EditDialogData} from "./store/Sling";
 declare var i18n: any;
 
 interface Window {
@@ -35,7 +34,7 @@ export interface JsProxy {
 export interface Cq {
   sling: JavaSling;
   getOsgiService(name: string): JsProxy;
-  getResourceModel(name: string): JsProxy;
-  getRequestModel(name: string): JsProxy;
+  getResourceModel(path: string, name: string): JsProxy;
+  getRequestModel(path: string, name: string): JsProxy;
 }
 declare var Cqx: Cq;
