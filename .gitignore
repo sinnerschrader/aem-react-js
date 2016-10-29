@@ -4,7 +4,9 @@ node_modules
 typings
 npm-debug.log
 *.d.ts
+.nyc_output
 *.js
 *.js.map
 *.tgz
+coverage
 !references.d.ts
