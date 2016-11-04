@@ -1,6 +1,7 @@
 language: node_js
 node_js:
-  - "5.11"
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
-
+- '5.11'
+after_success: 
+env:
+  global:
+    secure: tw8fQxwGzAek1Hkll4FWh2Iu2q8dZIvosc1BisGr+UlrxPDczpLEPCQ4rewMH9WJqa8sy5fHuQltTar4ASKWkNfpobPs/kmmB20Oaz3rw/fyeYWphkTsd8fa9P79iSsJzu86ie7AO3o5dHsUDdGIuFrxF7x72NbbQpdefi4fKSkbv11SauZBqv5JTOJ0ZfXG9rWSRQfUwh7UGn4cbFdXZysN0g91lk83MXe2cZ1JOuD+52iJkh8AU7ALqtL9Z1Vr5GDd6mjMZfnz5lpBK8266aFqEYPTnlG7In9mOtiIiN1mJ+8hsh3ngfSxoE7QAn+fCQ4qjxRC4+D7IBHr7XYupE1K0v+fLOPirBafCdu0lQCJtDH715zghYets3+MyJkrKFQWaoyuBTBSprn7v1jxXC7AEH32cgl/+6OcuQjc9udrxwCf8pUOzZd2Mu6h0ueNpIhI90wz4a3oWAhFNCIAz8WKnGCwbw5ZfJzJcPhGUtCdzF65SWm7fGbVcRxHyXRHfOVHvtAqHBRiJNl5Ietlg1A8EmfR+X1+Q5hDVgzvunrULAm1XLNLYXyOV7sdcfwN6PbwTE/XbqtkdkVYCEcJZA/rH5+NBOSafZekj5qRJ4uHnTIe9W5Qiv3jvMsgBdnuLVLXvANmEuwvNuJC2kU66/7/zYINCaISpf1f0hbNPZU=
