@@ -46,10 +46,9 @@ export default class Cache {
 
     public mergeCache(cache: any): void {
         if (cache) {
-            this.merge(this.resources, cache.resources);
-            this.merge(this.included, cache.included);
-            this.merge(this.scripts, cache.scripts);
-            this.merge(this.serviceCalls, cache.serviceCalls);
+            ["resources", "included", "scripts", "serviceCalls"].forEach((key) => {
+                this.merge(this[key], cache[key]);
+            });
         }
     }
 

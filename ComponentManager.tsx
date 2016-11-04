@@ -14,22 +14,21 @@ export interface ComponentTreeConfig {
     cache: Cache;
 }
 
-// TODO: find proper typing and add polyfill
-interface FetchWindow extends Window {
-    fetch(url: string, options: any): any;
-}
 
 /**
  * The Component
  */
 export default class ComponentManager {
 
-    constructor(registry: RootComponentRegistry, container: Container) {
+    constructor(registry: RootComponentRegistry, container: Container, aDocument?: Document) {
         this.container = container;
         this.registry = registry;
+        this.document = aDocument || document;
     }
 
     private container: Container;
+
+    private document: Document;
 
     private registry: RootComponentRegistry;
 
@@ -38,7 +37,7 @@ export default class ComponentManager {
      * @param item
      */
     public initReactComponent(item: any): void {
-        let textarea = document.getElementById(item.getAttribute("data-react-id")) as HTMLTextAreaElement;
+        let textarea = this.document.getElementById(item.getAttribute("data-react-id")) as HTMLTextAreaElement;
         if (textarea) {
             let props: ComponentTreeConfig = JSON.parse(textarea.value);
             if (props.wcmmode === "disabled") {
@@ -46,7 +45,6 @@ export default class ComponentManager {
                 if (comp == null) {
                     console.error("React component '" + props.resourceType + "' does not exist in component list.");
                 } else {
-                    console.log("Rendering react component '" + props.resourceType + "'.");
                     let cache: Cache = this.container.get("cache");
                     cache.mergeCache(props.cache);
                     let ctx: any = {registry: this.registry, componentManager: this, container: this.container};
@@ -60,7 +58,7 @@ export default class ComponentManager {
     }
 
 
-    public getResourceType(component: React.Component<any, any>): string {
+    public getResourceType(component: typeof React.Component): string {
         return this.registry.getResourceType(component);
     }
 
@@ -71,11 +69,12 @@ export default class ComponentManager {
     /**
      * find all root elements and initialize the react components
      */
-    public initReactComponents(): void {
-        let items = [].slice.call(document.querySelectorAll("[data-react]"));
+    public initReactComponents(): number {
+        let items = [].slice.call(this.document.querySelectorAll("[data-react]"));
         for (let item of items) {
             this.initReactComponent(item);
         }
+        return items.length;
     }
 
 }

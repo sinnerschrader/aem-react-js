@@ -2,21 +2,79 @@ import {expect} from "chai";
 
 import "./setup";
 
+import {Container} from "../di/Container";
+import ServiceProxy from "../di/ServiceProxy";
 import Cache from "../store/Cache";
+import {Cq} from "../references";
 
-describe("Cache", () => {
+describe("Container", () => {
 
-    it("should return direct match", () => {
+    let methodResult: string = "methodResult";
+    let paramValue: string = "param";
+    let methodName: string = "test";
+    let proxy: any = {
+        invoke: function (method: string, param: any[]): any {
+            expect(param[0]).to.equal(paramValue);
+            expect(method).to.equal(methodName);
+            return JSON.stringify(methodResult);
+        }
+    };
 
-        let cache: Cache = new Cache();
-        cache.put("/content", {test: "Test"});
-        let result: any = cache.get("/content");
+    it("should return resourceModel", () => {
 
-        expect(result).to.exist;
+        let container: Container = new Container((({
+            getResourceModel: function (path: string, resourceType: string) {
+                expect(path).to.equal("/test");
+                expect(resourceType).to.equal("/components/test");
+                return proxy;
+            }
+        } as any) as Cq));
+        container.register("cache", new Cache());
+        let service: ServiceProxy = container.getResourceModel("/test", "/components/test");
+
+        expect(service["name"]).to.equal("/test_/components/test");
+        let result: any = service.invoke(methodName, paramValue);
+        expect(result).to.equal(methodResult);
+
+    });
+
+    it("should return requestModel", () => {
+
+        let container: Container = new Container((({
+            getRequestModel: function (path: string, resourceType: string) {
+                expect(path).to.equal("/test");
+                expect(resourceType).to.equal("/components/test");
+                return proxy;
+            }
+        } as any) as Cq));
+        container.register("cache", new Cache());
+        let service: ServiceProxy = container.getRequestModel("/test", "/components/test");
+
+        expect(service["name"]).to.equal("/test_/components/test");
+        let result: any = service.invoke(methodName, paramValue);
+        expect(result).to.equal(methodResult);
+
+    });
+
+    it("should return osgi service", () => {
+
+        let container: Container = new Container((({
+            getOsgiService: function (className: string) {
+                expect(className).to.equal("java.pack.Service");
+                return proxy;
+            }
+        } as any) as Cq));
+        container.register("cache", new Cache());
+        let service: ServiceProxy = container.getOsgiService("java.pack.Service");
+
+        expect(service["name"]).to.equal("java.pack.Service");
+        let result: any = service.invoke(methodName, paramValue);
+        expect(result).to.equal(methodResult);
 
     });
 
     it("should return sub match", () => {
+
 
         let cache: Cache = new Cache();
         cache.put("/content", {test: {text: "Hallo"}});
@@ -25,20 +83,11 @@ describe("Cache", () => {
         expect(result).to.exist;
         expect(result.text).to.equal("Hallo");
 
-    });
-
-    it("should return empty sub match", () => {
-
-        let cache: Cache = new Cache();
-        cache.put("/content", {test: null});
-        let result: any = cache.get("/content/test");
-
-        expect(result).to.exist;
-        expect(result).to.deep.equal({});
 
     });
 
     it("should not return insufficiently deep match", () => {
+
 
         let cache: Cache = new Cache();
         cache.put("/content", {test: {text: "Hallo"}}, 1);
@@ -46,9 +95,11 @@ describe("Cache", () => {
 
         expect(result).to.not.exist;
 
+
     });
 
     it("should return inifinity deep match", () => {
+
 
         let cache: Cache = new Cache();
         cache.put("/content", {test: {text: "Hallo"}}, -1);
@@ -56,9 +107,11 @@ describe("Cache", () => {
 
         expect(result).to.exist;
 
+
     });
 
     it("should return sufficiently deep match", () => {
+
 
         let cache: Cache = new Cache();
         cache.put("/content", {test: {text: "Hallo"}});
@@ -66,9 +119,11 @@ describe("Cache", () => {
 
         expect(result).to.exist;
 
+
     });
 
     it("should return sufficiently deep sub match", () => {
+
 
         let cache: Cache = new Cache();
         cache.put("/content", {test: {text: "Hallo"}}, 2);
@@ -77,9 +132,11 @@ describe("Cache", () => {
         expect(result).to.exist;
         expect(result.text).to.equal("Hallo");
 
+
     });
 
     it("should return null if no match", () => {
+
 
         let cache: Cache = new Cache();
         cache.put("/content", {test: {text: "Hallo"}}, 1);
@@ -87,15 +144,18 @@ describe("Cache", () => {
 
         expect(result).to.not.exist;
 
+
     });
 
     it("should return match of depth 1", () => {
+
 
         let cache: Cache = new Cache();
         cache.put("/content", {level1: {level2: "Hallo"}}, 1);
         let result: any = cache.get("/content/level1/level2", 0);
 
         expect(result).to.equals("Hallo");
+
 
     });
 
@@ -135,34 +195,6 @@ describe("Cache", () => {
         expect(cache.getIncluded("existing")).to.equals("existingValue");
     });
 
-    it("should merge null caches", () => {
-
-        let cache: Cache = new Cache();
-
-        cache.mergeCache(null);
-        // expect no error
-
-    });
-
-    it("should clear cache", () => {
-
-        let cache: Cache = new Cache();
-        cache.put("incl", {x: 1});
-        expect(cache.get("incl")["x"]).to.equals(1);
-        cache.putIncluded("incl", "value");
-        expect(cache.getIncluded("incl")).to.equals("value");
-        cache.putScript("script", {element: "test"});
-        expect(cache.getScript("script")).to.deep.equal({element: "test"});
-        cache.putServiceCall("call", "result");
-        expect(cache.getServiceCall("call")).to.equal("result");
-        cache.clear();
-        expect(cache.get("incl")).to.be.null;
-        expect(cache.getIncluded("incl")).to.be.undefined;
-        expect(cache.getScript("script")).to.be.undefined;
-        expect(cache.getServiceCall("call")).to.be.undefined;
-
-    });
-
     it("should write and read entries", () => {
 
         let cache: Cache = new Cache();
@@ -172,18 +204,6 @@ describe("Cache", () => {
         expect(cache.getScript("script")).to.deep.equal({element: "test"});
         cache.putServiceCall("call", "result");
         expect(cache.getServiceCall("call")).to.equal("result");
-
-    });
-
-    it("should wrap service call", () => {
-
-        let cache: Cache = new Cache();
-        let result: any = cache.wrapServiceCall("x", () => {
-            return "done"
-        });
-        expect(result).to.equals("done");
-
-
     });
 
 });

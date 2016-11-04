@@ -6,6 +6,7 @@ This library is written in TypeScript.
 [![Build Status](https://travis-ci.org/sinnerschrader/aem-react-js.svg?branch=master)](https://travis-ci.org/sinnerschrader/aem-react-js)
 
 
+
 ## Basic usage
 
 The ComponentManager finds react components defined in the mark up and instantiates them. The markup must provide the following:
