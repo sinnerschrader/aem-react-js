@@ -1,5 +1,6 @@
 import {Cq} from "../references";
 import ServiceProxy from "./ServiceProxy";
+
 declare var Cqx: Cq;
 /**
  * a container for sharing global services and other objects like the cache.
@@ -10,9 +11,15 @@ declare var Cqx: Cq;
 export class Container {
 
     private services: any;
+    private cqx: Cq;
 
-    constructor() {
+    constructor(cqx: Cq) {
         this.services = {};
+        if (!cqx) {
+            this.cqx = Cqx;
+        } else {
+            this.cqx = cqx;
+        }
     }
 
     /**
@@ -39,9 +46,9 @@ export class Container {
      * @returns {ServiceProxy}
      */
     public getOsgiService(name: string): ServiceProxy {
-        return new ServiceProxy(this.get("cache"), (): any => {
-            return Cqx.getOsgiService(name);
-        }, name);
+        return this.getServiceProxy(arguments, (): any => {
+            return this.cqx.getOsgiService(name);
+        });
     }
 
     /**
@@ -50,9 +57,9 @@ export class Container {
      * @returns {ServiceProxy}
      */
     public getRequestModel(path: string, name: string): ServiceProxy {
-        return new ServiceProxy(this.get("cache"), (): any => {
-            return Cqx.getRequestModel(path, name);
-        }, path + "_" + name);
+        return this.getServiceProxy(arguments, (): any => {
+            return this.cqx.getRequestModel(path, name);
+        });
     }
 
     /**
@@ -61,9 +68,24 @@ export class Container {
      * @returns {ServiceProxy}
      */
     public getResourceModel(path: string, name: string): ServiceProxy {
-        return new ServiceProxy(this.get("cache"), (): any => {
-            return Cqx.getResourceModel(path, name);
-        }, path + "_" + name);
+        return this.getServiceProxy(arguments, (): any => {
+            return this.cqx.getResourceModel(path, name);
+        });
+    }
+
+    private getServiceProxy(args: IArguments, getter: () => any): ServiceProxy {
+        return new ServiceProxy(this.get("cache"), getter, this.createKey(args));
+    }
+
+    private createKey(params: IArguments): string {
+        let key: string = "";
+        for (let i = 0; i < params.length; i++) {
+            if (i > 0) {
+                key += "_";
+            }
+            key += params[i];
+        }
+        return key;
     }
 
 

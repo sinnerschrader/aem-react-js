@@ -9,7 +9,7 @@
       "commit": "88c0d5f868bc184d70b6799d36b1946787beb48d"
     },
     "react/react.d.ts": {
-      "commit": "df827a4d96dc999b3ecf113da6afbb49b2c9f0a2"
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
     },
     "react/react-dom.d.ts": {
       "commit": "05359f14d10740e532fc0299c8f0e04faf6bda25"
@@ -37,6 +37,9 @@
     },
     "enzyme/enzyme.d.ts": {
       "commit": "df827a4d96dc999b3ecf113da6afbb49b2c9f0a2"
+    },
+    "react/react-addons-test-utils.d.ts": {
+      "commit": "f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
     }
   }
 }

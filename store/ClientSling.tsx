@@ -1,8 +1,8 @@
 import {SlingResourceOptions, AbstractSling, EditDialogData} from "./Sling";
 import Cache from "./Cache";
 import {ResourceComponent} from "../component/ResourceComponent";
-import EditDialog from "../component/EditDialog";
-interface FetchWindow extends Window {
+
+export interface FetchWindow {
     fetch(url: string, options: any): any;
 }
 
@@ -11,14 +11,20 @@ interface FetchWindow extends Window {
  * the part of the cache which corresponds to the given component from the server.
  */
 export default class ClientSling extends AbstractSling {
-    constructor(cache: Cache, origin: string) {
+    constructor(cache: Cache, origin: string, fetch?: FetchWindow) {
         super();
         this.cache = cache;
         this.origin = origin;
+        if (!fetch) {
+            this.fetch = ((window as any) as FetchWindow);
+        } else {
+            this.fetch = fetch;
+        }
     }
 
     private cache: Cache;
     private origin: string;
+    private fetch: FetchWindow;
 
     public subscribe(listener: ResourceComponent<any, any, any>, path: string, options?: SlingResourceOptions): void {
         //
@@ -43,7 +49,7 @@ export default class ClientSling extends AbstractSling {
             if (serverRendering) {
                 url += "?" + serverRenderingParam;
             }
-            return (window as FetchWindow).fetch(url, {credentials: "same-origin"}).then((response: any) => {
+            return this.fetch.fetch(url, {credentials: "same-origin"}).then((response: any) => {
                 if (response.status === 404) {
                     return {};
                 } else {
@@ -59,7 +65,7 @@ export default class ClientSling extends AbstractSling {
     }
 
     public renderDialogScript(path: string, resourceType: string): EditDialogData {
-        // TODO Can we get the scrit from the server too?. This will probably not work as the returned script is
+        // TODO Can we get the script from the server too?. This will probably not work as the returned script is
         // not executed as in the initial server rendering case. For react router we need to do a reload anyways.
         return this.cache.getScript(path);
     }
