@@ -58,5 +58,25 @@ describe("ServiceProxy", () => {
 
     });
 
+    it("should invoke target and return null", () => {
+
+
+        let target: any = {
+            invoke: function (method: string, args: any[]): string {
+                return null;
+            }
+        }
+
+        let cache: Cache = new Cache();
+        let proxy: ServiceProxy = new ServiceProxy(cache, () => {
+            return target;
+        }, "javaClass");
+
+        let result: any = proxy.invoke("add", 1, 3);
+        expect(result).to.be.null;
+
+
+    });
+
 });
 
