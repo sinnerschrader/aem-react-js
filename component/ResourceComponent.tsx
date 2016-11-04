@@ -105,18 +105,6 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 
     public abstract renderBody(): React.ReactElement<any>;
 
-    public getChildren(): any {
-        let resource: any = this.state.resource;
-        let children: any = {};
-        Object.keys(resource).forEach((propertyName: string): void => {
-            let child = resource[propertyName];
-            if (child["jcr:primaryType"]) {
-                children[propertyName] = child;
-            }
-        });
-        return children;
-    }
-
     public getResource(): C {
         return (this.state.resource as C);
     }

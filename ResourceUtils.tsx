@@ -24,7 +24,7 @@ export default class ResourceUtils {
         for (let i = 0; i < path.length; i++) {
             data = data[path[i]];
             if (!data) {
-                break;
+                return null;
             }
         }
         return data;

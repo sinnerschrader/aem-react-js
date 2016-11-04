@@ -1,6 +1,7 @@
 import * as ReactTestUtils from "react-addons-test-utils";
 
 import {expect} from "chai";
+import * as enzyme from "enzyme";
 
 import "./setup";
 
@@ -13,11 +14,12 @@ import ComponentRegistry from "../ComponentRegistry";
 import {Container} from "../di/Container";
 import {EditDialogData} from "../store/Sling";
 import ComponentManager from "../ComponentManager";
+import {CommonWrapper} from "enzyme";
 
 describe("ResourceComponent", () => {
     class Test extends ResourceComponent<any, any, any> {
         public renderBody(): React.ReactElement<any> {
-            return (<div>{this.props.resource ? this.props.resource.text : "unknown"}</div>);
+            return (<span className="test">{this.props.resource ? this.props.resource.text : "unknown"}</span>);
         }
     }
 
@@ -28,11 +30,51 @@ describe("ResourceComponent", () => {
         }
     }
 
+    class AemContainer extends ResourceComponent<any, any, any> {
+        public renderBody(): React.ReactElement<any> {
+            let children: React.ReactElement<any>[] = this.renderChildren(this.getResource(), null, this.props.childClassName, this.props.childElementName);
+            return (<div data-container>{children}</div>);
+        }
+    }
+
+    function createContainer(className?: string, elementName?: string) {
+        return class AnonComponent extends ResourceComponent<any, any, any> {
+            public renderBody(): React.ReactElement<any> {
+                let children: React.ReactElement<any>[] = this.renderChildren(this.getResource(), null, className, elementName);
+                return (<div data-container>{children}</div>);
+            }
+        };
+    }
+
+    class MockSling {
+        constructor(resource: {[path: string]: any}) {
+            this.resources = resource;
+        }
+
+        private resources: {[path: string]: any};
+
+        public subscribe(listener: ResourceComponent<any, any, any>, path: string, options?: any): void {
+            if (this.resources[path]) {
+                listener.changedResource(path, this.resources[path]);
+            }
+
+        }
+
+        public renderDialogScript(): EditDialogData {
+            return {element: "div", attributes: {className: "dialog"}};
+        }
+
+        public includeResource(path: string, resourceType: string): string {
+            return "<include resourcetype='" + resourceType + "' path='" + path + "'></include>";
+        }
+    }
+
 
     let testRegistry: ComponentRegistry = new ComponentRegistry();
     testRegistry.register(Test);
     let registry: RootComponentRegistry = new RootComponentRegistry();
     registry.add(testRegistry);
+    registry.init();
 
     let container: Container = new Container();
     let componentManager: ComponentManager = new ComponentManager(registry, container);
@@ -41,20 +83,23 @@ describe("ResourceComponent", () => {
         registry: registry, componentManager: componentManager, container: container
     };
 
+    it("should render loading message", () => {
+
+
+        container.register("sling", new MockSling({}));
+
+        let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent aemContext={aemContext} comp={Test} path="/content/notfound"/>);
+        expect(item.find("span").html()).to.equal("<span>Loading</span>");
+
+    });
+
     it("should get resource directly", () => {
 
 
-        container.register("sling", {
-            subscribe: function (listener: ResourceComponent<any, any, any>, path: string, options?: any): void {
-                if (path === "/content/embed") {
-                    listener.changedResource(path, {embed: "Hallo"});
-                } else if (path === "/content/embed/test") {
-                    listener.changedResource(path, {text: "Hallo"});
-                }
-            }, renderDialogScript: function (): EditDialogData {
-                return {element: "div"};
-            }
-        });
+        container.register("sling", new MockSling({
+            "/content/embed": {embed: "Hallo"}, //
+            "/content/embed/test": {text: "Hallo"}
+        }));
         const item: any = ReactTestUtils.renderIntoDocument(
             <RootComponent aemContext={aemContext} comp={Embedded} path="/content/embed"/>
         );
@@ -69,15 +114,9 @@ describe("ResourceComponent", () => {
 
     it("should get resource from absolute Path", () => {
 
-        container.register("sling", {
-            subscribe: function (listener: ResourceComponent<any, any, any>, path: string, options?: any) {
-                if (path === "/content/test") {
-                    listener.changedResource(path, {text: "Hallo"});
-                }
-            }, renderDialogScript: function (): EditDialogData {
-                return {element: "div"};
-            }
-        });
+        container.register("sling", new MockSling({
+            "/content/test": {text: "Hallo"}
+        }));
 
         const item: any = ReactTestUtils.renderIntoDocument(
             <RootComponent aemContext={aemContext} comp={Test} path="/content/test"/>
@@ -88,6 +127,104 @@ describe("ResourceComponent", () => {
         expect(test.getPath()).to.equal("/content/test");
         expect(test.props.path).to.equal("/content/test");
         expect(test.getResource().text).to.equal("Hallo");
+
+    });
+
+    it("should render htl children wcmmode disabled", () => {
+        container.register("sling", new MockSling({
+            "/content": {
+                "child1": {
+                    "sling:resourceType": "htl/test", "text": "Hallo", "jcr:primaryType": "nt:unstructured"
+                }
+            }
+        }));
+
+        const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={AemContainer}
+                                                                                     path="/content"/>);
+
+        let include: CommonWrapper<any, any> = item.find("include");
+        expect(include[0].attribs.path).to.equal("/content/child1");
+        expect(include[0].attribs.resourcetype).to.equal("htl/test");
+
+    });
+
+    describe("should render htl children wcmmode enabled", () => {
+        before(() => {
+            container.register("sling", new MockSling({
+                "/content": {
+                    "child1": {
+                        "sling:resourceType": "htl/test", "text": "Hallo", "jcr:primaryType": "nt:unstructured"
+                    }
+                }
+            }));
+        });
+
+        it("default ", () => {
+            const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="edit" aemContext={aemContext} comp={AemContainer}
+                                                                                         path="/content"/>);
+
+            let include: CommonWrapper<any, any> = item.find("include");
+            expect(include[1].attribs.path).to.equal("/content/*");
+            expect(include[1].attribs.resourcetype).to.equal("foundation/components/parsys/new");
+        });
+
+        it("with child wrapper ", () => {
+            const item: CommonWrapper<RootComponent, any> = enzyme.mount(<RootComponent wcmmode="disabled" aemContext={aemContext}
+                                                                                        comp={createContainer("childClass", "el")}
+                                                                                        path="/content"/>);
+
+            let dialog: CommonWrapper<any, any> = item.find("el");
+            expect(dialog.props().className).to.equal("childClass");
+            expect(dialog.html()).to.equal('<el class="childClass"><div><include resourcetype="htl/test" path="/content/child1"></include></div></el>');
+        });
+
+    });
+
+    describe("should render react children wcmmode disabled", () => {
+        before(() => {
+            container.register("sling", new MockSling({
+                "/content": {
+                    "child1": {
+                        "sling:resourceType": "test", "text": "OOPS", "jcr:primaryType": "nt:unstructured"
+                    }
+                }, "/content/child1": {
+                    "sling:resourceType": "test", "text": "OOPS", "jcr:primaryType": "nt:unstructured"
+                }
+            }));
+        });
+        it("default ", () => {
+
+
+            const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={AemContainer}
+                                                                                         path="/content"/>);
+
+            let test: CommonWrapper<any, any> = item.find(".test");
+            expect(test[0].children[0].data).to.equal("OOPS");
+
+        });
+        it("with child wrapper", () => {
+
+
+            const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext}
+                                                                                         comp={createContainer("childClass","el")}
+                                                                                         path="/content"/>);
+
+            let test: CommonWrapper<any, any> = item.find("el");
+            expect(test.length).to.equal(1);
+            expect(test[0].attribs.class).to.equal("childClass");
+
+        });
+        it("with child class name", () => {
+
+
+            const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext}
+                                                                                         comp={createContainer("childClass")}
+                                                                                         path="/content"/>);
+
+            let dialog: CommonWrapper<any, any> = item.find(".dialog");
+            expect(dialog[0].attribs.class.split(" ")).to.contain("childClass");
+
+        });
 
     });
 

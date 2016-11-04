@@ -5,7 +5,9 @@
   "scripts": {
     "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
     "build": "tsd install &&./node_modules/typescript/bin/tsc",
-    "test": "npm run build && npm run lint &&  nyc mocha --compilers ts:espower-typescript/guess test/*.js",
+    "test": "npm run build && npm run lint &&  nyc mocha --compilers ts:espower-typescript/guess test/*.js ",
+    "single-test": "nyc mocha --compilers ts:espower-typescript/guess ",
+    "test-html": "npm run test && nyc report --reporter=html",
     "lint": "eslint . & tslint *.tsx",
     "preversion": "npm test && npm run build",
     "version": "git add .",
@@ -32,14 +34,14 @@
     "url": "http://www.github.com/sinnerschrader/aem-react-js"
   },
   "devDependencies": {
-    "codecov": "^1.0.1",
-    "nyc": "^6.4.4",
-    "tsd": "^0.6.5",
     "chai": "^3.5.0",
+    "codecov": "^1.0.1",
+    "enzyme": "^2.5.1",
     "eslint": "^1.6.0",
     "espower-typescript": "^3.0.0",
     "jsdom": "^8.1.0",
     "mocha": "^2.5.3",
+    "nyc": "^6.4.4",
     "power-assert": "^1.2.0",
     "react-addons-test-utils": "^15.3.1",
     "tsd": "^0.6.5",
