@@ -6,7 +6,6 @@ import {Sling, EditDialogData} from "../store/Sling";
 export interface EditDialogProps {
     path: string;
     resourceType: string;
-    hidden?: boolean;
     className?: string;
 }
 
@@ -43,10 +42,19 @@ export default class EditDialog extends AemComponent<EditDialogProps, any> {
         if (!dialog) {
             return null;
         }
-        if (dialog.html) {
-            dialog.attributes["dangerouslySetInnerHTML"] = {__html: dialog.html};
+        let attributes: any = {};
+        if (!!dialog.attributes) {
+            Object.keys(dialog.attributes).forEach((key: string) => {
+                attributes[key] = dialog.attributes[key];
+            });
         }
-        return React.createElement(dialog.element, dialog.attributes);
+        if (dialog.html) {
+            if (!attributes) {
+                attributes = {};
+            }
+            attributes["dangerouslySetInnerHTML"] = {__html: dialog.html};
+        }
+        return React.createElement(dialog.element, attributes);
     }
 
 

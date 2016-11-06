@@ -12,9 +12,9 @@ import * as React from "react";
 import RootComponentRegistry from "../RootComponentRegistry";
 import ComponentRegistry from "../ComponentRegistry";
 import {Container} from "../di/Container";
-import {EditDialogData} from "../store/Sling";
 import ComponentManager from "../ComponentManager";
 import {CommonWrapper} from "enzyme";
+import MockSling from "./MockSling";
 
 describe("ResourceComponent", () => {
     class Test extends ResourceComponent<any, any, any> {
@@ -46,28 +46,7 @@ describe("ResourceComponent", () => {
         };
     }
 
-    class MockSling {
-        constructor(resource: {[path: string]: any}) {
-            this.resources = resource;
-        }
 
-        private resources: {[path: string]: any};
-
-        public subscribe(listener: ResourceComponent<any, any, any>, path: string, options?: any): void {
-            if (this.resources[path]) {
-                listener.changedResource(path, this.resources[path]);
-            }
-
-        }
-
-        public renderDialogScript(): EditDialogData {
-            return {element: "div", attributes: {className: "dialog"}};
-        }
-
-        public includeResource(path: string, resourceType: string): string {
-            return "<include resourcetype='" + resourceType + "' path='" + path + "'></include>";
-        }
-    }
 
 
     let testRegistry: ComponentRegistry = new ComponentRegistry();

@@ -8,7 +8,6 @@
     "module": "commonjs",
     "jsx": "react",
     "noImplicitAny": false,
-    "removeComments": true,
     "preserveConstEnums": false,
     "declaration": true
   },
@@ -43,9 +42,12 @@
     "./references.d.ts",
     "./typings/tsd.d.ts",
     "./test/tests.tsx",
+    "./test/MockSling.tsx",
     "./test/ResourceUtilsTest.tsx",
     "./test/ResourceComponentTest.tsx",
+    "./test/WrapperFactoryTest.tsx",
     "./test/CacheTest.tsx",
+    "./test/EditDialogTest.tsx",
     "./test/ServiceProxyTest.tsx",
     "./test/setup.tsx"
   ]

@@ -1,6 +1,7 @@
 import * as React from "react";
 import {ClientAemContext, AemContext} from "../AemContext";
 import RootComponentRegistry from "../RootComponentRegistry";
+import {Container} from "../di/Container";
 
 /**
  * Provides base functionality for components that are
@@ -12,14 +13,12 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
         wcmmode: React.PropTypes.string, //
         path: React.PropTypes.string, //
         rootPath: React.PropTypes.string, //
-        resource: React.PropTypes.any, //
         aemContext: React.PropTypes.any
     };
 
     public context: {
         wcmmode: string;
         path: string;
-        resource: any;
         aemContext: ClientAemContext;
     };
 
@@ -32,10 +31,6 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
         return this.context.path;
     }
 
-    public getResource(): any {
-        return this.context.resource;
-    }
-
     public isWcmEnabled(): boolean {
         return !this.getWcmmode() || this.getWcmmode() !== "disabled";
     }
@@ -44,24 +39,32 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
         return this.context.aemContext;
     }
 
+    /* istanbul ignore next */
     public getRegistry(): RootComponentRegistry {
         return this.context.aemContext.registry;
     }
 
+    /* istanbul ignore next */
     public getComponent(name: string): any {
-        return this.context.aemContext.container.get(name);
+        return this.getContainer().get(name);
     }
 
+    /* istanbul ignore next */
     public getOsgiService(name: string): any {
-        return this.context.aemContext.container.getOsgiService(name);
+        return this.getContainer().getOsgiService(name);
     }
 
+    /* istanbul ignore next */
     public getResourceModel(name: string): any {
-        return this.context.aemContext.container.getResourceModel(this.getPath(), name);
+        return this.getContainer().getResourceModel(this.getPath(), name);
     }
 
+    /* istanbul ignore next */
     public getRequestModel(name: string): any {
-        return this.context.aemContext.container.getRequestModel(this.getPath(), name);
+        return this.getContainer().getRequestModel(this.getPath(), name);
     }
 
+    protected getContainer(): Container {
+        return this.context.aemContext.container;
+    }
 }
