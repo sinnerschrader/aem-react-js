@@ -15,6 +15,7 @@ import {Container} from "../di/Container";
 import ComponentManager from "../ComponentManager";
 import {CommonWrapper} from "enzyme";
 import MockSling from "./MockSling";
+import {Cq} from "../references";
 
 describe("ResourceComponent", () => {
     class Test extends ResourceComponent<any, any, any> {
@@ -55,7 +56,7 @@ describe("ResourceComponent", () => {
     registry.add(testRegistry);
     registry.init();
 
-    let container: Container = new Container();
+    let container: Container = new Container(({} as Cq));
     let componentManager: ComponentManager = new ComponentManager(registry, container);
 
     let aemContext: ClientAemContext = {

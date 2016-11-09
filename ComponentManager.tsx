@@ -14,10 +14,6 @@ export interface ComponentTreeConfig {
     cache: Cache;
 }
 
-// TODO: find proper typing and add polyfill
-interface FetchWindow extends Window {
-    fetch(url: string, options: any): any;
-}
 
 /**
  * The Component
@@ -46,7 +42,6 @@ export default class ComponentManager {
                 if (comp == null) {
                     console.error("React component '" + props.resourceType + "' does not exist in component list.");
                 } else {
-                    console.log("Rendering react component '" + props.resourceType + "'.");
                     let cache: Cache = this.container.get("cache");
                     cache.mergeCache(props.cache);
                     let ctx: any = {registry: this.registry, componentManager: this, container: this.container};

@@ -7,6 +7,7 @@ import EditDialog from "../component/EditDialog";
 import MockSling from "./MockSling";
 import {ClientAemContext} from "../AemContext";
 import {Container} from "../di/Container";
+import {Cq} from "../references";
 
 describe("EditDialog", () => {
 
@@ -26,7 +27,7 @@ describe("EditDialog", () => {
         }
     }
 
-    let container: Container = new Container();
+    let container: Container = new Container(({} as Cq));
 
     let aemContext: ClientAemContext = {
         container: container, componentManager: null, registry: null

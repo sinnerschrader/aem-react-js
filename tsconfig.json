@@ -44,10 +44,14 @@
     "./test/tests.tsx",
     "./test/MockSling.tsx",
     "./test/ResourceUtilsTest.tsx",
+    "./test/ServerRendererTest.tsx",
     "./test/ResourceComponentTest.tsx",
     "./test/WrapperFactoryTest.tsx",
     "./test/CacheTest.tsx",
+    "./test/ContainerTest.tsx",
     "./test/EditDialogTest.tsx",
+    "./test/ServerSlingTest.tsx",
+    "./test/ClientSlingTest.tsx",
     "./test/ServiceProxyTest.tsx",
     "./test/setup.tsx"
   ]

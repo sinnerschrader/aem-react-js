@@ -2,18 +2,39 @@ import {expect} from "chai";
 
 import "./setup";
 
+import {Container} from "../di/Container";
+import ServiceProxy from "../di/ServiceProxy";
 import Cache from "../store/Cache";
+import {Cq} from "../references";
 
-describe("Cache", () => {
+describe("Container", () => {
 
-    it("should return direct match", () => {
+    it("should return resourceModel", () => {
 
 
-        let cache: Cache = new Cache();
-        cache.put("/content", {test: "Test"});
-        let result: any = cache.get("/content");
+        let methodResult: string = "methodResult";
+        let paramValue: string = "param";
+        let methodName: string = "test";
+        let resourceModel: any = {
+            invoke: function (method: string, param: any[]): any {
+                expect(param[0]).to.equal(paramValue);
+                expect(method).to.equal(methodName);
+                return JSON.stringify(methodResult);
+            }
+        };
+        let container: Container = new Container((({
+            getResourceModel: function (path: string, resourceType: string) {
+                expect(path).to.equal("/test");
+                expect(resourceType).to.equal("/components/test");
+                return resourceModel;
+            }
+        } as any) as Cq));
+        container.register("cache", new Cache());
+        let service: ServiceProxy = container.getResourceModel("/test", "/components/test");
 
-        expect(result).to.exist;
+        expect(service["name"]).to.equal("/test_/components/test");
+        let result: any = service.invoke(methodName, paramValue);
+        expect(result).to.equal(methodResult);
 
 
     });

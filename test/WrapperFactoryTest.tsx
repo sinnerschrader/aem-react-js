@@ -11,6 +11,7 @@ import {Container} from "../di/Container";
 import ComponentManager from "../ComponentManager";
 import {ClientAemContext} from "../AemContext";
 import MockSling from "./MockSling";
+import {Cq} from "../references";
 
 
 describe("WrapperFactory", () => {
@@ -34,7 +35,7 @@ describe("WrapperFactory", () => {
     registry.add(testRegistry);
     registry.init();
 
-    let container: Container = new Container();
+    let container: Container = new Container(({} as Cq));
     let componentManager: ComponentManager = new ComponentManager(registry, container);
 
     let aemContext: ClientAemContext = {
