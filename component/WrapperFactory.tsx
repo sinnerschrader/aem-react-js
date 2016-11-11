@@ -59,7 +59,7 @@ export class Wrapper extends ResourceComponent<any, any, any> {
         } else {
             newProps = props;
         }
-        return React.createElement(this.config.component, props, children);
+        return React.createElement(this.config.component, newProps, children);
     }
 
     public renderBody(): React.ReactElement<any> {

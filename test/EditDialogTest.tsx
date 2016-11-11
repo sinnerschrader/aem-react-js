@@ -89,15 +89,12 @@ describe("EditDialog", () => {
                 "element": "cq",
                 "html": ""
             },
-            "attributes": {
-                "className": "text"
-            },
             "element": "div",
             "html": null
         }));
         let item: CommonWrapper<any, any> = enzyme.mount(<Wrapper aemContext={aemContext}><EditDialog path="/test"
                                                                                                       resourceType="components/test"/></Wrapper>);
-        expect(item.html()).to.equal('<div><div class="text"><cq data-config="{&quot;path&quot;:&quot;/content&quot;}" data-path="/content/"></cq></div></div>');
+        expect(item.html()).to.equal('<div><div><cq data-config="{&quot;path&quot;:&quot;/content&quot;}" data-path="/content/"></cq></div></div>');
     });
 
 });

@@ -48,6 +48,8 @@
     "./test/ResourceComponentTest.tsx",
     "./test/WrapperFactoryTest.tsx",
     "./test/CacheTest.tsx",
+    "./test/ComponentRegistryTest.tsx",
+    "./test/RootComponentRegistryTest.tsx",
     "./test/ContainerTest.tsx",
     "./test/EditDialogTest.tsx",
     "./test/ServerSlingTest.tsx",

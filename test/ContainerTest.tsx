@@ -9,24 +9,24 @@ import {Cq} from "../references";
 
 describe("Container", () => {
 
+    let methodResult: string = "methodResult";
+    let paramValue: string = "param";
+    let methodName: string = "test";
+    let proxy: any = {
+        invoke: function (method: string, param: any[]): any {
+            expect(param[0]).to.equal(paramValue);
+            expect(method).to.equal(methodName);
+            return JSON.stringify(methodResult);
+        }
+    };
+
     it("should return resourceModel", () => {
 
-
-        let methodResult: string = "methodResult";
-        let paramValue: string = "param";
-        let methodName: string = "test";
-        let resourceModel: any = {
-            invoke: function (method: string, param: any[]): any {
-                expect(param[0]).to.equal(paramValue);
-                expect(method).to.equal(methodName);
-                return JSON.stringify(methodResult);
-            }
-        };
         let container: Container = new Container((({
             getResourceModel: function (path: string, resourceType: string) {
                 expect(path).to.equal("/test");
                 expect(resourceType).to.equal("/components/test");
-                return resourceModel;
+                return proxy;
             }
         } as any) as Cq));
         container.register("cache", new Cache());
@@ -36,6 +36,40 @@ describe("Container", () => {
         let result: any = service.invoke(methodName, paramValue);
         expect(result).to.equal(methodResult);
 
+    });
+
+    it("should return requestModel", () => {
+
+        let container: Container = new Container((({
+            getRequestModel: function (path: string, resourceType: string) {
+                expect(path).to.equal("/test");
+                expect(resourceType).to.equal("/components/test");
+                return proxy;
+            }
+        } as any) as Cq));
+        container.register("cache", new Cache());
+        let service: ServiceProxy = container.getRequestModel("/test", "/components/test");
+
+        expect(service["name"]).to.equal("/test_/components/test");
+        let result: any = service.invoke(methodName, paramValue);
+        expect(result).to.equal(methodResult);
+
+    });
+
+    it("should return osgi service", () => {
+
+        let container: Container = new Container((({
+            getOsgiService: function (className: string) {
+                expect(className).to.equal("java.pack.Service");
+                return proxy;
+            }
+        } as any) as Cq));
+        container.register("cache", new Cache());
+        let service: ServiceProxy = container.getOsgiService("java.pack.Service");
+
+        expect(service["name"]).to.equal("java.pack.Service");
+        let result: any = service.invoke(methodName, paramValue);
+        expect(result).to.equal(methodResult);
 
     });
 

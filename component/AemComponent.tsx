@@ -23,6 +23,7 @@ export default class AemComponent<P, S> extends React.Component<P, S> {
     };
 
 
+    /* istanbul ignore next */
     public getWcmmode(): string {
         return this.context.wcmmode;
     }

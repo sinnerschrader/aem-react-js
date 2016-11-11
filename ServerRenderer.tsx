@@ -16,7 +16,6 @@ export default class ServerRenderer {
     constructor(registry: RootComponentRegistry, container: Container) {
         this.registry = registry;
         this.container = container;
-        console.log("constructor " + this.container.get("javaSling"));
     }
 
     private registry: RootComponentRegistry;

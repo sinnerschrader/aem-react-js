@@ -12,6 +12,7 @@ import ComponentManager from "../ComponentManager";
 import {ClientAemContext} from "../AemContext";
 import MockSling from "./MockSling";
 import {Cq} from "../references";
+import {ResourceComponent} from "../component/ResourceComponent";
 
 
 describe("WrapperFactory", () => {
@@ -53,6 +54,24 @@ describe("WrapperFactory", () => {
         expect(html).to.equal('<span data-global="bye" data-text="hallo"></span>');
 
     });
+
+    it(" should render simple vanilla component with transform", () => {
+
+        let transform = (resource: any, c: ResourceComponent<any, any, any>) => {
+            let props: any = {};
+            props.text = resource.textProperty;
+            return props;
+        };
+        container.register("sling", new MockSling({"/test": {textProperty: "hallo"}}));
+        let ReactClass: any = WrapperFactory.createWrapper({component: Text, transform: transform}, "components/text");
+        let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent aemContext={aemContext} comp={ReactClass} path="/test"/>);
+        let html: string = item.html();
+
+        expect(html).to.equal("<span>hallo</span>");
+
+    });
+
+
     it(" should render simple vanilla container", () => {
 
         container.register("sling", new MockSling({

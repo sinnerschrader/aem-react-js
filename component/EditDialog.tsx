@@ -49,9 +49,6 @@ export default class EditDialog extends AemComponent<EditDialogProps, any> {
             });
         }
         if (dialog.html) {
-            if (!attributes) {
-                attributes = {};
-            }
             attributes["dangerouslySetInnerHTML"] = {__html: dialog.html};
         }
         return React.createElement(dialog.element, attributes);

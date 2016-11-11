@@ -12,7 +12,7 @@ import Cache from "../store/Cache";
 
 describe("ServerRenderer", () => {
 
-    it("should return direct match", () => {
+    it("should render component", () => {
 
         class Test extends ResourceComponent<any, any, any> {
             public renderBody(): React.ReactElement<any> {
@@ -38,6 +38,25 @@ describe("ServerRenderer", () => {
         let response: ServerResponse = renderer.renderReactComponent("/test", "/components/test", "disabled");
 
         expect(response.html).to.equal('<span data-reactroot="" data-reactid="1" data-react-checksum="-1096281847">hi</span>');
+
+
+    });
+
+    it("should throw error if component is not found", () => {
+
+        let registry: RootComponentRegistry = ({
+            getComponent: function(resourceType: string): any {
+                return null;
+            }
+        } as RootComponentRegistry);
+        let renderer: ServerRenderer = new ServerRenderer(registry, null);
+        let error: boolean = false;
+        try {
+            renderer.renderReactComponent("/test", "/components/test", "disabled");
+        } catch (e) {
+            error = true;
+        }
+        expect(error).to.be.true;
 
 
     });
