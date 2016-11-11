@@ -1,10 +1,7 @@
 import * as ReactTestUtils from "react-addons-test-utils";
-
 import {expect} from "chai";
 import * as enzyme from "enzyme";
-
 import "./setup";
-
 import {ClientAemContext} from "../AemContext";
 import {ResourceComponent} from "../component/ResourceComponent";
 import RootComponent from "../component/RootComponent";
