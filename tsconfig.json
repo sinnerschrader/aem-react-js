@@ -47,6 +47,7 @@
     "./test/ServerRendererTest.tsx",
     "./test/ResourceComponentTest.tsx",
     "./test/WrapperFactoryTest.tsx",
+    "./test/ComponentManagerTest.tsx",
     "./test/CacheTest.tsx",
     "./test/ComponentRegistryTest.tsx",
     "./test/RootComponentRegistryTest.tsx",

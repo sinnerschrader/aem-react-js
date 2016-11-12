@@ -20,12 +20,15 @@ export interface ComponentTreeConfig {
  */
 export default class ComponentManager {
 
-    constructor(registry: RootComponentRegistry, container: Container) {
+    constructor(registry: RootComponentRegistry, container: Container, aDocument?: Document) {
         this.container = container;
         this.registry = registry;
+        this.document = aDocument || document;
     }
 
     private container: Container;
+
+    private document: Document;
 
     private registry: RootComponentRegistry;
 
@@ -34,7 +37,7 @@ export default class ComponentManager {
      * @param item
      */
     public initReactComponent(item: any): void {
-        let textarea = document.getElementById(item.getAttribute("data-react-id")) as HTMLTextAreaElement;
+        let textarea = this.document.getElementById(item.getAttribute("data-react-id")) as HTMLTextAreaElement;
         if (textarea) {
             let props: ComponentTreeConfig = JSON.parse(textarea.value);
             if (props.wcmmode === "disabled") {
@@ -55,7 +58,7 @@ export default class ComponentManager {
     }
 
 
-    public getResourceType(component: React.Component<any, any>): string {
+    public getResourceType(component: typeof React.Component): string {
         return this.registry.getResourceType(component);
     }
 
@@ -66,11 +69,12 @@ export default class ComponentManager {
     /**
      * find all root elements and initialize the react components
      */
-    public initReactComponents(): void {
-        let items = [].slice.call(document.querySelectorAll("[data-react]"));
+    public initReactComponents(): number {
+        let items = [].slice.call(this.document.querySelectorAll("[data-react]"));
         for (let item of items) {
             this.initReactComponent(item);
         }
+        return items.length;
     }
 
 }

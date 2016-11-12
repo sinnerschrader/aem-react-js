@@ -11,6 +11,7 @@ import {ResourceComponent} from "../component/ResourceComponent";
 import Cache from "../store/Cache";
 import ComponentRegistry from "../ComponentRegistry";
 import {Mapping} from "../RootComponentRegistry";
+import ComponentManager from "../ComponentManager";
 
 describe("RootComponentRegistry", () => {
 
@@ -31,10 +32,16 @@ describe("RootComponentRegistry", () => {
         rootRegistry.add(registry);
         rootRegistry.init();
 
-        let component: any = rootRegistry.getComponent(actualResourceType)
+        let component: any = rootRegistry.getComponent(actualResourceType);
+        expect(component).to.equal(TestView);
+
+        component = new ComponentManager(rootRegistry, null).getComponent(actualResourceType);
         expect(component).to.equal(TestView);
 
         let resourceType: string = rootRegistry.getResourceType(TestView);
+        expect(resourceType).to.equal(actualResourceType);
+
+        resourceType = new ComponentManager(rootRegistry, null).getResourceType(TestView);
         expect(resourceType).to.equal(actualResourceType);
 
     });
@@ -48,7 +55,7 @@ describe("RootComponentRegistry", () => {
         rootRegistry.add(registry);
         rootRegistry.init();
 
-        let component: any = rootRegistry.getComponent(actualResourceType)
+        let component: any = rootRegistry.getComponent(actualResourceType);
         expect(component).to.not.be.null;
 
         let resourceType: string = rootRegistry.getResourceType(TestView);
