@@ -7,7 +7,6 @@ This library is written in TypeScript.
 [![codecov](https://codecov.io/gh/sinnerschrader/aem-react-js/branch/master/graph/badge.svg)](https://codecov.io/gh/sinnerschrader/aem-react-js)
 
 
-
 ## Basic usage
 
 The ComponentManager finds react components defined in the mark up and instantiates them. The markup must provide the following:
