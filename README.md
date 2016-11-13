@@ -4,6 +4,7 @@ This npm module  is required by the [AEM React Integration project](http://www.g
 This library is written in TypeScript.
 
 [![Build Status](https://travis-ci.org/sinnerschrader/aem-react-js.svg?branch=master)](https://travis-ci.org/sinnerschrader/aem-react-js)
+[![codecov](https://codecov.io/gh/sinnerschrader/aem-react-js/branch/master/graph/badge.svg)](https://codecov.io/gh/sinnerschrader/aem-react-js)
 
 
 
