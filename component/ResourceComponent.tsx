@@ -121,35 +121,38 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
         return 0;
     }
 
-    protected renderChildren(content: Resource, path: string, childClassName?: string, childElementName?: string): React.ReactElement<any>[] {
+    protected renderChildren(path: string, childClassName?: string, childElementName?: string): React.ReactElement<any>[] {
 
-        let children: any = ResourceUtils.getChildren(content);
+        let childrenResource: any = !!path ? this.getResource()[path] : this.getResource();
+        let children: any = ResourceUtils.getChildren(childrenResource);
 
         let childComponents: React.ReactElement<any>[] = [];
+        let basePath: string = !!path ? path + "/" : "";
 
         // TODO alternatively create a div for each child and set className/elementName there
 
         Object.keys(children).forEach((nodeName: string, childIdx: number) => {
             let resource: Resource = children[nodeName];
             let resourceType: string = resource["sling:resourceType"];
+            let actualPath: string = basePath + nodeName;
             let componentType: typeof React.Component = this.getRegistry().getComponent(resourceType);
             if (childElementName) {
                 if (componentType) {
-                    let props: any = {resource: resource, path: nodeName, reactKey: path, key: nodeName};
+                    let props: any = {resource: resource, path: actualPath, reactKey: path, key: nodeName};
                     childComponents.push(React.createElement(childElementName, {
                         key: nodeName, className: childClassName
                     }, React.createElement(componentType, props)));
                 } else {
                     childComponents.push(React.createElement(childElementName, {
                         key: nodeName, className: childClassName
-                    }, React.createElement(ResourceInclude, {path: nodeName, key: nodeName, resourceType: resourceType})));
+                    }, React.createElement(ResourceInclude, {path: actualPath, key: nodeName, resourceType: resourceType})));
                 }
             } else {
                 if (componentType) {
-                    let props: any = {resource: resource, path: nodeName, reactKey: path, key: nodeName, className: childClassName};
+                    let props: any = {resource: resource, path: basePath + nodeName, reactKey: path, key: nodeName, className: childClassName};
                     childComponents.push(React.createElement(componentType, props));
                 } else {
-                    childComponents.push(<ResourceInclude path={nodeName} key={nodeName} resourceType={resourceType}></ResourceInclude>);
+                    childComponents.push(<ResourceInclude path={actualPath} key={nodeName} resourceType={resourceType}></ResourceInclude>);
                 }
             }
         }, this);
