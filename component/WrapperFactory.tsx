@@ -47,7 +47,7 @@ export class Wrapper extends ResourceComponent<any, any, any> {
         let children: React.ReactElement<any>[];
         if (!!this.config.parsys) {
             let parsysPath: string = this.getPath() + "/" + this.config.parsys.path;
-            children = this.renderChildren(this.getResource(), parsysPath, this.config.parsys.childClassName, this.config.parsys.childElementName);
+            children = this.renderChildren(parsysPath, this.config.parsys.childClassName, this.config.parsys.childElementName);
         }
         let props: any = this.getResource();
         if (this.config.props) {

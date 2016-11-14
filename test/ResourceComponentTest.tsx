@@ -31,15 +31,15 @@ describe("ResourceComponent", () => {
 
     class AemContainer extends ResourceComponent<any, any, any> {
         public renderBody(): React.ReactElement<any> {
-            let children: React.ReactElement<any>[] = this.renderChildren(this.getResource(), null, this.props.childClassName, this.props.childElementName);
+            let children: React.ReactElement<any>[] = this.renderChildren(this.props.childPath, this.props.childClassName, this.props.childElementName);
             return (<div data-container>{children}</div>);
         }
     }
 
-    function createContainer(className?: string, elementName?: string) {
+    function createContainer(className?: string, elementName?: string, childPath?: string): typeof AemContainer {
         return class AnonComponent extends ResourceComponent<any, any, any> {
             public renderBody(): React.ReactElement<any> {
-                let children: React.ReactElement<any>[] = this.renderChildren(this.getResource(), null, className, elementName);
+                let children: React.ReactElement<any>[] = this.renderChildren(childPath, className, elementName);
                 return (<div data-container>{children}</div>);
             }
         };
@@ -199,6 +199,35 @@ describe("ResourceComponent", () => {
 
             let dialog: CommonWrapper<any, any> = item.find(".dialog");
             expect(dialog[0].attribs.class.split(" ")).to.contain("childClass");
+
+        });
+
+
+    });
+
+    describe("should render react children with child path", () => {
+        before(() => {
+            let child: any = {
+                "sling:resourceType": "test", "text": "OOPS", "jcr:primaryType": "nt:unstructured"
+            };
+            container.register("sling", new MockSling({
+                "/content": {
+                    "children": {child1: child}
+                }, "/content/children": {
+                    "child1": child
+                }, "/content/children/child1": child
+            }));
+        });
+
+        it("with child path", () => {
+
+
+            const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext}
+                                                                                         comp={createContainer("childClass", null, "children")}
+                                                                                         path="/content"/>);
+
+            let child: CommonWrapper<any, any> = item.find(".test");
+            expect(child[0].children[0].data).to.equal("OOPS");
 
         });
 

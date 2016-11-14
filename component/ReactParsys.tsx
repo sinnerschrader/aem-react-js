@@ -15,7 +15,7 @@ export default class ReactParsys extends ResourceComponent<Resource, ReactParsys
 
     public renderBody(): React.ReactElement<any> {
 
-        let children:  React.ReactElement<any>[] = this.renderChildren(this.getResource(), this.getPath(), this.props.childClassName, this.props.childElementName);
+        let children:  React.ReactElement<any>[] = this.renderChildren(this.getPath(), this.props.childClassName, this.props.childElementName);
         return React.createElement(this.props.elementName || "div", {className: this.props.className}, children);
     }
 
