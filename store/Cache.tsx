@@ -53,7 +53,11 @@ export default class Cache {
     }
 
     public put(path: string, resource: any, depth?: number): void {
-        this.resources[path] = {data: resource, depth: this.normalizeDepth(depth)};
+        if (resource === null || typeof resource === "undefined") {
+            delete this.resources[path];
+        } else {
+            this.resources[path] = {data: resource, depth: this.normalizeDepth(depth)};
+        }
     }
 
     public get(path: string, depth?: number): void {

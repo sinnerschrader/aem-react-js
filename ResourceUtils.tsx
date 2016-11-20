@@ -3,7 +3,7 @@ export default class ResourceUtils {
     public static ABSOLUTE_PATH_PATTERN: RegExp = /^\//;
 
     /**
-     * returns only the properties of the given object whoe have a property named jcr:primaryType
+     * returns only the properties of the given object whoe have a property named sling:resourceType
      * @param resource the resource
      * @returns {any} the sub object
      */
@@ -12,7 +12,7 @@ export default class ResourceUtils {
         if (resource) {
             Object.keys(resource).forEach((propertyName: string): void => {
                 let child = resource[propertyName];
-                if (child["jcr:primaryType"]) {
+                if (child["sling:resourceType"]) {
                     children[propertyName] = child;
                 }
             });

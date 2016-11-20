@@ -8,6 +8,7 @@ export interface ResourceRouteProps {
     route: any;
 }
 
+
 /**
  * Used as the component of <Route/> to translate from the path variables to a absolute resource path and pass this to the react aem component
  * defined by the prop 'resourceComponent'.

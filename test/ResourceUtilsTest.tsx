@@ -25,10 +25,10 @@ describe("ResourceUtils", () => {
 
     it(" should return children which are objects with a primaryType prop", () => {
 
-        let test: any = {child1: {"jcr:primaryType": "1"}, value: "hallo"};
+        let test: any = {child1: {"sling:resourceType": "1"}, value: "hallo"};
         let children: any[] = ResourceUtils.getChildren(test);
         expect(Object.keys(children).length).to.equal(1);
-        expect(children["child1"]["jcr:primaryType"]).to.equal("1");
+        expect(children["child1"]["sling:resourceType"]).to.equal("1");
 
 
     });

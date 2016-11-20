@@ -1,17 +1,19 @@
 import {ResourceComponent} from "../component/ResourceComponent";
-import {EditDialogData} from "../store/Sling";
+import {EditDialogData, SlingResourceOptions} from "../store/Sling";
+import Cache from "../store/Cache";
 export default class MockSling {
-    constructor(resource: {[path: string]: any}, data?: EditDialogData) {
-        this.resources = resource;
+    constructor(cache?: Cache, data?: EditDialogData) {
+        this.cache = cache || new Cache();
         this.data = data;
     }
 
-    private resources: {[path: string]: any};
+    private cache: Cache;
     private data: EditDialogData;
 
-    public subscribe(listener: ResourceComponent<any, any, any>, path: string, options?: any): void {
-        if (this.resources[path]) {
-            listener.changedResource(path, this.resources[path]);
+    public subscribe(listener: ResourceComponent<any, any, any>, path: string, options?: SlingResourceOptions): void {
+        let resource: any = this.cache.get(path, options ? options.depth : null)
+        if (resource) {
+            listener.changedResource(path, resource);
         }
 
     }
