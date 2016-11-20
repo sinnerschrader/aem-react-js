@@ -5,6 +5,7 @@ This library is written in TypeScript.
 
 [![Build Status](https://travis-ci.org/sinnerschrader/aem-react-js.svg?branch=master)](https://travis-ci.org/sinnerschrader/aem-react-js)
 [![codecov](https://codecov.io/gh/sinnerschrader/aem-react-js/branch/master/graph/badge.svg)](https://codecov.io/gh/sinnerschrader/aem-react-js)
+[![npm version](https://badge.fury.io/js/aem-react-js.svg)](https://badge.fury.io/js/aem-react-js)
 
 
 ## Documentation
