@@ -123,6 +123,9 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 
     protected renderChildren(path: string, childClassName?: string, childElementName?: string): React.ReactElement<any>[] {
 
+        if (path && path.match(/^\//)) {
+            throw new Error("path must be relative. was " + path);
+        }
         let childrenResource: any = !!path ? this.getResource()[path] : this.getResource();
         let children: any = ResourceUtils.getChildren(childrenResource);
 

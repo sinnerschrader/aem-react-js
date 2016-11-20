@@ -6,8 +6,10 @@
  */
 export default class ResourceMappingImpl {
 
-    constructor(extension: string) {
-        this.extension = extension;
+    constructor(extension?: string) {
+        if (extension) {
+            this.extension = extension;
+        }
     }
 
     private extension: string = ".html";

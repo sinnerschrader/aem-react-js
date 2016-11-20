@@ -34,20 +34,20 @@ describe("EditDialog", () => {
     };
 
     it("should render wrapper element", () => {
-        container.register("sling", new MockSling({}));
+        container.register("sling", new MockSling(null));
         let item: CommonWrapper<any, any> = enzyme.mount(<Wrapper aemContext={aemContext}><EditDialog path="/test" resourceType="components/test"/></Wrapper>);
         expect(item.html()).to.equal('<div><div class="dialog"></div></div>');
     });
 
     it("should render wrapper element with extra className", () => {
-        container.register("sling", new MockSling({}));
+        container.register("sling", new MockSling());
         let item: CommonWrapper<any, any> = enzyme.mount(<Wrapper aemContext={aemContext}><EditDialog className="hi" path="/test"
                                                                                                       resourceType="components/test"/></Wrapper>);
         expect(item.html()).to.equal('<div><div class="dialog hi"></div></div>');
     });
 
     it("should render wrapper element with extra className and existing className", () => {
-        container.register("sling", new MockSling({}, {
+        container.register("sling", new MockSling(null, {
             element: "ul", child: {
                 element: "script", html: "Cq.makeEditable()"
             }
@@ -58,7 +58,7 @@ describe("EditDialog", () => {
     });
 
     it("should render classic ui", () => {
-        container.register("sling", new MockSling({}, {
+        container.register("sling", new MockSling(null, {
             "child": {
                 "child": null,
                 "attributes": {
@@ -79,7 +79,7 @@ describe("EditDialog", () => {
     });
 
     it("should render touch ui", () => {
-        container.register("sling", new MockSling({}, {
+        container.register("sling", new MockSling(null, {
             "child": {
                 "child": null,
                 "attributes": {

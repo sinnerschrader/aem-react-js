@@ -14,6 +14,7 @@ import ComponentManager from "../ComponentManager";
 import {CommonWrapper} from "enzyme";
 import MockSling from "./MockSling";
 import {Cq} from "../references";
+import Cache from "../store/Cache";
 
 describe("ResourceComponent", () => {
     class Test extends ResourceComponent<any, any, any> {
@@ -62,7 +63,7 @@ describe("ResourceComponent", () => {
     it("should render loading message", () => {
 
 
-        container.register("sling", new MockSling({}));
+        container.register("sling", new MockSling(null));
 
         let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent aemContext={aemContext} comp={Test} path="/content/notfound"/>);
         expect(item.find("span").html()).to.equal("<span>Loading</span>");
@@ -72,10 +73,16 @@ describe("ResourceComponent", () => {
     it("should get resource directly", () => {
 
 
-        container.register("sling", new MockSling({
-            "/content/embed": {embed: "Hallo"}, //
-            "/content/embed/test": {text: "Hallo"}
-        }));
+        let cache: Cache = new Cache();
+        cache.put(
+            "/content/embed",
+            {
+                test: {
+                    text: "Hallo"
+                }
+            }
+        )
+        container.register("sling", new MockSling(cache));
         const item: any = ReactTestUtils.renderIntoDocument(
             <RootComponent aemContext={aemContext} comp={Embedded} path="/content/embed"/>
         );
@@ -90,9 +97,9 @@ describe("ResourceComponent", () => {
 
     it("should get resource from absolute Path", () => {
 
-        container.register("sling", new MockSling({
-            "/content/test": {text: "Hallo"}
-        }));
+        let cache = new Cache();
+        cache.put("/content/test", {text: "Hallo"});
+        container.register("sling", new MockSling(cache));
 
         const item: any = ReactTestUtils.renderIntoDocument(
             <RootComponent aemContext={aemContext} comp={Test} path="/content/test"/>
@@ -107,13 +114,13 @@ describe("ResourceComponent", () => {
     });
 
     it("should render htl children wcmmode disabled", () => {
-        container.register("sling", new MockSling({
-            "/content": {
-                "child1": {
-                    "sling:resourceType": "htl/test", "text": "Hallo", "jcr:primaryType": "nt:unstructured"
-                }
+        let cache = new Cache();
+        cache.put("/content", {
+            "child1": {
+                "sling:resourceType": "htl/test", "text": "Hallo", "jcr:primaryType": "nt:unstructured"
             }
-        }));
+        });
+        container.register("sling", new MockSling(cache));
 
         const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={AemContainer}
                                                                                      path="/content"/>);
@@ -126,13 +133,13 @@ describe("ResourceComponent", () => {
 
     describe("should render htl children wcmmode enabled", () => {
         before(() => {
-            container.register("sling", new MockSling({
-                "/content": {
-                    "child1": {
-                        "sling:resourceType": "htl/test", "text": "Hallo", "jcr:primaryType": "nt:unstructured"
-                    }
+            let cache = new Cache();
+            cache.put("/content", {
+                "child1": {
+                    "sling:resourceType": "htl/test", "text": "Hallo", "jcr:primaryType": "nt:unstructured"
                 }
-            }));
+            });
+            container.register("sling", new MockSling(cache));
         });
 
         it("default ", () => {
@@ -158,15 +165,14 @@ describe("ResourceComponent", () => {
 
     describe("should render react children wcmmode disabled", () => {
         before(() => {
-            container.register("sling", new MockSling({
-                "/content": {
+            let cache = new Cache();
+            cache.put("/content",
+                {
                     "child1": {
                         "sling:resourceType": "test", "text": "OOPS", "jcr:primaryType": "nt:unstructured"
                     }
-                }, "/content/child1": {
-                    "sling:resourceType": "test", "text": "OOPS", "jcr:primaryType": "nt:unstructured"
-                }
-            }));
+                });
+            container.register("sling", new MockSling(cache));
         });
         it("default ", () => {
 
@@ -207,16 +213,15 @@ describe("ResourceComponent", () => {
 
     describe("should render react children with child path", () => {
         before(() => {
-            let child: any = {
-                "sling:resourceType": "test", "text": "OOPS", "jcr:primaryType": "nt:unstructured"
-            };
-            container.register("sling", new MockSling({
-                "/content": {
-                    "children": {child1: child}
-                }, "/content/children": {
-                    "child1": child
-                }, "/content/children/child1": child
-            }));
+            let cache: Cache = new Cache();
+            cache.put("/content", {
+                "children": {
+                    child1: {
+                        "sling:resourceType": "test", "text": "OOPS", "jcr:primaryType": "nt:unstructured"
+                    }
+                }
+            });
+            container.register("sling", new MockSling(cache));
         });
 
         it("with child path", () => {
