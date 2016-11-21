@@ -6,6 +6,7 @@ import {Container} from "./di/Container";
 import Cache from "./store/Cache";
 
 declare var window: Window;
+declare var document: Document;
 
 export interface ComponentTreeConfig {
     wcmmode: string;
@@ -20,17 +21,17 @@ export interface ComponentTreeConfig {
  */
 export default class ComponentManager {
 
-    constructor(registry: RootComponentRegistry, container: Container, aDocument?: Document) {
-        this.container = container;
-        this.registry = registry;
-        this.document = aDocument || document;
-    }
-
     private container: Container;
 
     private document: Document;
 
     private registry: RootComponentRegistry;
+
+    constructor(registry: RootComponentRegistry, container: Container, aDocument?: Document) {
+        this.container = container;
+        this.registry = registry;
+        this.document = aDocument || document;
+    }
 
     /**
      * initialize react component in dom.
@@ -42,7 +43,7 @@ export default class ComponentManager {
             let props: ComponentTreeConfig = JSON.parse(textarea.value);
             if (props.wcmmode === "disabled") {
                 let comp = this.registry.getComponent(props.resourceType);
-                if (comp == null) {
+                if (comp === null) {
                     console.error("React component '" + props.resourceType + "' does not exist in component list.");
                 } else {
                     let cache: Cache = this.container.get("cache");

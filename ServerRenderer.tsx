@@ -13,15 +13,14 @@ export interface ServerResponse {
 
 export default class ServerRenderer {
 
-    constructor(registry: RootComponentRegistry, container: Container) {
-        this.registry = registry;
-        this.container = container;
-    }
-
     private registry: RootComponentRegistry;
 
     private container: Container;
 
+    constructor(registry: RootComponentRegistry, container: Container) {
+        this.registry = registry;
+        this.container = container;
+    }
 
     /* render component as string.
      * @param component

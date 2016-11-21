@@ -5,6 +5,7 @@ typings
 npm-debug.log
 *.d.ts
 .nyc_output
+*.jsx
 *.js
 *.js.map
 *.tgz
