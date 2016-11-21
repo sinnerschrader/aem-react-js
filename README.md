@@ -12,15 +12,6 @@ This library is written in TypeScript.
 
 The combined documentation for this javascript subproject and the main AEM packages have moved to [aem-react](https://sinnerschrader.github.io/aem-react/).
 
-## Notes
-
-Currently using typescript@next because we get a weird error otherwise:
-
-````
-router/AemLink.tsx(4,38): error TS4020: Extends clause of exported class 'AemLink' has or is using private name 'Link'.
-````
-
-
 ## Trouble shooting`
 
 ### Error during rendering on server only
