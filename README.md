@@ -10,8 +10,7 @@ This library is written in TypeScript.
 
 ## Documentation
 
-The combined documentation for this javascript subproject and the main AEM packages have moved to [aem-react](https://sinnerschrader.github
-.io/aem-react/).
+The combined documentation for this javascript subproject and the main AEM packages have moved to [aem-react](https://sinnerschrader.github.io/aem-react/).
 
 ## Notes
 
