@@ -37,7 +37,7 @@
     "chai": "^3.5.0",
     "codecov": "^1.0.1",
     "enzyme": "^2.5.1",
-    "espower-typescript": "^6.0.1",
+    "espower-typescript": "^7.0.0",
     "jsdom": "^9.8.3",
     "mocha": "^3.1.2",
     "nyc": "^10.0.0",
