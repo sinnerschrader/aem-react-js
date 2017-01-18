@@ -49,7 +49,7 @@ export default class ComponentRegistry {
     }
 
     private mapClassToResourceType(componentClassName: string): string {
-        let parts: string[] = componentClassName.match(/([A-Z][a-z]*)/);
+        let parts: string[] = componentClassName.match(/([A-Z][a-z0-9]*)/);
         if (parts) {
             let resourceType: string = parts[0].toLocaleLowerCase();
             let rest: string = componentClassName.substring(parts[0].length);
