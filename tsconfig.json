@@ -40,7 +40,7 @@
     "./include.tsx",
     "./ServerRenderer.tsx",
     "./references.d.ts",
-    "./typings/tsd.d.ts",
+    "./typings/index.d.ts",
     "./test/tests.tsx",
     "./test/ResourceRouteTest.tsx",
     "./test/MockSling.tsx",

@@ -4,7 +4,7 @@
   "description": "Aem components written in React.",
   "scripts": {
     "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
-    "build": "tsd install &&./node_modules/typescript/bin/tsc",
+    "build": "typings install &&./node_modules/typescript/bin/tsc",
     "test": "npm run build && npm run lint &&  nyc mocha --compilers ts:espower-typescript/guess test/*.js ",
     "single-test": "nyc mocha --compilers ts:espower-typescript/guess ",
     "test-html": "npm run test && nyc report --reporter=html",
@@ -43,9 +43,9 @@
     "nyc": "^10.0.0",
     "power-assert": "^1.2.0",
     "react-addons-test-utils": "^15.3.1",
-    "tsd": "^0.6.5",
     "tslint": "^4.0.1",
-    "typescript": "^2.1.1"
+    "typescript": "^2.1.1",
+    "typings": "^2.1.0"
   },
   "dependencies": {
     "react": "^15.3.1",
