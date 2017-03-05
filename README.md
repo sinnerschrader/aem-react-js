@@ -1,5 +1,7 @@
 # AEM React integration module
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/sinnerschrader/aem-react-js.svg)](https://greenkeeper.io/)
+
 This npm module  is required by the [AEM React Integration project](http://www.github.com/sinnerschrader/aem-react).
 This library is written in TypeScript.
 
