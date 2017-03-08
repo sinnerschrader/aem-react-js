@@ -66,10 +66,12 @@ var ResourceComponent = (function (_super) {
         if (this.state.state === STATE.LOADING) {
             child = this.renderLoading();
         }
-        else if (!!this.props.root) {
+        else if (!!this.props.skipRenderDialog) {
+            console.log("RC skip root dialog");
             return this.renderBody();
         }
         else {
+            console.log("RC render root dialog");
             child = this.renderBody();
         }
         return (<EditDialog_1.default path={this.getPath()} resourceType={this.getResourceType()} className={this.props.className}>

@@ -12,11 +12,12 @@ var RootComponent = (function (_super) {
     }
     RootComponent.prototype.getChildContext = function () {
         return {
-            aemContext: this.props.aemContext, path: this.props.path
+            aemContext: this.props.aemContext, path: this.props.path,
         };
     };
     RootComponent.prototype.render = function () {
-        var childProps = { path: this.props.path, root: true, wcmmode: this.props.wcmmode };
+        console.log("ROOTCOMponet render root dialog " + this.props.renderRootDialog);
+        var childProps = { path: this.props.path, root: true, wcmmode: this.props.wcmmode, skipRenderDialog: !this.props.renderRootDialog };
         return React.createElement(this.props.comp, childProps);
     };
     return RootComponent;

@@ -7,7 +7,7 @@
     "sourceMap": true,
     "module": "commonjs",
     "jsx": "react",
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "preserveConstEnums": false,
     "declaration": true
   },
@@ -33,6 +33,7 @@
     "./router/ResourceMappingImpl.tsx",
     "./router/ResourceRoute.tsx",
     "./router/AemLink.tsx",
+    "./router/AemRoute.tsx",
     "./AemContext.tsx",
     "./ComponentManager.tsx",
     "./ComponentRegistry.tsx",

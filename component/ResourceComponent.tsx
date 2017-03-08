@@ -11,7 +11,7 @@ export interface Resource {
 }
 
 export enum STATE {
-    LOADING, LOADED, FAILED
+    LOADING, LOADED, FAILED,
 }
 
 export interface ResourceState {
@@ -22,6 +22,7 @@ export interface ResourceState {
 
 export interface ResourceProps {
     path: string;
+    skipRenderDialog?: boolean;
     root?: boolean;
     wcmmode?: string;
     className?: string;
@@ -87,9 +88,11 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
         let child: React.ReactElement<any>;
         if (this.state.state === STATE.LOADING) {
             child = this.renderLoading();
-        } else if (!!this.props.root) {
+        } else if (!!this.props.skipRenderDialog) {
+            console.log("RC skip root dialog");
             return this.renderBody();
         } else {
+            console.log("RC render root dialog");
             child = this.renderBody();
         }
         return (
@@ -126,7 +129,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
         if (path && path.match(/^\//)) {
             throw new Error("path must be relative. was " + path);
         }
-        let childrenResource: any = !!path ? this.getResource()[path] : this.getResource();
+        let childrenResource: any = !!path ? (this.getResource() as any)[path] : this.getResource();
         let children: any = ResourceUtils.getChildren(childrenResource);
 
         let childComponents: React.ReactElement<any>[] = [];

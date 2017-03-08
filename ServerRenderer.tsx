@@ -27,7 +27,7 @@ export default class ServerRenderer {
      * @param props
      * @returns {string}
      */
-    public renderReactComponent(path: string, resourceType: string, wcmmode: string): ServerResponse {
+    public renderReactComponent(path: string, resourceType: string, wcmmode: string, renderRootDialog?: boolean): ServerResponse {
 
         console.log("render react on path " + path);
         console.log("render react component " + resourceType);
@@ -39,7 +39,9 @@ export default class ServerRenderer {
         }
 
         let ctx: AemContext = {registry: this.registry, container: this.container};
-        let html: string = ReactDom.renderToString(<RootComponent aemContext={ctx} comp={comp} path={path} wcmmode={wcmmode}/>);
+        console.log("render root dialog " + renderRootDialog);
+        let html: string = ReactDom.renderToString(<RootComponent aemContext={ctx} comp={comp} path={path} wcmmode={wcmmode}
+                                                                  renderRootDialog={!!renderRootDialog}/>);
 
         let cache: Cache = this.container.get("cache");
         return {html: html, state: JSON.stringify(cache.getFullState())};

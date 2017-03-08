@@ -1,6 +1,7 @@
 import {SlingResourceOptions, AbstractSling, EditDialogData} from "./Sling";
 import Cache from "./Cache";
 import {ResourceComponent} from "../component/ResourceComponent";
+import {Promise} from "es6-promise";
 
 export interface FetchWindow {
     fetch(url: string, options: any): any;
@@ -11,7 +12,14 @@ export interface FetchWindow {
  * the part of the cache which corresponds to the given component from the server.
  */
 export default class ClientSling extends AbstractSling {
-    constructor(cache: Cache, origin: string, fetch?: FetchWindow) {
+
+    private cache: Cache;
+    private origin: string;
+    private fetch: FetchWindow;
+    private delayInMillis: number;
+
+    // TODO change params arry into map
+    constructor(cache: Cache, origin: string, fetch?: FetchWindow, delayInMillis?: number) {
         super();
         this.cache = cache;
         this.origin = origin;
@@ -21,10 +29,6 @@ export default class ClientSling extends AbstractSling {
             this.fetch = fetch;
         }
     }
-
-    private cache: Cache;
-    private origin: string;
-    private fetch: FetchWindow;
 
     public subscribe(listener: ResourceComponent<any, any, any>, path: string, options?: SlingResourceOptions): void {
         //
@@ -53,6 +57,16 @@ export default class ClientSling extends AbstractSling {
                 if (response.status === 404) {
                     return {};
                 } else {
+                    if (this.delayInMillis) {
+                        let promise = new Promise(
+                            (resolve: (value?: any | PromiseLike<any>) => void, reject: (error?: any) => void) => {
+                                window.setTimeout(
+                                    () => {
+                                        resolve(response.json());
+                                    }, this.delayInMillis);
+                            });
+                        return promise;
+                    }
                     return response.json();
                 }
             }).then((json: any) => {
