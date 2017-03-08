@@ -1,5 +1,6 @@
 import {expect} from "chai";
 import AemTest from "./AemTest";
+import * as enzyme from "enzyme";
 
 import {ResourceComponent} from "../component/ResourceComponent";
 import * as React from "react";
@@ -8,6 +9,7 @@ import ComponentRegistry from "../ComponentRegistry";
 import ReactParsys from "../component/ReactParsys";
 import AemLink from "../router/AemLink";
 import {Router, Route, createMemoryHistory} from "react-router";
+import {ShallowWrapper} from "enzyme";
 
 describe("AemLink", () => {
 
@@ -41,7 +43,7 @@ describe("AemLink", () => {
     aemTest.addRegistry(registry);
     aemTest.init();
 
-    it("should render AemLink", () => {
+    it("should render AemLink in Router", () => {
 
         let wrapper: CheerioWrapper<any, any> = aemTest.render({
             resourceType: "/components/router-component"
@@ -50,5 +52,42 @@ describe("AemLink", () => {
 
     });
 
-});
+    it("should render AemLink", () => {
+
+        class MyLink extends AemLink {
+            protected isClickable(): boolean {
+                return true;
+            }
+        }
+        let router: any = {}
+        let history = {
+            createLocation: function () {
+                return {pathname: "bla.html"};
+            }
+
+        };
+        let container = {
+            get: function () {
+                return history;
+            }
+        };
+
+
+        let context: any = {
+            router: router,
+            wcmmode: "disabled",
+
+            aemContext: {
+                container: container
+            }
+        };
+
+
+        let wrapper: ShallowWrapper<any, any> = enzyme.shallow((<MyLink to="bla.html"/>), {context: context})
+        wrapper.simulate('click');
+
+    });
+
+})
+;
 

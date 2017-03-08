@@ -5,6 +5,8 @@ import "./setup";
 import ResourceUtils from "../ResourceUtils";
 import {PathResult} from "../ResourceUtils";
 
+
+
 describe("ResourceUtils", () => {
 
     it(" should return the containing page path", () => {
@@ -28,7 +30,7 @@ describe("ResourceUtils", () => {
         let test: any = {child1: {"sling:resourceType": "1"}, value: "hallo"};
         let children: any[] = ResourceUtils.getChildren(test);
         expect(Object.keys(children).length).to.equal(1);
-        expect(children["child1"]["sling:resourceType"]).to.equal("1");
+        expect(((children as any)["child1"] as any)["sling:resourceType"]).to.equal("1");
 
 
     });
