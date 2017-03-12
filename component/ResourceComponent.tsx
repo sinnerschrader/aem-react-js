@@ -5,6 +5,7 @@ import {Sling} from "../store/Sling";
 import RootComponentRegistry from "../RootComponentRegistry";
 import ResourceUtils from "../ResourceUtils";
 import {ResourceInclude} from "../include";
+import * as shallowCompare from "react-addons-shallow-compare";
 
 export interface Resource {
     "sling:resourceType": string;
@@ -40,16 +41,21 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 
     public getChildContext(): any {
         return {
-            wcmmode: this.getWcmmode(), path: this.getPath()
+            wcmmode: this.getWcmmode(),
+            path: this.getPath(),
         };
 
+    }
+
+    public shouldComponentUpdate(nextProps: P, nextState: S): boolean {
+        return shallowCompare(this, nextProps, nextState);
     }
 
     public componentWillMount(): void {
         this.initialize();
     }
 
-    public componentDidUpdate(prevProps: ResourceProps): void {
+    public componentWillReceiveProps(prevProps: ResourceProps): void {
         this.initialize();
     }
 

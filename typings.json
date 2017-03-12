@@ -13,5 +13,9 @@
     "jsdom": "github:DefinitelyTyped/DefinitelyTyped/jsdom/jsdom.d.ts#88c0d5f868bc184d70b6799d36b1946787beb48d",
     "enzyme": "github:DefinitelyTyped/DefinitelyTyped/enzyme/enzyme.d.ts#df827a4d96dc999b3ecf113da6afbb49b2c9f0a2",
     "react-addons-test-utils": "github:DefinitelyTyped/DefinitelyTyped/react/react-addons-test-utils.d.ts#f5ab2df94e1aabf0fc6d783ad01c4c4671760627"
+  },
+  "dependencies": {
+    "react-addons-shallow-compare": "registry:dt/react-addons-shallow-compare#0.14.0+20170123203653"
   }
+
 }
