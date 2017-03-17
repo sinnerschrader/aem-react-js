@@ -3,13 +3,13 @@ import ComponentRegistry from "./ComponentRegistry";
 
 export class Mapping {
     public resourceType: string;
-    public vanilla: boolean;
+    public vanillaClass: typeof React.Component;
     public componentClass: typeof React.Component;
 
-    constructor(resourceType: string, componentClass: typeof React.Component, vanilla: boolean) {
+    constructor(resourceType: string, componentClass: typeof React.Component, vanillaClass: typeof React.Component) {
         this.resourceType = resourceType;
         this.componentClass = componentClass;
-        this.vanilla = vanilla;
+        this.vanillaClass = vanillaClass;
     }
 }
 
@@ -17,8 +17,9 @@ export default class RootComponentRegistry {
 
     private registries: ComponentRegistry[];
 
-    private resourceTypeToComponent: { [name: string]: typeof React.Component } = {};
+    private resourceTypeToComponent: {[name: string]: typeof React.Component} = {};
     private componentToResourceType: {[componentClassName: string]: string} = {};
+    private vanillaToWrapper: {[componentClassName: string]: string} = {};
 
     constructor() {
         this.registries = [];
@@ -48,9 +49,12 @@ export default class RootComponentRegistry {
         /* tslint:disable:no-string-literal */
         let componentClassName: string = (mapping.componentClass as any)["name"];
         /* tsslint:enable:no-string-literal */
-        if (!mapping.vanilla) {
+        if (!mapping.vanillaClass) {
             // vanilla component's class all have the same name
             this.componentToResourceType[componentClassName] = mapping.resourceType;
+        } else {
+            let vanillaClassName: string = (mapping.vanillaClass as any)["name"];
+            this.vanillaToWrapper[vanillaClassName] = mapping.componentClass;
         }
         this.resourceTypeToComponent[mapping.resourceType] = mapping.componentClass;
     }
@@ -61,6 +65,11 @@ export default class RootComponentRegistry {
                 this.register(mapping);
             }, this);
         }, this);
+    }
+
+    public getVanillaWrapper(component: typeof React.Component): typeof React.Component {
+        let name: string = (component as any) ["name"];
+        return this.vanillaToWrapper[name];
     }
 
 }

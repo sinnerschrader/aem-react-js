@@ -3,6 +3,7 @@ import {Link} from "react-router";
 import Router = ReactRouter.Router;
 import LinkProps = ReactRouter.LinkProps;
 import LocationDescriptor = HistoryModule.LocationDescriptor;
+import {AemContext} from "../AemContext";
 
 export default class AemLink extends React.Component<LinkProps, void> {
 
