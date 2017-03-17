@@ -14,11 +14,11 @@
   "files": [
     "./ComponentManager.tsx",
     "./component/ResourceComponent.tsx",
+    "./component/VanillaInclude.tsx",
     "./component/ReactParsys.tsx",
     "./component/RootComponent.tsx",
     "./component/AemComponent.tsx",
     "./component/EditDialog.tsx",
-    "./component/VanillaWrapper.tsx",
     "./component/EditMarker.tsx",
     "./component/WrapperFactory.tsx",
     "./component/Script.tsx",

@@ -24,7 +24,7 @@ export default class ComponentRegistry {
         let componentClassName: string = (componentClass as any)["name"];
         /* tsslint:enable:no-string-literal */
         let resourceType: string = this.mapToResourceType(componentClassName);
-        this.mappings.push(new Mapping(resourceType, componentClass, false));
+        this.mappings.push(new Mapping(resourceType, componentClass, null));
     }
 
     public registerVanilla(config: ComponentConfig): void {
@@ -33,7 +33,7 @@ export default class ComponentRegistry {
         /* tsslint:enable:no-string-literal */
         let resourceType: string = this.mapToResourceType(componentClassName);
         let wrapperClass: React.ComponentClass<any> = WrapperFactory.createWrapper(config, resourceType);
-        this.mappings.push(new Mapping(resourceType, wrapperClass, true));
+        this.mappings.push(new Mapping(resourceType, wrapperClass, config.component));
     }
 
     private mapToResourceType(componentClassName: string): string {

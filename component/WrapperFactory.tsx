@@ -19,6 +19,7 @@ export default class WrapperFactory {
      */
     public static createWrapper(config: ComponentConfig, resourceType: string): React.ComponentClass<any> {
         return class TheWrapper extends Wrapper {
+
             constructor(props?: any, context?: any) {
                 super(config, props, context);
             }
