@@ -21,7 +21,7 @@ describe("ComponentRegistry", () => {
         let mapping: Mapping = registry.mappings[0];
         expect(mapping.componentClass).to.equal(TestView);
         expect(mapping.resourceType).to.equal("/components/test-view");
-        expect(mapping.vanilla).to.be.false;
+        expect(mapping.vanillaClass).to.be.null;
 
     });
 
@@ -34,7 +34,7 @@ describe("ComponentRegistry", () => {
         let mapping: Mapping = registry.mappings[0];
         expect(mapping.componentClass).to.equal(TestView);
         expect(mapping.resourceType).to.equal("/x/TestView");
-        expect(mapping.vanilla).to.be.false;
+        expect(mapping.vanillaClass).to.be.null;
 
     });
 
@@ -45,7 +45,7 @@ describe("ComponentRegistry", () => {
         let mapping: Mapping = registry.mappings[0];
         expect(mapping.componentClass).to.not.equal(TestView);
         expect(mapping.resourceType).to.equal("/components/vanilla/test-view");
-        expect(mapping.vanilla).to.be.true;
+        expect(mapping.vanillaClass).to.equal(TestView);
 
     });
 });

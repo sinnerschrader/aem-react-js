@@ -9,6 +9,7 @@ var AemComponent_1 = require("./AemComponent");
 var EditDialog_1 = require("./EditDialog");
 var ResourceUtils_1 = require("../ResourceUtils");
 var include_1 = require("../include");
+var shallowCompare = require("react-addons-shallow-compare");
 (function (STATE) {
     STATE[STATE["LOADING"] = 0] = "LOADING";
     STATE[STATE["LOADED"] = 1] = "LOADED";
@@ -25,13 +26,17 @@ var ResourceComponent = (function (_super) {
     }
     ResourceComponent.prototype.getChildContext = function () {
         return {
-            wcmmode: this.getWcmmode(), path: this.getPath()
+            wcmmode: this.getWcmmode(),
+            path: this.getPath(),
         };
+    };
+    ResourceComponent.prototype.shouldComponentUpdate = function (nextProps, nextState) {
+        return shallowCompare(this, nextProps, nextState);
     };
     ResourceComponent.prototype.componentWillMount = function () {
         this.initialize();
     };
-    ResourceComponent.prototype.componentDidUpdate = function (prevProps) {
+    ResourceComponent.prototype.componentWillReceiveProps = function (prevProps) {
         this.initialize();
     };
     ResourceComponent.prototype.initialize = function () {
