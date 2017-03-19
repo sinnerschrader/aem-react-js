@@ -38,7 +38,6 @@ export default class Cache {
         let result: T = this.getServiceCall(cacheKey);
         if (typeof result === "undefined") {
             result = callback();
-            console.log("new service call: " + result);
             this.putServiceCall(cacheKey, result);
         }
         return result;
@@ -47,7 +46,7 @@ export default class Cache {
     public mergeCache(cache: any): void {
         if (cache) {
             ["resources", "included", "scripts", "serviceCalls"].forEach((key) => {
-                this.merge(this[key], cache[key]);
+                this.merge((this as any)[key], cache[key]);
             });
         }
     }

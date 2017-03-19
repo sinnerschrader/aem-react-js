@@ -148,7 +148,7 @@ describe("Cache", () => {
 
         let cache: Cache = new Cache();
         cache.put("incl", {x: 1});
-        expect(cache.get("incl")["x"]).to.equals(1);
+        expect((cache.get("incl") as any)["x"]).to.equals(1);
         cache.putIncluded("incl", "value");
         expect(cache.getIncluded("incl")).to.equals("value");
         cache.putScript("script", {element: "test"});
