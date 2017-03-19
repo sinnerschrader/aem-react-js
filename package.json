@@ -1,8 +1,8 @@
 {
   "name": "aem-react-js",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Aem components written in React.",
-  "typings":  "dist/src/index.d.ts",
+  "typings": "dist/src/index.d.ts",
   "scripts": {
     "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
     "build": "typings install &&./node_modules/typescript/bin/tsc",
