@@ -14,15 +14,17 @@ This library is written in TypeScript.
 
 The combined documentation for this javascript subproject and the main AEM packages have moved to [aem-react](https://sinnerschrader.github.io/aem-react/).
 
-## Trouble shooting`
+## Browser compatibility
 
-### Error during rendering on server only
+This library uses the following _new_ features:
 
-```
-Caused by: java.lang.ArrayIndexOutOfBoundsException: 8
-        at java.lang.invoke.MethodHandleImpl$ArrayAccessor.getElementL(MethodHandleImpl.java:130)
-        at jdk.nashorn.internal.scripts.Script$Recompilation$42327$242230AA$\^eval\_.L:6890$instantiateReactComponent(<eval>:6975)
-        at jdk.nashorn.internal.scripts.Script$Recompilation$42422$495489AAA$\^eval\_.L:14349$instantiateChild(<eval>:14379)
-        at jdk.nashorn.internal.scripts.Script$Recompilation$42420$464731AAAA$\^eval\_.L:13343$traverseAllChildrenImpl(<eval>:13445)
-```
-Does not happen in env==production
+### `function.name`
+
+Use a polyfill.
+[support for function.name](http://kangax.github.io/compat-table/es6/#test-function_name_property)
+
+### `window.fetch` 
+
+Pass an object with method `fetch()` to `ClientSling` constructor or use a polyfill.
+[caniuse fetch](http://caniuse.com/#search=fetch)
+
