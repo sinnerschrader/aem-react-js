@@ -14,6 +14,7 @@ import MockSling from "./MockSling";
 import {Cq} from "../references";
 import {ResourceComponent} from "../component/ResourceComponent";
 import Cache from "../store/Cache";
+import VanillaInclude from "../component/VanillaInclude";
 
 
 describe("WrapperFactory", () => {
@@ -58,7 +59,27 @@ describe("WrapperFactory", () => {
 
     });
 
+    it(" should render simple vanilla include", () => {
+
+        class Test extends ResourceComponent<any, any, any> {
+            public renderBody(): any {
+                return (<div><VanillaInclude path="vanilla" component={Text}/></div>);
+            }
+        }
+
+        let cache = new Cache();
+        cache.put("/test", {vanilla : {text: "good bye"}});
+        container.register("sling", new MockSling(cache));
+        let ReactClass: any = WrapperFactory.createWrapper({component: Test}, "components/test");
+        let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent aemContext={aemContext} comp={Test} path="/test"/>);
+        let html: string = item.html();
+
+        expect(html).to.equal('<div><div class="dialog"><span>good bye</span></div></div>');
+
+    });
+
     it(" should render simple vanilla component with transform", () => {
+
 
         let transform = (resource: any, c: ResourceComponent<any, any, any>) => {
             let props: any = {};

@@ -16,6 +16,8 @@ import MockSling from "./MockSling";
 import {Cq} from "../references";
 import Cache from "../store/Cache";
 
+
+
 describe("ResourceComponent", () => {
     class Test extends ResourceComponent<any, any, any> {
         public renderBody(): React.ReactElement<any> {
@@ -125,7 +127,7 @@ describe("ResourceComponent", () => {
         const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={AemContainer}
                                                                                      path="/content"/>);
 
-        let include: CommonWrapper<any, any> = item.find("include");
+        let include: any = item.find("include");
         expect(include[0].attribs.path).to.equal("/content/child1");
         expect(include[0].attribs.resourcetype).to.equal("htl/test");
 
@@ -146,7 +148,7 @@ describe("ResourceComponent", () => {
             const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="edit" aemContext={aemContext} comp={AemContainer}
                                                                                          path="/content"/>);
 
-            let include: CommonWrapper<any, any> = item.find("include");
+            let include: any = item.find("include");
             expect(include[1].attribs.path).to.equal("/content/*");
             expect(include[1].attribs.resourcetype).to.equal("foundation/components/parsys/new");
         });
@@ -180,7 +182,7 @@ describe("ResourceComponent", () => {
             const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={AemContainer}
                                                                                          path="/content"/>);
 
-            let test: CommonWrapper<any, any> = item.find(".test");
+            let test: any = item.find(".test");
             expect(test[0].children[0].data).to.equal("OOPS");
 
         });
@@ -191,7 +193,7 @@ describe("ResourceComponent", () => {
                                                                                          comp={createContainer("childClass","el")}
                                                                                          path="/content"/>);
 
-            let test: CommonWrapper<any, any> = item.find("el");
+            let test: any = item.find("el");
             expect(test.length).to.equal(1);
             expect(test[0].attribs.class).to.equal("childClass");
 
@@ -203,7 +205,7 @@ describe("ResourceComponent", () => {
                                                                                          comp={createContainer("childClass")}
                                                                                          path="/content"/>);
 
-            let dialog: CommonWrapper<any, any> = item.find(".dialog");
+            let dialog: any = item.find(".dialog");
             expect(dialog[0].attribs.class.split(" ")).to.contain("childClass");
 
         });
@@ -231,7 +233,7 @@ describe("ResourceComponent", () => {
                                                                                          comp={createContainer("childClass", null, "children")}
                                                                                          path="/content"/>);
 
-            let child: CommonWrapper<any, any> = item.find(".test");
+            let child: any = item.find(".test");
             expect(child[0].children[0].data).to.equal("OOPS");
 
         });

@@ -23,10 +23,6 @@ export interface JavaSling {
   getPagePath(): string;
 }
 
-export interface Promise {
-  then(success: (result: any) => void, error: (e: any) => void): Promise;
-}
-
 export interface JsProxy {
   invoke(name: string, args: any[]): string;
 }

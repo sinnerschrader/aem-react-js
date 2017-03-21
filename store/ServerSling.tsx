@@ -25,7 +25,6 @@ export default class ServerSling extends AbstractSling {
             }
             this.cache.put(path, resource, depth);
         }
-        console.log(" ServerSling resource is loaded " + path + "   " + resource);
         listener.changedResource(path, resource);
     }
 
