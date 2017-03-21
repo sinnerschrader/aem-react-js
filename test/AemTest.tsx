@@ -10,7 +10,7 @@ import {CheerioWrapper} from "enzyme";
 import * as React from "react";
 import Cache from "../store/Cache";
 import MockSling from "./MockSling";
-import {ShallowWrapper} from "enzyme";
+
 
 export default class AemTest {
 
