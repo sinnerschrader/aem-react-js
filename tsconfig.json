@@ -47,6 +47,7 @@
     "./test/MockSling.tsx",
     "./test/ResourceUtilsTest.tsx",
     "./test/ServerRendererTest.tsx",
+    "./test/ResourceIncludeTest.tsx",
     "./test/ResourceComponentTest.tsx",
     "./test/WrapperFactoryTest.tsx",
     "./test/ComponentManagerTest.tsx",
