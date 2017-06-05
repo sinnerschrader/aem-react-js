@@ -35,7 +35,7 @@
     "url": "http://www.github.com/sinnerschrader/aem-react-js"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.0.2",
     "codecov": "^2.0.2",
     "enzyme": "^2.5.1",
     "espower-typescript": "^8.0.0",
