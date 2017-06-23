@@ -169,8 +169,9 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 
         let newZone: React.ReactElement<any> = null;
         if (this.isWcmEnabled()) {
+            let parsysPath = path ? path + "/*" : "*";
             let resourceType = "foundation/components/parsys/new";
-            newZone = <ResourceInclude key="newZone" element="div" path="*"
+            newZone = <ResourceInclude key="newZone" element="div" path={ parsysPath }
                                        resourceType={ resourceType }></ResourceInclude>;
             childComponents.push(newZone);
         }
