@@ -6,13 +6,14 @@ export interface ComponentConfig {
     depth?: number;
     parsys?: ReactParsysProps;
     component: typeof React.Component;
-    props?: {[name: string]: any};
-    transform?: (props: {[name: string]: any}, r: ResourceComponent<any, any, any>) => {[name: string]: any};
+    props?: { [name: string]: any };
+    transform?: (props: { [name: string]: any }, r: ResourceComponent<any, any, any>) => { [name: string]: any };
+    loadingComponent?: typeof React.Component;
 }
 
 export default class WrapperFactory {
     /**
-     * 
+     *
      * @param config
      * @param resourceType
      * @return {TheWrapper}
@@ -53,7 +54,7 @@ export class Wrapper extends ResourceComponent<any, any, any> {
         if (this.config.props) {
             Object.keys(this.config.props).forEach((key: string) => props[key] = this.config.props[key]);
         }
-        let newProps: {[name: string]: any};
+        let newProps: { [name: string]: any };
         if (this.config.transform) {
             newProps = this.config.transform(props, this);
         } else {
@@ -65,4 +66,13 @@ export class Wrapper extends ResourceComponent<any, any, any> {
     public renderBody(): React.ReactElement<any> {
         return this.create();
     }
+
+    protected renderLoading(): React.ReactElement<any> {
+        let loadingComponent: typeof React.Component = this.config.loadingComponent;
+        if (loadingComponent) {
+            return React.createElement(loadingComponent, this.props);
+        }
+        return (<span>Loading</span>);
+    }
+
 }
