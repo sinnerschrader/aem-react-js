@@ -42,7 +42,7 @@ describe("WrapperFactory", () => {
     let componentManager: ComponentManager = new ComponentManager(registry, container, ({} as Document));
 
     let aemContext: ClientAemContext = {
-        registry: registry, componentManager: componentManager, container: container
+         componentManager: componentManager, container: container, registry: registry
     };
 
 
@@ -51,11 +51,39 @@ describe("WrapperFactory", () => {
         let cache = new Cache();
         cache.put("/test", {text: "hallo"});
         container.register("sling", new MockSling(cache));
-        let ReactClass: any = WrapperFactory.createWrapper({component: Test, props: {global: "bye"}}, "components/test");
-        let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent aemContext={aemContext} comp={ReactClass} path="/test"/>);
+        let reactClass: any = WrapperFactory.createWrapper({component: Test, props: {global: "bye"}}, "components/test");
+        let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent aemContext={aemContext} comp={reactClass} path="/test"/>);
         let html: string = item.html();
 
         expect(html).to.equal('<span data-global="bye" data-text="hallo"></span>');
+
+    });
+
+    it(" should render loading component", () => {
+
+        let loader: any = () => {
+            return (<span>...</span>);
+        }
+
+        let cache = new Cache();
+        container.register("sling", new MockSling(cache));
+        let reactClass: any = WrapperFactory.createWrapper({component: Test, props: {global: "bye"}, loadingComponent: loader}, "components/test");
+        let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent aemContext={aemContext} comp={reactClass} path="/test"/>);
+        let html: string = item.html();
+
+        expect(html).to.equal('<div class="dialog"><span>...</span></div>');
+
+    });
+
+    it(" should render default loading ui", () => {
+
+        let cache = new Cache();
+        container.register("sling", new MockSling(cache));
+        let reactClass: any = WrapperFactory.createWrapper({component: Test, props: {global: "bye"}}, "components/test");
+        let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent aemContext={aemContext} comp={reactClass} path="/test"/>);
+        let html: string = item.html();
+
+        expect(html).to.equal('<div class="dialog"><span>Loading</span></div>');
 
     });
 
@@ -68,9 +96,9 @@ describe("WrapperFactory", () => {
         }
 
         let cache = new Cache();
-        cache.put("/test", {vanilla : {text: "good bye"}});
+        cache.put("/test", {vanilla: {text: "good bye"}});
         container.register("sling", new MockSling(cache));
-        let ReactClass: any = WrapperFactory.createWrapper({component: Test}, "components/test");
+        let reactClass: any = WrapperFactory.createWrapper({component: Test}, "components/test");
         let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent aemContext={aemContext} comp={Test} path="/test"/>);
         let html: string = item.html();
 
@@ -104,15 +132,15 @@ describe("WrapperFactory", () => {
         cache.put("/test", {
             children: {
                 child: {
-                    "sling:resourceType": "components/text", "text": "hey there"
-                }
-            }
+                    "sling:resourceType": "components/text", "text": "hey there",
+                },
+            },
         });
         container.register("sling", new MockSling(cache));
 
 
-        let ReactClass: any = WrapperFactory.createWrapper({component: Test, parsys: {path: "children"}}, "components/test");
-        let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={ReactClass} path="/test"/>);
+        let reactClass: any = WrapperFactory.createWrapper({component: Test, parsys: {path: "children"}}, "components/test");
+        let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={reactClass} path="/test"/>);
         let html: string = item.html();
 
         expect(html).to.equal('<span><div class="dialog"><span>hey there</span></div></span>');
