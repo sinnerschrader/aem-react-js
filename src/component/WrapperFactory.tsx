@@ -1,84 +1,96 @@
-import {ResourceComponent} from "./ResourceComponent";
-import * as React from "react";
-import {ReactParsysProps} from "./ReactParsys";
+import {ResourceComponent} from './ResourceComponent';
+import * as React from 'react';
+import {ReactParsysProps} from './ReactParsys';
 
 export interface ComponentConfig {
-    depth?: number;
-    parsys?: ReactParsysProps;
-    component: React.ComponentClass<any>;
-    props?: { [name: string]: any };
-    transform?: (props: { [name: string]: any }, r: ResourceComponent<any, any, any>) => { [name: string]: any };
-    loadingComponent?: React.ComponentClass<any>;
+  depth?: number;
+  parsys?: ReactParsysProps;
+  component: React.ComponentClass<any>;
+  props?: {[name: string]: any};
+  transform?: (
+    props: {[name: string]: any},
+    r: ResourceComponent<any, any, any>
+  ) => {[name: string]: any};
+  loadingComponent?: React.ComponentClass<any>;
 }
 
 export class WrapperFactory {
-    /**
-     *
-     * @param config
-     * @param resourceType
-     * @return {TheWrapper}
-     */
-    public static createWrapper(config: ComponentConfig, resourceType: string): React.ComponentClass<any> {
-        return class TheWrapper extends Wrapper {
-            constructor(props?: any, context?: any) {
-                super(config, props, context);
-            }
+  /**
+   *
+   * @param config
+   * @param resourceType
+   * @return {TheWrapper}
+   */
+  public static createWrapper(
+    config: ComponentConfig,
+    resourceType: string
+  ): React.ComponentClass<any> {
+    return class TheWrapper extends Wrapper {
+      constructor(props?: any, context?: any) {
+        super(config, props, context);
+      }
 
-            public getResourceType(): string {
-                return resourceType;
-            }
-        };
-    }
+      public getResourceType(): string {
+        return resourceType;
+      }
+    };
+  }
 }
 
 export class Wrapper extends ResourceComponent<any, any, any> {
-    protected config: ComponentConfig;
+  protected config: ComponentConfig;
 
-    protected getDepth(): number {
-        return this.config.depth || 0;
+  protected getDepth(): number {
+    return this.config.depth || 0;
+  }
+
+  public constructor(config: ComponentConfig, props?: any, context?: any) {
+    super(props, context);
+
+    this.config = config;
+  }
+
+  public create(): React.ReactElement<any> {
+    let children: React.ReactElement<any>[];
+
+    if (!!this.config.parsys) {
+      children = this.renderChildren(
+        this.config.parsys.path,
+        this.config.parsys.childClassName,
+        this.config.parsys.childElementName
+      );
     }
 
-    public constructor(config: ComponentConfig, props?: any, context?: any) {
-        super(props, context);
+    let props: any = this.getResource();
 
-        this.config = config;
+    if (this.config.props) {
+      Object.keys(this.config.props).forEach(
+        (key: string) => (props[key] = this.config.props[key])
+      );
     }
 
-    public create(): React.ReactElement<any> {
-        let children: React.ReactElement<any>[];
+    let newProps: {[name: string]: any};
 
-        if (!!this.config.parsys) {
-            children = this.renderChildren(this.config.parsys.path, this.config.parsys.childClassName, this.config.parsys.childElementName);
-        }
-
-        let props: any = this.getResource();
-
-        if (this.config.props) {
-            Object.keys(this.config.props).forEach((key: string) => props[key] = this.config.props[key]);
-        }
-
-        let newProps: { [name: string]: any };
-
-        if (this.config.transform) {
-            newProps = this.config.transform(props, this);
-        } else {
-            newProps = props;
-        }
-
-        return React.createElement(this.config.component, newProps, children);
+    if (this.config.transform) {
+      newProps = this.config.transform(props, this);
+    } else {
+      newProps = props;
     }
 
-    public renderBody(): React.ReactElement<any> {
-        return this.create();
+    return React.createElement(this.config.component, newProps, children);
+  }
+
+  public renderBody(): React.ReactElement<any> {
+    return this.create();
+  }
+
+  protected renderLoading(): React.ReactElement<any> {
+    let loadingComponent = this.config.loadingComponent;
+
+    if (loadingComponent) {
+      return React.createElement(loadingComponent, this.props);
     }
 
-    protected renderLoading(): React.ReactElement<any> {
-        let loadingComponent = this.config.loadingComponent;
-
-        if (loadingComponent) {
-            return React.createElement(loadingComponent, this.props);
-        }
-
-        return (<span>Loading</span>);
-    }
+    return <span>Loading</span>;
+  }
 }

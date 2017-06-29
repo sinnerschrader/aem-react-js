@@ -1,6 +1,6 @@
-import {Cache} from "./Cache";
-import {SlingResourceOptions, AbstractSling, EditDialogData} from "./Sling";
-import {ResourceComponent} from "../component/ResourceComponent";
+import {Cache} from './Cache';
+import {SlingResourceOptions, AbstractSling, EditDialogData} from './Sling';
+import {ResourceComponent} from '../component/ResourceComponent';
 
 export interface JavaSling {
   includeResource(path: string, resourceType: string): string;
@@ -11,58 +11,65 @@ export interface JavaSling {
 }
 
 export class ServerSling extends AbstractSling {
-    private sling: JavaSling;
-    private cache: Cache;
+  private sling: JavaSling;
+  private cache: Cache;
 
-    constructor(cache: Cache, sling: JavaSling) {
-        super();
+  constructor(cache: Cache, sling: JavaSling) {
+    super();
 
-        this.cache = cache;
-        this.sling = sling;
+    this.cache = cache;
+    this.sling = sling;
+  }
+
+  public subscribe(
+    listener: ResourceComponent<any, any, any>,
+    path: string,
+    options?: SlingResourceOptions
+  ): void {
+    let depth: number =
+      !options || typeof options.depth !== 'number' ? -1 : options.depth;
+    let resource: any = this.cache.get(path, depth);
+
+    if (!resource) {
+      console.log(' ServerSling has no resource' + path);
+
+      resource = JSON.parse(this.sling.getResource(path, depth));
+
+      if (!resource) {
+        resource = {};
+      }
+
+      this.cache.put(path, resource, depth);
     }
 
-    public subscribe(listener: ResourceComponent<any, any, any>, path: string, options?: SlingResourceOptions): void {
-        let depth: number = !options || typeof options.depth !== "number" ? -1 : options.depth;
-        let resource: any = this.cache.get(path, depth);
+    listener.changedResource(path, resource);
+  }
 
-        if (!resource) {
-            console.log(" ServerSling has no resource" + path);
+  public renderDialogScript(
+    path: string,
+    resourceType: string
+  ): EditDialogData {
+    let script: string = this.sling.renderDialogScript(path, resourceType);
+    let dialog: EditDialogData = null;
 
-            resource = JSON.parse(this.sling.getResource(path, depth));
-
-            if (!resource) {
-                resource = {};
-            }
-
-            this.cache.put(path, resource, depth);
-        }
-
-        listener.changedResource(path, resource);
+    if (script) {
+      dialog = JSON.parse(script);
     }
 
-    public renderDialogScript(path: string, resourceType: string): EditDialogData {
-        let script: string = this.sling.renderDialogScript(path, resourceType);
-        let dialog: EditDialogData = null;
+    this.cache.putScript(path, dialog);
 
-        if (script) {
-            dialog = JSON.parse(script);
-        }
+    return dialog;
+  }
 
-        this.cache.putScript(path, dialog);
+  public includeResource(path: string, resourceType: string): string {
+    let included: string = this.sling.includeResource(path, resourceType);
 
-        return dialog;
-    }
+    this.cache.putIncluded(path, included);
 
+    return included;
+  }
 
-    public includeResource(path: string, resourceType: string): string {
-        let included: string = this.sling.includeResource(path, resourceType);
-
-        this.cache.putIncluded(path, included);
-
-        return included;
-    }
-
-    public getRequestPath(): string {
-        return this.sling.getPagePath();
-    }
+  public getRequestPath(): string {
+    return this.sling.getPagePath();
+  }
 }

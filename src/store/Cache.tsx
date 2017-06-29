@@ -1,159 +1,169 @@
-import {ResourceUtils} from "../ResourceUtils";
-import {EditDialogData} from "./Sling";
+import {ResourceUtils} from '../ResourceUtils';
+import {EditDialogData} from './Sling';
 
 interface ResourceEntry {
-    depth: number;
-    data: any;
+  depth: number;
+  data: any;
 }
 
 /**
  * This cache is used to store server side data and pass it to the client.
  */
 export class Cache {
-    private resources: {[path: string]: ResourceEntry};
-    private scripts: {[path: string]: EditDialogData};
-    private included: {[path: string]: string};
-    private serviceCalls: {[path: string]: any};
+  private resources: {[path: string]: ResourceEntry};
+  private scripts: {[path: string]: EditDialogData};
+  private included: {[path: string]: string};
+  private serviceCalls: {[path: string]: any};
 
-    constructor() {
-        this.resources = {};
-        this.scripts = {};
-        this.included = {};
-        this.serviceCalls = {};
+  constructor() {
+    this.resources = {};
+    this.scripts = {};
+    this.included = {};
+    this.serviceCalls = {};
+  }
+
+  public generateServiceCacheKey(
+    service: string,
+    method: string,
+    args: any[]
+  ): string {
+    let cacheKey: string = service + '.' + method + '(';
+
+    for (let i = 0; i < args.length; i++) {
+      cacheKey += args[i] + '';
+      if (i < args.length - 1) {
+        cacheKey += ',';
+      }
     }
 
-    public generateServiceCacheKey(service: string, method: string, args: any[]): string {
-        let cacheKey: string = service + "." + method + "(";
+    cacheKey += ')';
 
-        for (let i = 0; i < args.length; i++) {
-            cacheKey += args[i] + "";
-            if (i < args.length - 1) {
-                cacheKey += ",";
-            }
-        }
+    return cacheKey;
+  }
 
-        cacheKey += ")";
+  public wrapServiceCall<T>(cacheKey: string, callback: () => T): T {
+    let result: T = this.getServiceCall(cacheKey);
 
-        return cacheKey;
+    if (typeof result === 'undefined') {
+      result = callback();
+      this.putServiceCall(cacheKey, result);
     }
 
-    public wrapServiceCall<T>(cacheKey: string, callback: () => T): T {
-        let result: T = this.getServiceCall(cacheKey);
+    return result;
+  }
 
-        if (typeof result === "undefined") {
-            result = callback();
-            this.putServiceCall(cacheKey, result);
-        }
+  public mergeCache(cache: any): void {
+    if (cache) {
+      ['resources', 'included', 'scripts', 'serviceCalls'].forEach(key => {
+        this.merge((this as any)[key], cache[key]);
+      });
+    }
+  }
 
-        return result;
+  public put(path: string, resource: any, depth?: number): void {
+    if (resource === null || typeof resource === 'undefined') {
+      delete this.resources[path];
+    } else {
+      this.resources[path] = {
+        data: resource,
+        depth: this.normalizeDepth(depth)
+      };
+    }
+  }
+
+  public get(path: string, depth?: number): void {
+    let normalizedDepth: number = this.normalizeDepth(depth);
+    let subPath: string[] = [];
+    let resource: ResourceEntry = this.resources[path];
+
+    while (!resource && path != null) {
+      let result = ResourceUtils.findAncestor(path, 1);
+
+      if (result !== null) {
+        path = result.path;
+        subPath.splice(0, 0, result.subPath[0]);
+        resource = this.resources[result.path];
+      } else {
+        break;
+      }
     }
 
-    public mergeCache(cache: any): void {
-        if (cache) {
-            ["resources", "included", "scripts", "serviceCalls"].forEach((key) => {
-                this.merge((this as any)[key], cache[key]);
-            });
-        }
+    if (typeof resource === 'undefined' || resource === null) {
+      return null;
+    } else if (resource.depth < 0) {
+      return this.getProperty(resource.data, subPath);
+    } else if (normalizedDepth < 0) {
+      return null;
+    } else if (subPath.length + normalizedDepth - 1 <= resource.depth) {
+      return this.getProperty(resource.data, subPath);
+    } else {
+      return null;
+    }
+  }
+
+  public putServiceCall(key: string, serviceCall: any): void {
+    this.serviceCalls[key] = serviceCall;
+  }
+
+  public getServiceCall(key: string): any {
+    return this.serviceCalls[key];
+  }
+
+  public putScript(path: string, script: EditDialogData): void {
+    this.scripts[path] = script;
+  }
+
+  public getScript(path: string): EditDialogData {
+    return this.scripts[path];
+  }
+
+  public putIncluded(path: string, included: string): void {
+    this.included[path] = included;
+  }
+
+  public getIncluded(path: string): string {
+    return this.included[path];
+  }
+
+  public getFullState(): any {
+    return {
+      included: this.included,
+      resources: this.resources,
+      scripts: this.scripts,
+      serviceCalls: this.serviceCalls
+    };
+  }
+
+  public clear(): void {
+    this.resources = {};
+    this.scripts = {};
+    this.included = {};
+    this.serviceCalls = {};
+  }
+
+  private merge(target: any, source: any): void {
+    if (source) {
+      Object.keys(source).forEach((key: string) => {
+        target[key] = source[key];
+      });
+    }
+  }
+
+  private normalizeDepth(depth?: number): number {
+    if (depth < 0 || depth === null || typeof depth === 'undefined') {
+      return -1;
     }
 
-    public put(path: string, resource: any, depth?: number): void {
-        if (resource === null || typeof resource === "undefined") {
-            delete this.resources[path];
-        } else {
-            this.resources[path] = {data: resource, depth: this.normalizeDepth(depth)};
-        }
+    return depth;
+  }
+
+  private getProperty(data: any, path: string[]): any {
+    let subData: any = ResourceUtils.getProperty(data, path);
+
+    if (typeof subData === 'undefined' || subData === null) {
+      return {};
+    } else {
+      return subData;
     }
-
-    public get(path: string, depth?: number): void {
-        let normalizedDepth: number = this.normalizeDepth(depth);
-        let subPath: string[] = [];
-        let resource: ResourceEntry = this.resources[path];
-
-        while (!resource && path != null) {
-            let result = ResourceUtils.findAncestor(path, 1);
-
-            if (result !== null) {
-                path = result.path;
-                subPath.splice(0, 0, result.subPath[0]);
-                resource = this.resources[result.path];
-            } else {
-                break;
-            }
-        }
-
-        if (typeof resource === "undefined" || resource === null) {
-            return null;
-        } else if (resource.depth < 0) {
-            return this.getProperty(resource.data, subPath);
-        } else if (normalizedDepth < 0) {
-            return null;
-        } else if (subPath.length + normalizedDepth - 1 <= resource.depth) {
-            return this.getProperty(resource.data, subPath);
-        } else {
-            return null;
-        }
-    }
-
-    public putServiceCall(key: string, serviceCall: any): void {
-        this.serviceCalls[key] = serviceCall;
-    }
-
-    public getServiceCall(key: string): any {
-        return this.serviceCalls[key];
-    }
-
-    public putScript(path: string, script: EditDialogData): void {
-        this.scripts[path] = script;
-    }
-
-    public getScript(path: string): EditDialogData {
-        return this.scripts[path];
-    }
-
-    public putIncluded(path: string, included: string): void {
-        this.included[path] = included;
-    }
-
-    public getIncluded(path: string): string {
-        return this.included[path];
-    }
-
-    public getFullState(): any {
-        return {
-            included: this.included, resources: this.resources, scripts: this.scripts, serviceCalls: this.serviceCalls,
-        };
-    }
-
-    public clear(): void {
-        this.resources = {};
-        this.scripts = {};
-        this.included = {};
-        this.serviceCalls = {};
-    }
-
-    private merge(target: any, source: any): void {
-        if (source) {
-            Object.keys(source).forEach((key: string) => {
-                target[key] = source[key];
-            });
-        }
-    }
-
-    private normalizeDepth(depth?: number): number {
-        if (depth < 0 || depth === null || typeof depth === "undefined") {
-            return -1;
-        }
-
-        return depth;
-    }
-
-    private getProperty(data: any, path: string[]): any {
-        let subData: any = ResourceUtils.getProperty(data, path);
-
-        if (typeof subData === "undefined" || subData === null) {
-            return {};
-        } else {
-            return subData;
-        }
-    }
+  }
 }
