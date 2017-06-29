@@ -1,13 +1,6 @@
-**/target
-node_modules
 .idea
-typings
-npm-debug.log
-*.d.ts
 .nyc_output
-*.jsx
-*.js
-*.js.map
-*.tgz
 coverage
-!references.d.ts
+dist
+node_modules
+npm-debug.log
