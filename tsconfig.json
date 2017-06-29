@@ -11,7 +11,8 @@
     "declaration": true,
     "outDir": "lib",
     "rootDir": "src",
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "lib": ["dom", "es2015"]
   },
   "include": [
     "src/**/*.ts",

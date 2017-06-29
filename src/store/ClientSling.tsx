@@ -1,7 +1,6 @@
 import {SlingResourceOptions, AbstractSling, EditDialogData} from './Sling';
 import {Cache} from './Cache';
 import {ResourceComponent} from '../component/ResourceComponent';
-import {Promise} from 'es6-promise';
 
 export interface FetchWindow {
   fetch(url: string, options: any): any;

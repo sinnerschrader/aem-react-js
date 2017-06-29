@@ -1,6 +1,5 @@
 # AEM React integration module
 
-
 This npm module  is required by the [AEM React Integration project](http://www.github.com/sinnerschrader/aem-react).
 This library is written in TypeScript.
 
@@ -8,7 +7,6 @@ This library is written in TypeScript.
 [![codecov](https://codecov.io/gh/sinnerschrader/aem-react-js/branch/master/graph/badge.svg)](https://codecov.io/gh/sinnerschrader/aem-react-js)
 [![npm version](https://badge.fury.io/js/aem-react-js.svg)](https://badge.fury.io/js/aem-react-js)
 [![Greenkeeper badge](https://badges.greenkeeper.io/sinnerschrader/aem-react-js.svg)](https://greenkeeper.io/)
-
 
 ## Documentation
 
@@ -23,8 +21,11 @@ This library uses the following _new_ features:
 Use a polyfill.
 [support for function.name](http://kangax.github.io/compat-table/es6/#test-function_name_property)
 
-### `window.fetch` 
+### `window.fetch`
 
 Pass an object with method `fetch()` to `ClientSling` constructor or use a polyfill.
 [caniuse fetch](http://caniuse.com/#search=fetch)
 
+### `Promise`
+
+ Use a polyfill.
