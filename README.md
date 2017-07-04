@@ -83,7 +83,7 @@ This script does the following:
 1. commits package.json and CHANGELOG.md
 1. tags a new release
 
-*Dependencies: `node run release`*
+*Dependencies: `node run test`*
 
 ### Publishing a new release
 
