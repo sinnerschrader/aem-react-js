@@ -1,0 +1,20 @@
+image: node:8
+
+# This folder is cached between builds
+# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+cache:
+  key: "$CI_PROJECT_ID"
+  paths:
+  - node_modules/
+
+stages:
+- ci
+
+test:
+  stage: ci
+  script:
+  - npm config set //repo.sinnerschrader.com/repository/vwa-npm-group-1/:_authToken="$NPM_TOKEN" -q
+  - npm config set //repo.sinnerschrader.com/repository/vwa-npm-hosted-1/:_authToken="$NPM_TOKEN" -q
+  - npm prune
+  - npm install
+  - npm test

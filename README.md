@@ -16,16 +16,77 @@ The combined documentation for this javascript subproject and the main AEM packa
 
 This library uses the following _new_ features:
 
-### `function.name`
+### `function.name` ([compatibility](http://kangax.github.io/compat-table/es6/#test-function_name_property))
 
-Use a polyfill.
-[support for function.name](http://kangax.github.io/compat-table/es6/#test-function_name_property)
+Please use a polyfill.
 
-### `window.fetch`
+### `window.fetch` ([caniuse](https://caniuse.com/#search=fetch))
 
 Pass an object with method `fetch()` to `ClientSling` constructor or use a polyfill.
-[caniuse fetch](http://caniuse.com/#search=fetch)
 
-### `Promise`
+### `Promise` ([caniuse](https://caniuse.com/#search=Promise))
 
- Use a polyfill.
+Please use a polyfill.
+
+## Development
+
+### Linting the commit message and the sources
+
+```sh
+node run lint
+```
+
+### Checking the formatting of the sources
+
+```sh
+node run check
+```
+
+### Compiling the sources
+
+```sh
+node run compile
+```
+
+*Dependencies: `node run lint`, `node run check`*
+
+### Running the unit tests
+
+```sh
+node test
+```
+
+*Dependencies: `node run compile`*
+
+### Formatting the sources
+
+```sh
+node run format
+```
+
+### Committing a new change
+
+```sh
+npm run cz
+```
+
+### Releasing a new version
+
+```sh
+node run release
+```
+
+This script does the following:
+
+1. bumps the version in package.json (based on your commit history)
+1. uses conventional-changelog to update CHANGELOG.md
+1. commits package.json and CHANGELOG.md
+1. tags a new release
+
+*Dependencies: `node run release`*
+
+### Publishing a new release
+
+```sh
+git push --follow-tags origin master && npm publish
+```
