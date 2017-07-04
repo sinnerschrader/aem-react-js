@@ -1,17 +1,16 @@
-import * as ReactTestUtils from 'react-addons-test-utils';
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
+import * as React from 'react';
+import * as ReactTestUtils from 'react-addons-test-utils';
 import {ClientAemContext} from '../../AemContext';
+import {ComponentManager} from '../../ComponentManager';
+import {ComponentRegistry} from '../../ComponentRegistry';
+import {RootComponentRegistry} from '../../RootComponentRegistry';
+import {Container} from '../../di/Container';
+import {Cache} from '../../store/Cache';
+import {MockSling} from '../../test/MockSling';
 import {ResourceComponent} from '../ResourceComponent';
 import {RootComponent} from '../RootComponent';
-import * as React from 'react';
-import {RootComponentRegistry} from '../../RootComponentRegistry';
-import {ComponentRegistry} from '../../ComponentRegistry';
-import {Container, Cq} from '../../di/Container';
-import {ComponentManager} from '../../ComponentManager';
-import {CommonWrapper} from 'enzyme';
-import {MockSling} from '../../test/MockSling';
-import {Cache} from '../../store/Cache';
 
 describe('ResourceComponent', () => {
   class Test extends ResourceComponent<any, any, any> {
@@ -32,7 +31,7 @@ describe('ResourceComponent', () => {
 
   class AemContainer extends ResourceComponent<any, any, any> {
     public renderBody(): React.ReactElement<any> {
-      let children: React.ReactElement<any>[] = this.renderChildren(
+      const children: React.ReactElement<any>[] = this.renderChildren(
         this.props.childPath,
         this.props.childClassName,
         this.props.childElementName
@@ -53,11 +52,12 @@ describe('ResourceComponent', () => {
   ): typeof AemContainer {
     return class AnonComponent extends ResourceComponent<any, any, any> {
       public renderBody(): React.ReactElement<any> {
-        let children: React.ReactElement<any>[] = this.renderChildren(
+        const children: React.ReactElement<any>[] = this.renderChildren(
           childPath,
           className,
           elementName
         );
+
         return (
           <div data-container>
             {children}
@@ -67,31 +67,29 @@ describe('ResourceComponent', () => {
     };
   }
 
-  let testRegistry: ComponentRegistry = new ComponentRegistry();
+  const testRegistry = new ComponentRegistry();
 
   testRegistry.register(Test);
 
-  let registry: RootComponentRegistry = new RootComponentRegistry();
+  const registry = new RootComponentRegistry();
 
   registry.add(testRegistry);
   registry.init();
 
-  let container: Container = new Container({} as Cq);
-  let componentManager: ComponentManager = new ComponentManager(
-    registry,
-    container
-  );
+  const container: Container = new Container({} as any);
 
-  let aemContext: ClientAemContext = {
-    componentManager: componentManager,
-    container: container,
-    registry: registry
+  const componentManager = new ComponentManager(registry, container);
+
+  const aemContext: ClientAemContext = {
+    componentManager,
+    container,
+    registry
   };
 
   it('should render loading message', () => {
     container.register('sling', new MockSling(null));
 
-    let item = enzyme.mount(
+    const item = enzyme.mount(
       <RootComponent
         aemContext={aemContext}
         comp={Test}
@@ -103,7 +101,7 @@ describe('ResourceComponent', () => {
   });
 
   it('should get resource directly', () => {
-    let cache: Cache = new Cache();
+    const cache: Cache = new Cache();
 
     cache.put('/content/embed', {
       test: {
@@ -121,7 +119,7 @@ describe('ResourceComponent', () => {
       />
     );
 
-    let test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
+    const test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
 
     expect(test.getPath()).to.equal('/content/embed/test');
     expect(test.props.path).to.equal('test');
@@ -129,7 +127,7 @@ describe('ResourceComponent', () => {
   });
 
   it('should get resource from absolute Path', () => {
-    let cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content/test', {text: 'Hallo'});
     container.register('sling', new MockSling(cache));
@@ -138,7 +136,7 @@ describe('ResourceComponent', () => {
       <RootComponent aemContext={aemContext} comp={Test} path="/content/test" />
     );
 
-    let test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
+    const test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
 
     expect(test.getPath()).to.equal('/content/test');
     expect(test.props.path).to.equal('/content/test');
@@ -146,7 +144,7 @@ describe('ResourceComponent', () => {
   });
 
   it('should render htl children wcmmode disabled', () => {
-    let cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content', {
       child1: {
@@ -167,7 +165,7 @@ describe('ResourceComponent', () => {
       />
     );
 
-    let include: any = item.find('include');
+    const include: any = item.find('include');
 
     expect(include[0].attribs.path).to.equal('/content/child1');
     expect(include[0].attribs.resourcetype).to.equal('htl/test');
@@ -175,7 +173,7 @@ describe('ResourceComponent', () => {
 
   describe('should render htl children wcmmode enabled', () => {
     before(() => {
-      let cache = new Cache();
+      const cache = new Cache();
 
       cache.put('/content', {
         child1: {
@@ -198,7 +196,7 @@ describe('ResourceComponent', () => {
         />
       );
 
-      let include: any = item.find('include');
+      const include: any = item.find('include');
 
       expect(include[1].attribs.path).to.equal('/content/*');
       expect(include[1].attribs.resourcetype).to.equal(
@@ -216,18 +214,19 @@ describe('ResourceComponent', () => {
         />
       );
 
-      let dialog: CommonWrapper<any, any> = item.find('el');
+      const dialog = item.find('el');
 
       expect(dialog.props().className).to.equal('childClass');
       expect(dialog.html()).to.equal(
-        '<el class="childClass"><div><include resourcetype="htl/test" path="/content/child1"></include></div></el>'
+        '<el class="childClass"><div><include resourcetype="htl/test" ' +
+          'path="/content/child1"></include></div></el>'
       );
     });
   });
 
   describe('should render react children wcmmode disabled', () => {
     before(() => {
-      let cache = new Cache();
+      const cache = new Cache();
 
       cache.put('/content', {
         child1: {
@@ -250,7 +249,7 @@ describe('ResourceComponent', () => {
         />
       );
 
-      let test: any = item.find('.test');
+      const test: any = item.find('.test');
 
       expect(test[0].children[0].data).to.equal('OOPS');
     });
@@ -265,7 +264,7 @@ describe('ResourceComponent', () => {
         />
       );
 
-      let test: any = item.find('el');
+      const test: any = item.find('el');
 
       expect(test.length).to.equal(1);
       expect(test[0].attribs.class).to.equal('childClass');
@@ -281,7 +280,7 @@ describe('ResourceComponent', () => {
         />
       );
 
-      let dialog: any = item.find('.dialog');
+      const dialog: any = item.find('.dialog');
 
       expect(dialog[0].attribs.class.split(' ')).to.contain('childClass');
     });
@@ -289,7 +288,7 @@ describe('ResourceComponent', () => {
 
   describe('should render react children with child path', () => {
     before(() => {
-      let cache: Cache = new Cache();
+      const cache: Cache = new Cache();
 
       cache.put('/content', {
         children: {
@@ -314,7 +313,7 @@ describe('ResourceComponent', () => {
         />
       );
 
-      let child: any = item.find('.test');
+      const child: any = item.find('.test');
 
       expect(child[0].children[0].data).to.equal('OOPS');
     });

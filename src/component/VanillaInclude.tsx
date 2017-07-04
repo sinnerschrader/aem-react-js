@@ -8,9 +8,10 @@ export interface VanillaProps {
 
 export class VanillaInclude extends AemComponent<VanillaProps, any> {
   public render(): React.ReactElement<any> {
-    let componentClass = this.getRegistry().getVanillaWrapper(
+    const componentClass = this.getRegistry().getVanillaWrapper(
       this.props.component
     );
+
     return React.createElement(componentClass, {path: this.props.path});
   }
 }

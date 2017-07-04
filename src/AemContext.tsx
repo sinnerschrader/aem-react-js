@@ -1,5 +1,5 @@
-import {RootComponentRegistry} from './RootComponentRegistry';
 import {ComponentManager} from './ComponentManager';
+import {RootComponentRegistry} from './RootComponentRegistry';
 import {Container} from './di/Container';
 
 export interface AemContext {

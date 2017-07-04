@@ -1,14 +1,14 @@
 import {expect} from 'chai';
-import {AemTest} from '../AemTest';
-import {ResourceComponent} from '../../component/ResourceComponent';
 import * as React from 'react';
 import {ComponentRegistry} from '../../ComponentRegistry';
 import {ReactParsys} from '../../component/ReactParsys';
+import {ResourceComponent} from '../../component/ResourceComponent';
+import {AemTest} from '../AemTest';
 
 describe('AemTest', () => {
   class Text extends ResourceComponent<any, any, any> {
     public renderBody(): React.ReactElement<any> {
-      let text: string = this.getResource()
+      const text: string = this.getResource()
         ? this.getResource().text
         : 'unknown';
 
@@ -20,18 +20,18 @@ describe('AemTest', () => {
     }
   }
 
-  let registry: ComponentRegistry = new ComponentRegistry('/components');
+  const registry: ComponentRegistry = new ComponentRegistry('/components');
 
   registry.register(Text);
   registry.register(ReactParsys);
 
-  let aemTest: AemTest = new AemTest();
+  const aemTest: AemTest = new AemTest();
 
   aemTest.addRegistry(registry);
   aemTest.init();
 
   it('should render Text', () => {
-    let wrapper = aemTest.render({
+    const wrapper = aemTest.render({
       resourceType: '/components/text',
       text: 'Hallo'
     });

@@ -18,11 +18,11 @@ describe('ComponentRegistry', () => {
   }
 
   it('should register component', () => {
-    let registry: ComponentRegistry = new ComponentRegistry('/components');
+    const registry: ComponentRegistry = new ComponentRegistry('/components');
 
     registry.register(TestView);
 
-    let mapping: Mapping = registry.mappings[0];
+    const mapping: Mapping = registry.mappings[0];
 
     expect(mapping.componentClass).to.equal(TestView);
     expect(mapping.resourceType).to.equal('/components/test-view');
@@ -30,13 +30,13 @@ describe('ComponentRegistry', () => {
   });
 
   it('should register component with special mapping', () => {
-    let registry: ComponentRegistry = new ComponentRegistry((name: string) => {
-      return '/x/' + name;
-    });
+    const registry: ComponentRegistry = new ComponentRegistry(
+      (name: string) => '/x/' + name
+    );
 
     registry.register(TestView);
 
-    let mapping: Mapping = registry.mappings[0];
+    const mapping: Mapping = registry.mappings[0];
 
     expect(mapping.componentClass).to.equal(TestView);
     expect(mapping.resourceType).to.equal('/x/TestView');
@@ -44,13 +44,13 @@ describe('ComponentRegistry', () => {
   });
 
   it('should register vanilla component', () => {
-    let registry: ComponentRegistry = new ComponentRegistry(
+    const registry: ComponentRegistry = new ComponentRegistry(
       '/components/vanilla'
     );
 
     registry.registerVanilla({component: TestView});
 
-    let mapping: Mapping = registry.mappings[0];
+    const mapping: Mapping = registry.mappings[0];
 
     expect(mapping.componentClass).to.not.equal(TestView);
     expect(mapping.resourceType).to.equal('/components/vanilla/test-view');

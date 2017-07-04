@@ -2,11 +2,10 @@
 
 import {expect} from 'chai';
 import * as React from 'react';
-import {ServerRenderer} from '../ServerRenderer';
-import {Container, Cq} from '../di/Container';
-import {ServerResponse} from '../ServerRenderer';
 import {RootComponentRegistry} from '../RootComponentRegistry';
+import {ServerRenderer, ServerResponse} from '../ServerRenderer';
 import {ResourceComponent} from '../component/ResourceComponent';
+import {Container} from '../di/Container';
 import {Cache} from '../store/Cache';
 
 describe('ServerRenderer', () => {
@@ -21,8 +20,8 @@ describe('ServerRenderer', () => {
       }
     }
 
-    let sling: any = {
-      subscribe: function(
+    const sling: any = {
+      subscribe(
         component: ResourceComponent<any, any, any>,
         path: string
       ): void {
@@ -30,38 +29,41 @@ describe('ServerRenderer', () => {
       }
     };
 
-    let container: Container = new Container({} as Cq);
+    const container: Container = new Container({} as any);
 
     container.register('sling', sling);
     container.register('cache', new Cache());
 
-    let registry: RootComponentRegistry = {
-      getComponent: function(resourceType: string): any {
+    const registry: RootComponentRegistry = {
+      getComponent(resourceType: string): any {
         return Test;
       }
-    } as RootComponentRegistry;
+    } as any;
 
-    let renderer: ServerRenderer = new ServerRenderer(registry, container);
-    let response: ServerResponse = renderer.renderReactComponent(
+    const renderer: ServerRenderer = new ServerRenderer(registry, container);
+
+    const response: ServerResponse = renderer.renderReactComponent(
       '/test',
       '/components/test',
       'disabled'
     );
 
     expect(response.html).to.equal(
-      '<span data-reactroot="" data-reactid="1" data-react-checksum="-1096281847">hi</span>'
+      '<span data-reactroot="" data-reactid="1" ' +
+        'data-react-checksum="-1096281847">hi</span>'
     );
   });
 
   it('should throw error if component is not found', () => {
-    let registry: RootComponentRegistry = {
-      getComponent: function(resourceType: string): any {
+    const registry: RootComponentRegistry = {
+      getComponent(resourceType: string): any {
         return null;
       }
-    } as RootComponentRegistry;
+    } as any;
 
-    let renderer: ServerRenderer = new ServerRenderer(registry, null);
-    let error: boolean = false;
+    const renderer: ServerRenderer = new ServerRenderer(registry, null);
+
+    let error = false;
 
     try {
       renderer.renderReactComponent('/test', '/components/test', 'disabled');

@@ -65,7 +65,12 @@ exports.lint = () => {
 
   sh.echo('# Linting the sources ############################################');
 
-  exec(bin('tslint'), sources);
+  exec(
+    bin('tslint'),
+    '--project', 'tsconfig.json',
+    '--type-check',
+    sources
+  );
 
   return '';
 };

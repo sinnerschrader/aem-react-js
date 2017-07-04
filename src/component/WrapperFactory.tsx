@@ -1,48 +1,23 @@
-import {ResourceComponent} from './ResourceComponent';
 import * as React from 'react';
 import {ReactParsysProps} from './ReactParsys';
+import {ResourceComponent} from './ResourceComponent';
+
+export type Transform = (
+  props: {[name: string]: any},
+  r: ResourceComponent<any, any, any>
+) => {[name: string]: any};
 
 export interface ComponentConfig {
   depth?: number;
   parsys?: ReactParsysProps;
   component: React.ComponentClass<any>;
   props?: {[name: string]: any};
-  transform?: (
-    props: {[name: string]: any},
-    r: ResourceComponent<any, any, any>
-  ) => {[name: string]: any};
+  transform?: Transform;
   loadingComponent?: React.ComponentClass<any>;
-}
-
-export class WrapperFactory {
-  /**
-   *
-   * @param config
-   * @param resourceType
-   * @return {TheWrapper}
-   */
-  public static createWrapper(
-    config: ComponentConfig,
-    resourceType: string
-  ): React.ComponentClass<any> {
-    return class TheWrapper extends Wrapper {
-      constructor(props?: any, context?: any) {
-        super(config, props, context);
-      }
-
-      public getResourceType(): string {
-        return resourceType;
-      }
-    };
-  }
 }
 
 export class Wrapper extends ResourceComponent<any, any, any> {
   protected config: ComponentConfig;
-
-  protected getDepth(): number {
-    return this.config.depth || 0;
-  }
 
   public constructor(config: ComponentConfig, props?: any, context?: any) {
     super(props, context);
@@ -61,7 +36,7 @@ export class Wrapper extends ResourceComponent<any, any, any> {
       );
     }
 
-    let props: any = this.getResource();
+    const props = this.getResource();
 
     if (this.config.props) {
       Object.keys(this.config.props).forEach(
@@ -69,13 +44,9 @@ export class Wrapper extends ResourceComponent<any, any, any> {
       );
     }
 
-    let newProps: {[name: string]: any};
-
-    if (this.config.transform) {
-      newProps = this.config.transform(props, this);
-    } else {
-      newProps = props;
-    }
+    const newProps = this.config.transform
+      ? this.config.transform(props, this)
+      : props;
 
     return React.createElement(this.config.component, newProps, children);
   }
@@ -84,13 +55,40 @@ export class Wrapper extends ResourceComponent<any, any, any> {
     return this.create();
   }
 
+  protected getDepth(): number {
+    return this.config.depth || 0;
+  }
+
   protected renderLoading(): React.ReactElement<any> {
-    let loadingComponent = this.config.loadingComponent;
+    const loadingComponent = this.config.loadingComponent;
 
     if (loadingComponent) {
       return React.createElement(loadingComponent, this.props);
     }
 
     return <span>Loading</span>;
+  }
+}
+
+export class WrapperFactory {
+  /**
+   *
+   * @param config
+   * @param resourceType
+   * @return {TheWrapper}
+   */
+  public static createWrapper(
+    config: ComponentConfig,
+    resourceType: string
+  ): React.ComponentClass<any> {
+    return class TheWrapper extends Wrapper {
+      public constructor(props?: any, context?: any) {
+        super(config, props, context);
+      }
+
+      public getResourceType(): string {
+        return resourceType;
+      }
+    };
   }
 }

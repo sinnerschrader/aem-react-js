@@ -1,8 +1,8 @@
 import {expect} from 'chai';
-import {ResourceComponent} from '../component/ResourceComponent';
 import * as React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {ResourceInclude} from '../ResourceInclude';
+import {ResourceComponent} from '../component/ResourceComponent';
 import {AemTest} from '../test/AemTest';
 
 describe('ResourceInclude', () => {
@@ -36,25 +36,28 @@ describe('ResourceInclude', () => {
     }
   }
 
-  let registry: ComponentRegistry = new ComponentRegistry('/components');
+  const registry: ComponentRegistry = new ComponentRegistry('/components');
+
   registry.register(Test);
   registry.register(Test2);
   registry.registerVanilla({component: Text});
 
-  let aemTest: AemTest = new AemTest();
+  const aemTest: AemTest = new AemTest();
+
   aemTest.addRegistry(registry);
   aemTest.init();
 
   it('should render included resource', () => {
-    let wrapper = aemTest.render({resourceType: '/components/test'});
+    const wrapper = aemTest.render({resourceType: '/components/test'});
 
     expect(wrapper.html()).to.equal(
-      '<span><div><include resourcetype="/components/something" path="//embed"></include></div></span>'
+      '<span><div><include resourcetype="/components/something" ' +
+        'path="//embed"></include></div></span>'
     );
   });
 
   it('should render included vanilla resource', () => {
-    let wrapper = aemTest.render(
+    const wrapper = aemTest.render(
       {
         embed: {text: 'hallo'},
         resourceType: '/components/test2'

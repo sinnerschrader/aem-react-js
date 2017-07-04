@@ -1,30 +1,33 @@
 import {expect} from 'chai';
-import {Cache} from '../Cache';
-import {EditDialogData} from '../Sling';
-import {ClientSling} from '../ClientSling';
 import {ResourceComponent} from '../../component/ResourceComponent';
+import {Cache} from '../Cache';
+import {ClientSling} from '../ClientSling';
+import {EditDialogData} from '../Sling';
 
 describe('ClientSling', () => {
   it('should include resource', () => {
-    let html: string = '<div></div>';
-    let cache: Cache = new Cache();
-    let sling: ClientSling = new ClientSling(cache, null);
+    const html = '<div></div>';
+    const cache: Cache = new Cache();
+    const sling: ClientSling = new ClientSling(cache, null);
 
     cache.putIncluded('/test', html);
 
-    let actualHtml: string = sling.includeResource('/test', '/component/test');
+    const actualHtml: string = sling.includeResource(
+      '/test',
+      '/component/test'
+    );
 
     expect(actualHtml).to.equal(html);
   });
 
   it('should include dialog', () => {
-    let dialog: EditDialogData = {element: 'el'};
-    let cache: Cache = new Cache();
-    let sling: ClientSling = new ClientSling(cache, null);
+    const dialog: EditDialogData = {element: 'el'};
+    const cache: Cache = new Cache();
+    const sling: ClientSling = new ClientSling(cache, null);
 
     cache.putScript('/test', dialog);
 
-    let actualDialog: EditDialogData = sling.renderDialogScript(
+    const actualDialog: EditDialogData = sling.renderDialogScript(
       '/test',
       '/component/test'
     );
@@ -33,17 +36,17 @@ describe('ClientSling', () => {
   });
 
   it('should subscribe to cached resource', () => {
-    let resource: any = {};
-    let cache: Cache = new Cache();
-    let sling: ClientSling = new ClientSling(cache, null);
-    let path: string = '/test';
+    const resource: any = {};
+    const cache: Cache = new Cache();
+    const sling: ClientSling = new ClientSling(cache, null);
+    const path = '/test';
 
     cache.put(path, resource);
 
     let actualResource: any;
     let actualPath: string;
 
-    let listener: ResourceComponent<
+    const listener: ResourceComponent<
       any,
       any,
       any
@@ -70,20 +73,20 @@ describe('ClientSling', () => {
 
   it('should subscribe to resource', () => {
     let actualUrl: string;
-    let resource: any = {data: {text: 'hi'}, depth: 1};
-    let resources: any = {resources: {'/test': resource}};
-    let cache: Cache = new Cache();
+    const resource: any = {data: {text: 'hi'}, depth: 1};
+    const resources: any = {resources: {'/test': resource}};
+    const cache: Cache = new Cache();
 
-    let sling: ClientSling = new ClientSling(cache, '/url', {
-      fetch: function(url: string, options: any): any {
+    const sling: ClientSling = new ClientSling(cache, '/url', {
+      fetch(url: string, options: any): any {
         actualUrl = url;
 
         return {
-          then: function(cb: (value: any) => any): any {
+          then(cb: (value: any) => any): any {
             return cb({
-              json: function(): any {
+              json(): any {
                 return {
-                  then: function(cb2: (value: any) => void): void {
+                  then(cb2: (value: any) => void): void {
                     cb2(resources);
                   }
                 };
@@ -94,12 +97,13 @@ describe('ClientSling', () => {
       }
     });
 
-    let path: string = '/test';
+    const path = '/test';
+
     let actualResource: any;
     let actualPath: string;
 
-    let listener: any = {
-      changedResource: function(_path: string, _resource: any): void {
+    const listener: any = {
+      changedResource(_path: string, _resource: any): void {
         actualResource = _resource;
         actualPath = _path;
       }

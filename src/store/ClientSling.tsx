@@ -1,14 +1,15 @@
-import {SlingResourceOptions, AbstractSling, EditDialogData} from './Sling';
-import {Cache} from './Cache';
 import {ResourceComponent} from '../component/ResourceComponent';
+import {Cache} from './Cache';
+import {AbstractSling, EditDialogData, SlingResourceOptions} from './Sling';
 
 export interface FetchWindow {
   fetch(url: string, options: any): any;
 }
 
 /**
- * ClientSling gets all data from the cache. If the data is not available then it will get
- * the part of the cache which corresponds to the given component from the server.
+ * ClientSling gets all data from the cache.
+ * If the data is not available then it will get the part of the cache which
+ * corresponds to the given component from the server.
  */
 export class ClientSling extends AbstractSling {
   private cache: Cache;
@@ -17,7 +18,7 @@ export class ClientSling extends AbstractSling {
   private delayInMillis: number;
 
   // TODO change params arry into map
-  constructor(
+  public constructor(
     cache: Cache,
     origin: string,
     fetch?: FetchWindow,
@@ -28,11 +29,7 @@ export class ClientSling extends AbstractSling {
     this.cache = cache;
     this.origin = origin;
 
-    if (!fetch) {
-      this.fetch = (window as any) as FetchWindow;
-    } else {
-      this.fetch = fetch;
-    }
+    this.fetch = !fetch ? (window as any) as FetchWindow : fetch;
   }
 
   public subscribe(
@@ -40,33 +37,23 @@ export class ClientSling extends AbstractSling {
     path: string,
     options?: SlingResourceOptions
   ): void {
-    let depth: number;
+    const depth =
+      !options || typeof options.depth === 'undefined' || options.depth === null
+        ? 0
+        : options.depth;
 
-    if (
-      !options ||
-      typeof options.depth === 'undefined' ||
-      options.depth === null
-    ) {
-      depth = 0;
-    } else {
-      depth = options.depth;
-    }
-
-    let resource: any = this.cache.get(path, depth);
+    const resource: any = this.cache.get(path, depth);
 
     if (resource === null || typeof resource === 'undefined') {
-      let depthAsString: string;
-
-      if (depth < 0) {
-        depthAsString = 'infinity';
-      } else {
-        depthAsString = options.depth + '';
-      }
+      // const depthAsString = depth < 0 ? 'infinity' : options.depth + '';
 
       // TODO what about depth as string??
-      let url: string = this.origin + path + '.json.html'; // + depthAsString + ".json";
-      const serverRenderingParam: string = 'serverRendering=disabled';
-      let serverRendering: boolean =
+      let url = `${this.origin}${path}.json.html`;
+      // + depthAsString + ".json";
+
+      const serverRenderingParam = 'serverRendering=disabled';
+
+      const serverRendering: boolean =
         window.location.search.indexOf(serverRenderingParam) >= 0;
 
       if (serverRendering) {
@@ -81,7 +68,7 @@ export class ClientSling extends AbstractSling {
           } else {
             /* istanbul ignore if  */
             if (this.delayInMillis) {
-              let promise = new Promise(
+              const promise = new Promise(
                 (
                   resolve: (value?: any | PromiseLike<any>) => void,
                   reject: (error?: any) => void
@@ -112,8 +99,10 @@ export class ClientSling extends AbstractSling {
     path: string,
     resourceType: string
   ): EditDialogData {
-    // TODO Can we get the script from the server too?. This will probably not work as the returned script is
-    // not executed as in the initial server rendering case. For react router we need to do a reload anyways.
+    // TODO Can we get the script from the server too?.
+    // This will probably not work as the returned script is
+    // not executed as in the initial server rendering case.
+    // For react router we need to do a reload anyways.
     return this.cache.getScript(path);
   }
 

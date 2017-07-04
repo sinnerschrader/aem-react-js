@@ -1,11 +1,11 @@
 import * as React from 'react';
+import * as shallowCompare from 'react-addons-shallow-compare';
+import {ResourceInclude} from '../ResourceInclude';
+import {ResourceUtils} from '../ResourceUtils';
+import {RootComponentRegistry} from '../RootComponentRegistry';
+import {Sling} from '../store/Sling';
 import {AemComponent} from './AemComponent';
 import {EditDialog} from './EditDialog';
-import {Sling} from '../store/Sling';
-import {RootComponentRegistry} from '../RootComponentRegistry';
-import {ResourceUtils} from '../ResourceUtils';
-import {ResourceInclude} from '../ResourceInclude';
-import * as shallowCompare from 'react-addons-shallow-compare';
 
 export interface Resource {
   'sling:resourceType': string;
@@ -64,16 +64,12 @@ export abstract class ResourceComponent<
   }
 
   public initialize(): void {
-    let absolutePath: string;
-
-    if (ResourceUtils.isAbsolutePath(this.props.path)) {
-      absolutePath = this.props.path;
-    } else {
-      absolutePath = this.context.path + '/' + this.props.path;
-    }
+    const absolutePath = ResourceUtils.isAbsolutePath(this.props.path)
+      ? this.props.path
+      : `${this.context.path}/` + String(this.props.path);
 
     if (absolutePath !== this.getPath()) {
-      this.setState({absolutePath: absolutePath, state: STATE.LOADING} as S);
+      this.setState({absolutePath, state: STATE.LOADING});
 
       (this.getAemContext().container.get(
         'sling'
@@ -91,10 +87,6 @@ export abstract class ResourceComponent<
     } else {
       return null;
     }
-  }
-
-  protected renderLoading(): React.ReactElement<any> {
-    return <span>Loading</span>;
   }
 
   public render(): React.ReactElement<any> {
@@ -134,9 +126,11 @@ export abstract class ResourceComponent<
   }
 
   public changedResource(path: string, resource: C): void {
-    this.setState(
-      {state: STATE.LOADED, resource: resource, absolutePath: path} as any
-    );
+    this.setState({state: STATE.LOADED, resource, absolutePath: path} as any);
+  }
+
+  protected renderLoading(): React.ReactElement<any> {
+    return <span>Loading</span>;
   }
 
   protected getDepth(): number {
@@ -152,30 +146,33 @@ export abstract class ResourceComponent<
       throw new Error('path must be relative. was ' + path);
     }
 
-    let childrenResource: any = !!path
+    const childrenResource: any = !!path
       ? (this.getResource() as any)[path]
       : this.getResource();
-    let children: any = ResourceUtils.getChildren(childrenResource);
-    let childComponents: React.ReactElement<any>[] = [];
-    let basePath: string = !!path ? path + '/' : '';
 
-    // TODO alternatively create a div for each child and set className/elementName there
+    const children: any = ResourceUtils.getChildren(childrenResource);
+    const childComponents: React.ReactElement<any>[] = [];
+    const basePath: string = !!path ? path + '/' : '';
+
+    // TODO alternatively create a div for each child
+    // and set className/elementName there
 
     Object.keys(children).forEach((nodeName: string, childIdx: number) => {
-      let resource: Resource = children[nodeName];
-      let resourceType: string = resource['sling:resourceType'];
-      let actualPath: string = basePath + nodeName;
-      let componentType: React.ComponentClass<
+      const resource: Resource = children[nodeName];
+      const resourceType: string = resource['sling:resourceType'];
+      const actualPath: string = basePath + nodeName;
+
+      const componentType: React.ComponentClass<
         any
       > = this.getRegistry().getComponent(resourceType);
 
       if (childElementName) {
         if (componentType) {
-          let props: any = {
+          const props: any = {
             key: nodeName,
             path: actualPath,
             reactKey: path,
-            resource: resource
+            resource
           };
 
           childComponents.push(
@@ -199,19 +196,19 @@ export abstract class ResourceComponent<
               React.createElement(ResourceInclude, {
                 key: nodeName,
                 path: actualPath,
-                resourceType: resourceType
+                resourceType
               })
             )
           );
         }
       } else {
         if (componentType) {
-          let props: any = {
+          const props: any = {
             className: childClassName,
             key: nodeName,
             path: basePath + nodeName,
             reactKey: path,
-            resource: resource
+            resource
           };
 
           childComponents.push(React.createElement(componentType, props));
@@ -230,8 +227,8 @@ export abstract class ResourceComponent<
     let newZone: React.ReactElement<any> = null;
 
     if (this.isWcmEnabled()) {
-      let parsysPath = path ? path + '/*' : '*';
-      let resourceType = 'foundation/components/parsys/new';
+      const parsysPath = path ? path + '/*' : '*';
+      const resourceType = 'foundation/components/parsys/new';
 
       newZone = (
         <ResourceInclude

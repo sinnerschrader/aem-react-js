@@ -1,6 +1,6 @@
-import {Cache} from './Cache';
-import {SlingResourceOptions, AbstractSling, EditDialogData} from './Sling';
 import {ResourceComponent} from '../component/ResourceComponent';
+import {Cache} from './Cache';
+import {AbstractSling, EditDialogData, SlingResourceOptions} from './Sling';
 
 export interface JavaSling {
   includeResource(path: string, resourceType: string): string;
@@ -14,7 +14,7 @@ export class ServerSling extends AbstractSling {
   private sling: JavaSling;
   private cache: Cache;
 
-  constructor(cache: Cache, sling: JavaSling) {
+  public constructor(cache: Cache, sling: JavaSling) {
     super();
 
     this.cache = cache;
@@ -26,8 +26,9 @@ export class ServerSling extends AbstractSling {
     path: string,
     options?: SlingResourceOptions
   ): void {
-    let depth: number =
+    const depth: number =
       !options || typeof options.depth !== 'number' ? -1 : options.depth;
+
     let resource: any = this.cache.get(path, depth);
 
     if (!resource) {
@@ -49,7 +50,8 @@ export class ServerSling extends AbstractSling {
     path: string,
     resourceType: string
   ): EditDialogData {
-    let script: string = this.sling.renderDialogScript(path, resourceType);
+    const script: string = this.sling.renderDialogScript(path, resourceType);
+
     let dialog: EditDialogData = null;
 
     if (script) {
@@ -62,7 +64,7 @@ export class ServerSling extends AbstractSling {
   }
 
   public includeResource(path: string, resourceType: string): string {
-    let included: string = this.sling.includeResource(path, resourceType);
+    const included: string = this.sling.includeResource(path, resourceType);
 
     this.cache.putIncluded(path, included);
 

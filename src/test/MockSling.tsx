@@ -1,12 +1,12 @@
 import {ResourceComponent} from '../component/ResourceComponent';
-import {EditDialogData, SlingResourceOptions} from '../store/Sling';
 import {Cache} from '../store/Cache';
+import {EditDialogData, SlingResourceOptions} from '../store/Sling';
 
 export class MockSling {
   private cache: Cache;
   private data: EditDialogData;
 
-  constructor(cache?: Cache, data?: EditDialogData) {
+  public constructor(cache?: Cache, data?: EditDialogData) {
     this.cache = cache || new Cache();
     this.data = data;
   }
@@ -16,7 +16,7 @@ export class MockSling {
     path: string,
     options?: SlingResourceOptions
   ): void {
-    let resource: any = this.cache.get(path, options ? options.depth : null);
+    const resource: any = this.cache.get(path, options ? options.depth : null);
 
     if (resource) {
       listener.changedResource(path, resource);
@@ -32,12 +32,6 @@ export class MockSling {
   }
 
   public includeResource(path: string, resourceType: string): string {
-    return (
-      "<include resourcetype='" +
-      resourceType +
-      "' path='" +
-      path +
-      "'></include>"
-    );
+    return `<include resourcetype='${resourceType}' path='${path}'></include>`;
   }
 }

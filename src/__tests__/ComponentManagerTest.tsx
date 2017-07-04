@@ -9,22 +9,22 @@ import {SlingResourceOptions} from '../store/Sling';
 
 describe('ComponentManager', () => {
   it('should not install components when wcmmode is not disabled', () => {
-    let cache: Cache = new Cache();
+    const cache: Cache = new Cache();
 
-    let data: ComponentTreeConfig = {
-      cache: cache,
+    const data: ComponentTreeConfig = {
+      cache,
       path: '/test',
       resourceType: '/components/test',
       wcmmode: 'edit'
     };
 
-    let doc: Document = new JSDOM(
+    const doc: Document = new JSDOM(
       "<html><div data-react-id='1'></div><textarea id='1'>" +
-        JSON.stringify(data) +
-        '</textarea></html>'
+        `${JSON.stringify(data)}</textarea></html>`
     ).window.document;
-    let cm: ComponentManager = new ComponentManager(null, null, doc);
-    let element: Element = doc.querySelector('div');
+
+    const cm: ComponentManager = new ComponentManager(null, null, doc);
+    const element: Element = doc.querySelector('div');
 
     cm.initReactComponent(element);
   });
@@ -36,21 +36,21 @@ describe('ComponentManager', () => {
       }
     }
 
-    let cache: Cache = new Cache();
+    const cache: Cache = new Cache();
 
-    let data: ComponentTreeConfig = {
-      cache: cache,
+    const data: ComponentTreeConfig = {
+      cache,
       path: '/test',
       resourceType: '/components/test',
       wcmmode: 'disabled'
     };
 
-    let cqx: any = {};
-    let container: Container = new Container(cqx as Cq);
+    const cqx: any = {};
+    const container: Container = new Container(cqx as Cq);
 
     container.register('cache', cache);
 
-    let sling: any = {
+    const sling: any = {
       subscribe: (
         listener: ResourceComponent<any, any, any>,
         path: string,
@@ -62,23 +62,21 @@ describe('ComponentManager', () => {
 
     container.register('sling', sling);
 
-    let registry: any = {
-      getComponent: (resourceType: string) => {
-        return Test;
-      }
+    const registry: any = {
+      getComponent: (resourceType: string) => Test
     };
 
-    let doc: Document = new JSDOM(
+    const doc: Document = new JSDOM(
       "<html><div data-react data-react-id='1'></div><textarea id='1'>" +
-        JSON.stringify(data) +
-        '</textarea></html>'
+        `${JSON.stringify(data)}</textarea></html>`
     ).window.document;
-    let cm: ComponentManager = new ComponentManager(registry, container, doc);
-    let element: Element = doc.querySelector('div');
+
+    const cm: ComponentManager = new ComponentManager(registry, container, doc);
+    const element: Element = doc.querySelector('div');
 
     cm.initReactComponent(element);
 
-    let count: number = cm.initReactComponents();
+    const count: number = cm.initReactComponents();
 
     expect(count).to.equal(1);
   });

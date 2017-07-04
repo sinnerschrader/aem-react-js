@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ClientAemContext, AemContext} from '../AemContext';
+import {AemContext, ClientAemContext} from '../AemContext';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {Container} from '../di/Container';
 
@@ -33,10 +33,6 @@ export class AemComponent<P, S> extends React.Component<P, S> {
     return !this.getWcmmode() || this.getWcmmode() !== 'disabled';
   }
 
-  protected getAemContext(): AemContext {
-    return this.context.aemContext;
-  }
-
   /* istanbul ignore next */
   public getRegistry(): RootComponentRegistry {
     return this.context.aemContext.registry;
@@ -60,6 +56,10 @@ export class AemComponent<P, S> extends React.Component<P, S> {
   /* istanbul ignore next */
   public getRequestModel(name: string): any {
     return this.getContainer().getRequestModel(this.getPath(), name);
+  }
+
+  protected getAemContext(): AemContext {
+    return this.context.aemContext;
   }
 
   protected getContainer(): Container {

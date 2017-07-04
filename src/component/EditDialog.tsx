@@ -1,6 +1,6 @@
 import * as React from 'react';
+import {EditDialogData, Sling} from '../store/Sling';
 import {AemComponent} from './AemComponent';
-import {Sling, EditDialogData} from '../store/Sling';
 
 export interface EditDialogProps {
   path: string;
@@ -8,10 +8,31 @@ export interface EditDialogProps {
   className?: string;
 }
 
+function createAuthorElement(dialog: EditDialogData): React.ReactElement<any> {
+  if (!dialog) {
+    return null;
+  }
+
+  const attributes: any = {};
+
+  if (!!dialog.attributes) {
+    Object.keys(dialog.attributes).forEach((key: string) => {
+      attributes[key] = dialog.attributes[key];
+    });
+  }
+
+  if (dialog.html) {
+    attributes.dangerouslySetInnerHTML = {__html: dialog.html};
+  }
+
+  return React.createElement(dialog.element as any, attributes);
+}
+
 export class EditDialog extends AemComponent<EditDialogProps, any> {
   public render(): React.ReactElement<any> {
-    let sling: Sling = this.getComponent('sling');
-    let dialog: EditDialogData = sling.renderDialogScript(
+    const sling: Sling = this.getComponent('sling');
+
+    const dialog: EditDialogData = sling.renderDialogScript(
       this.props.path,
       this.props.resourceType
     );
@@ -26,7 +47,7 @@ export class EditDialog extends AemComponent<EditDialogProps, any> {
   private createWrapperElement(
     dialog: EditDialogData
   ): React.ReactElement<any> {
-    let attributes: {[name: string]: any} = {};
+    const attributes: {[name: string]: any} = {};
 
     if (dialog.attributes) {
       Object.keys(dialog.attributes).forEach(
@@ -49,27 +70,7 @@ export class EditDialog extends AemComponent<EditDialogProps, any> {
       dialog.element as any,
       attributes,
       this.props.children,
-      this.createAuthorElement(dialog.child)
+      createAuthorElement(dialog.child)
     );
-  }
-
-  private createAuthorElement(dialog: EditDialogData): React.ReactElement<any> {
-    if (!dialog) {
-      return null;
-    }
-
-    let attributes: any = {};
-
-    if (!!dialog.attributes) {
-      Object.keys(dialog.attributes).forEach((key: string) => {
-        attributes[key] = dialog.attributes[key];
-      });
-    }
-
-    if (dialog.html) {
-      attributes.dangerouslySetInnerHTML = {__html: dialog.html};
-    }
-
-    return React.createElement(dialog.element as any, attributes);
   }
 }

@@ -1,5 +1,5 @@
-import {ResourceComponent} from '../component/ResourceComponent';
 import {ResourceUtils} from '../ResourceUtils';
+import {ResourceComponent} from '../component/ResourceComponent';
 
 export interface SlingResourceOptions {
   depth?: number;
@@ -29,7 +29,8 @@ export interface Sling {
   ): void;
 
   /**
-   * get the aem wrapper element for the component of the given resourceType at the given resource path.
+   * get the aem wrapper element for the component
+   * of the given resourceType at the given resource path.
    * @param path
    * @param resourceType
    */

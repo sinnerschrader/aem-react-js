@@ -6,7 +6,7 @@ export class Mapping {
   public vanillaClass: React.ComponentClass<any>;
   public componentClass: React.ComponentClass<any>;
 
-  constructor(
+  public constructor(
     resourceType: string,
     componentClass: React.ComponentClass<any>,
     vanillaClass: React.ComponentClass<any>
@@ -27,7 +27,7 @@ export class RootComponentRegistry {
     [componentClassName: string]: React.ComponentClass<any>;
   } = {};
 
-  constructor() {
+  public constructor() {
     this.registries = [];
   }
 
@@ -35,16 +35,16 @@ export class RootComponentRegistry {
     this.registries.push(registry);
   }
 
-  public getResourceType(component: React.ComponentClass<any>): string;
-  public getResourceType(component: React.Component<any, any>): string;
-  public getResourceType(component: any): string {
+  public getResourceType(
+    component: React.ComponentClass<any> | React.Component<any, any>
+  ): string {
     if (component instanceof React.Component) {
-      let componentClassName: string = Object.getPrototypeOf(component)
+      const componentClassName: string = Object.getPrototypeOf(component)
         .constructor.name;
 
       return this.componentToResourceType[componentClassName];
     } else {
-      let componentClassName: string = (component as any).name;
+      const componentClassName: string = (component as any).name;
 
       return this.componentToResourceType[componentClassName];
     }
@@ -55,15 +55,13 @@ export class RootComponentRegistry {
   }
 
   public register(mapping: Mapping): void {
-    /* tslint:disable:no-string-literal */
-    let componentClassName: string = (mapping.componentClass as any)['name'];
-    /* tsslint:enable:no-string-literal */
+    const componentClassName = mapping.componentClass.name;
 
     if (!mapping.vanillaClass) {
       // vanilla component's class all have the same name
       this.componentToResourceType[componentClassName] = mapping.resourceType;
     } else {
-      let vanillaClassName: string = (mapping.vanillaClass as any)['name'];
+      const vanillaClassName: string = (mapping.vanillaClass as any)['name'];
 
       this.vanillaToWrapper[vanillaClassName] = mapping.componentClass;
     }
@@ -82,8 +80,6 @@ export class RootComponentRegistry {
   public getVanillaWrapper(
     component: React.ComponentClass<any>
   ): React.ComponentClass<any> {
-    let name: string = (component as any)['name'];
-
-    return this.vanillaToWrapper[name];
+    return this.vanillaToWrapper[component.name];
   }
 }

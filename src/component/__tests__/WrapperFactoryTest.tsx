@@ -1,18 +1,17 @@
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
 import * as React from 'react';
-import {WrapperFactory} from '../WrapperFactory';
-import {CommonWrapper} from 'enzyme';
-import {RootComponent} from '../RootComponent';
+import {ClientAemContext} from '../../AemContext';
+import {ComponentManager} from '../../ComponentManager';
 import {ComponentRegistry} from '../../ComponentRegistry';
 import {RootComponentRegistry} from '../../RootComponentRegistry';
-import {Container, Cq} from '../../di/Container';
-import {ComponentManager} from '../../ComponentManager';
-import {ClientAemContext} from '../../AemContext';
+import {Container} from '../../di/Container';
+import {Cache} from '../../store/Cache';
 import {MockSling} from '../../test/MockSling';
 import {ResourceComponent} from '../ResourceComponent';
-import {Cache} from '../../store/Cache';
+import {RootComponent} from '../RootComponent';
 import {VanillaInclude} from '../VanillaInclude';
+import {WrapperFactory} from '../WrapperFactory';
 
 describe('WrapperFactory', () => {
   class Test extends React.Component<any, any> {
@@ -35,79 +34,77 @@ describe('WrapperFactory', () => {
     }
   }
 
-  let testRegistry: ComponentRegistry = new ComponentRegistry('components');
-  let registry: RootComponentRegistry = new RootComponentRegistry();
+  const testRegistry = new ComponentRegistry('components');
+  const registry = new RootComponentRegistry();
 
   testRegistry.registerVanilla({component: Text});
 
   registry.add(testRegistry);
   registry.init();
 
-  let container: Container = new Container({} as Cq);
-  let componentManager: ComponentManager = new ComponentManager(
-    registry,
-    container,
-    {} as Document
-  );
+  const container = new Container({} as any);
 
-  let aemContext: ClientAemContext = {
-    componentManager: componentManager,
-    container: container,
-    registry: registry
+  const componentManager = new ComponentManager(registry, container, {} as any);
+
+  const aemContext: ClientAemContext = {
+    componentManager,
+    container,
+    registry
   };
 
   it('should render simple vanilla component', () => {
-    let cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/test', {text: 'hallo'});
     container.register('sling', new MockSling(cache));
 
-    let reactClass: any = WrapperFactory.createWrapper(
+    const reactClass: any = WrapperFactory.createWrapper(
       {component: Test, props: {global: 'bye'}},
       'components/test'
     );
-    let item: CommonWrapper<any, any> = enzyme.mount(
+    const item = enzyme.mount(
       <RootComponent aemContext={aemContext} comp={reactClass} path="/test" />
     );
-    let html: string = item.html();
+    const html = item.html();
 
     expect(html).to.equal('<span data-global="bye" data-text="hallo"></span>');
   });
 
   it('should render loading component', () => {
-    let loader: any = () => {
-      return <span>...</span>;
-    };
-
-    let cache = new Cache();
+    const loader: any = () => <span>...</span>;
+    const cache = new Cache();
 
     container.register('sling', new MockSling(cache));
 
-    let reactClass: any = WrapperFactory.createWrapper(
+    const reactClass: any = WrapperFactory.createWrapper(
       {component: Test, props: {global: 'bye'}, loadingComponent: loader},
       'components/test'
     );
-    let item: CommonWrapper<any, any> = enzyme.mount(
+
+    const item = enzyme.mount(
       <RootComponent aemContext={aemContext} comp={reactClass} path="/test" />
     );
-    let html: string = item.html();
+
+    const html = item.html();
 
     expect(html).to.equal('<div class="dialog"><span>...</span></div>');
   });
 
   it('should render default loading ui', () => {
-    let cache = new Cache();
+    const cache = new Cache();
 
     container.register('sling', new MockSling(cache));
 
-    let reactClass: any = WrapperFactory.createWrapper(
+    const reactClass: any = WrapperFactory.createWrapper(
       {component: Test, props: {global: 'bye'}},
       'components/test'
     );
-    let item: CommonWrapper<any, any> = enzyme.mount(
+
+    const item = enzyme.mount(
       <RootComponent aemContext={aemContext} comp={reactClass} path="/test" />
     );
-    let html: string = item.html();
+
+    const html: string = item.html();
 
     expect(html).to.equal('<div class="dialog"><span>Loading</span></div>');
   });
@@ -123,15 +120,16 @@ describe('WrapperFactory', () => {
       }
     }
 
-    let cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/test', {vanilla: {text: 'good bye'}});
     container.register('sling', new MockSling(cache));
 
-    let item: CommonWrapper<any, any> = enzyme.mount(
+    const item = enzyme.mount(
       <RootComponent aemContext={aemContext} comp={Test} path="/test" />
     );
-    let html: string = item.html();
+
+    const html: string = item.html();
 
     expect(html).to.equal(
       '<div><div class="dialog"><span>good bye</span></div></div>'
@@ -139,31 +137,35 @@ describe('WrapperFactory', () => {
   });
 
   it('should render simple vanilla component with transform', () => {
-    let transform = (resource: any, c: ResourceComponent<any, any, any>) => {
-      let props: any = {};
+    const transform = (resource: any, c: ResourceComponent<any, any, any>) => {
+      const props: any = {};
+
       props.text = resource.textProperty;
+
       return props;
     };
 
-    let cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/test', {textProperty: 'hallo'});
     container.register('sling', new MockSling(cache));
 
-    let reactClass: any = WrapperFactory.createWrapper(
-      {component: Text, transform: transform},
+    const reactClass: any = WrapperFactory.createWrapper(
+      {component: Text, transform},
       'components/text'
     );
-    let item: CommonWrapper<any, any> = enzyme.mount(
+
+    const item = enzyme.mount(
       <RootComponent aemContext={aemContext} comp={reactClass} path="/test" />
     );
-    let html: string = item.html();
+
+    const html: string = item.html();
 
     expect(html).to.equal('<span>hallo</span>');
   });
 
   it('should render simple vanilla container', () => {
-    let cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/test', {
       children: {
@@ -176,11 +178,12 @@ describe('WrapperFactory', () => {
 
     container.register('sling', new MockSling(cache));
 
-    let reactClass: any = WrapperFactory.createWrapper(
+    const reactClass: any = WrapperFactory.createWrapper(
       {component: Test, parsys: {path: 'children'}},
       'components/test'
     );
-    let item: CommonWrapper<any, any> = enzyme.mount(
+
+    const item = enzyme.mount(
       <RootComponent
         wcmmode="disabled"
         aemContext={aemContext}
@@ -188,7 +191,8 @@ describe('WrapperFactory', () => {
         path="/test"
       />
     );
-    let html: string = item.html();
+
+    const html: string = item.html();
 
     expect(html).to.equal(
       '<span><div class="dialog"><span>hey there</span></div></span>'

@@ -2,8 +2,6 @@ import {JSDOM} from 'jsdom';
 
 declare var global: any;
 
-let FAKE_DOM_HTML: string = '<html><body></body></html>';
-
 if (typeof document === 'undefined') {
   // if the fake DOM has already been set up, or
   // if running in a real browser, do nothing
@@ -17,7 +15,7 @@ if (typeof document === 'undefined') {
   //
   // If you want to do any async setup in your tests, use
   // the before() and beforeEach() hooks.
-  const jsdom = new JSDOM(FAKE_DOM_HTML);
+  const jsdom = new JSDOM('<html><body></body></html>');
 
   global.document = jsdom.window.document;
   global.window = jsdom.window;

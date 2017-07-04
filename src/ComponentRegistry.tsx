@@ -3,36 +3,51 @@ import {Mapping} from './RootComponentRegistry';
 import {WrapperFactory} from './component/WrapperFactory';
 import {ComponentConfig} from './component/WrapperFactory';
 
+function mapClassToResourceType(componentClassName: string): string {
+  const parts: string[] = componentClassName.match(/([A-Z][a-z0-9]*)/);
+
+  if (parts) {
+    let resourceType: string = parts[0].toLocaleLowerCase();
+
+    const rest: string = componentClassName.substring(parts[0].length);
+
+    if (rest.length > 0) {
+      resourceType += '-' + mapClassToResourceType(rest);
+    }
+
+    return resourceType;
+  }
+}
+
 export class ComponentRegistry {
   public mappings: Mapping[];
 
   private mapping: any;
 
-  constructor(mapping?: (componentClassName: string) => string);
-  constructor(mapping?: string);
-  constructor(mapping?: any) {
+  public constructor(
+    mapping?: ((componentClassName: string) => string) | string
+  ) {
     this.mappings = [];
     this.mapping = mapping;
   }
 
   public register(componentClass: React.ComponentClass<any>): void {
     /* tslint:disable:no-string-literal */
-    let componentClassName: string = (componentClass as any)['name'];
+    const componentClassName: string = (componentClass as any)['name'];
     /* tsslint:enable:no-string-literal */
-    let resourceType: string = this.mapToResourceType(componentClassName);
+    const resourceType: string = this.mapToResourceType(componentClassName);
 
     this.mappings.push(new Mapping(resourceType, componentClass, null));
   }
 
   public registerVanilla(config: ComponentConfig): void {
     /* tslint:disable:no-string-literal */
-    let componentClassName: string = (config.component as any)['name'];
+    const componentClassName: string = (config.component as any)['name'];
     /* tsslint:enable:no-string-literal */
-    let resourceType: string = this.mapToResourceType(componentClassName);
-    let wrapperClass: React.ComponentClass<any> = WrapperFactory.createWrapper(
-      config,
-      resourceType
-    );
+    const resourceType: string = this.mapToResourceType(componentClassName);
+    const wrapperClass: React.ComponentClass<
+      any
+    > = WrapperFactory.createWrapper(config, resourceType);
 
     this.mappings.push(
       new Mapping(resourceType, wrapperClass, config.component)
@@ -40,32 +55,14 @@ export class ComponentRegistry {
   }
 
   private mapToResourceType(componentClassName: string): string {
-    let resourceType: string = null;
-
     if (typeof this.mapping === 'function') {
-      resourceType = this.mapping(componentClassName);
-    } else if (typeof this.mapping === 'string') {
-      resourceType =
-        this.mapping + '/' + this.mapClassToResourceType(componentClassName);
-    } else {
-      resourceType = this.mapClassToResourceType(componentClassName);
+      return this.mapping(componentClassName);
     }
 
-    return resourceType;
-  }
-
-  private mapClassToResourceType(componentClassName: string): string {
-    let parts: string[] = componentClassName.match(/([A-Z][a-z0-9]*)/);
-
-    if (parts) {
-      let resourceType: string = parts[0].toLocaleLowerCase();
-      let rest: string = componentClassName.substring(parts[0].length);
-
-      if (rest.length > 0) {
-        resourceType += '-' + this.mapClassToResourceType(rest);
-      }
-
-      return resourceType;
+    if (typeof this.mapping === 'string') {
+      return `${this.mapping}/` + mapClassToResourceType(componentClassName);
     }
+
+    return mapClassToResourceType(componentClassName);
   }
 }

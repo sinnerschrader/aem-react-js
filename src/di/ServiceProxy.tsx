@@ -13,7 +13,7 @@ export class ServiceProxy {
   private name: string;
   private locator: () => any;
 
-  constructor(cache: Cache, locator: () => any, name: string) {
+  public constructor(cache: Cache, locator: () => any, name: string) {
     this.cache = cache;
     this.locator = locator;
     this.name = name;
@@ -27,15 +27,15 @@ export class ServiceProxy {
    * @returns {any}
    */
   public invoke(method: string, ...args: any[]): any {
-    let cacheKey: string = this.cache.generateServiceCacheKey(
+    const cacheKey: string = this.cache.generateServiceCacheKey(
       this.name,
       method,
       args
     );
 
     return this.cache.wrapServiceCall(cacheKey, (): any => {
-      let service: JsProxy = this.locator();
-      let result: any = service.invoke(method, args);
+      const service: JsProxy = this.locator();
+      const result = service.invoke(method, args);
 
       if (result == null) {
         return null;

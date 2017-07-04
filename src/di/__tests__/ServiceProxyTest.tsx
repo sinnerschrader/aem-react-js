@@ -1,51 +1,50 @@
 /* tslint:disable no-unused-expression */
 
 import {expect} from 'chai';
-import {Cache} from '../../store/Cache';
 import {ServiceProxy} from '../../di/ServiceProxy';
+import {Cache} from '../../store/Cache';
 
 describe('ServiceProxy', () => {
   it('should invoke target and cache result', () => {
-    let target: any = {
-      invoke: function(method: string, args: any[]): string {
+    const target: any = {
+      invoke(method: string, args: any[]): string {
         if (method === 'add' && args.length === 2) {
-          return JSON.stringify(args[0] + args[1]);
+          const arg1: number = args[0];
+          const arg2: number = args[1];
+
+          return JSON.stringify(arg1 + arg2);
         }
 
         throw new Error('unknown method');
       }
     };
 
-    let cache: Cache = new Cache();
+    const cache: Cache = new Cache();
 
-    let proxy: ServiceProxy = new ServiceProxy(
+    const proxy: ServiceProxy = new ServiceProxy(
       cache,
-      () => {
-        return target;
-      },
+      () => target,
       'javaClass'
     );
 
-    let result: number = proxy.invoke('add', 1, 3);
+    const result: number = proxy.invoke('add', 1, 3);
 
     expect(result).to.equal(4);
     expect(cache.getServiceCall('javaClass.add(1,3)')).to.equal(4);
   });
 
   it('should invoke target and not cache result when error is thrown', () => {
-    let target: any = {
-      invoke: function(method: string, args: any[]): string {
+    const target: any = {
+      invoke(method: string, args: any[]): string {
         throw new Error('unknown method');
       }
     };
 
-    let cache: Cache = new Cache();
+    const cache: Cache = new Cache();
 
-    let proxy: ServiceProxy = new ServiceProxy(
+    const proxy: ServiceProxy = new ServiceProxy(
       cache,
-      () => {
-        return target;
-      },
+      () => target,
       'javaClass'
     );
 
@@ -60,23 +59,21 @@ describe('ServiceProxy', () => {
   });
 
   it('should invoke target and return null', () => {
-    let target: any = {
-      invoke: function(method: string, args: any[]): string {
+    const target: any = {
+      invoke(method: string, args: any[]): string {
         return null;
       }
     };
 
-    let cache: Cache = new Cache();
+    const cache: Cache = new Cache();
 
-    let proxy: ServiceProxy = new ServiceProxy(
+    const proxy: ServiceProxy = new ServiceProxy(
       cache,
-      () => {
-        return target;
-      },
+      () => target,
       'javaClass'
     );
 
-    let result: any = proxy.invoke('add', 1, 3);
+    const result: any = proxy.invoke('add', 1, 3);
 
     expect(result).to.be.null;
   });

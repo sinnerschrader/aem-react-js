@@ -20,7 +20,7 @@ export class ComponentManager {
   private document: Document;
   private registry: RootComponentRegistry;
 
-  constructor(
+  public constructor(
     registry: RootComponentRegistry,
     container: Container,
     aDocument?: Document
@@ -35,28 +35,27 @@ export class ComponentManager {
    * @param item
    */
   public initReactComponent(item: any): void {
-    let textarea = this.document.getElementById(
+    const textarea = this.document.getElementById(
       item.getAttribute('data-react-id')
     ) as HTMLTextAreaElement;
 
     if (textarea) {
-      let props: ComponentTreeConfig = JSON.parse(textarea.value);
+      const props: ComponentTreeConfig = JSON.parse(textarea.value);
 
       if (props.wcmmode === 'disabled') {
-        let comp = this.registry.getComponent(props.resourceType);
+        const comp = this.registry.getComponent(props.resourceType);
 
         if (comp === null) {
           console.error(
-            "React component '" +
-              props.resourceType +
-              "' does not exist in component list."
+            `React component '${props.resourceType}' ` +
+              'does not exist in component list.'
           );
         } else {
-          let cache: Cache = this.container.get('cache');
+          const cache: Cache = this.container.get('cache');
 
           cache.mergeCache(props.cache);
 
-          let ctx: any = {
+          const ctx: any = {
             componentManager: this,
             container: this.container,
             registry: this.registry
@@ -75,9 +74,8 @@ export class ComponentManager {
       }
     } else {
       console.error(
-        "React config with id '" +
-          item.getAttribute('data-react-id') +
-          "' has no corresponding textarea element."
+        `React config with id '${item.getAttribute('data-react-id')}' ` +
+          'has no corresponding textarea element.'
       );
     }
   }
@@ -94,9 +92,9 @@ export class ComponentManager {
    * find all root elements and initialize the react components
    */
   public initReactComponents(): number {
-    let items = [].slice.call(this.document.querySelectorAll('[data-react]'));
+    const items = [].slice.call(this.document.querySelectorAll('[data-react]'));
 
-    for (let item of items) {
+    for (const item of items) {
       this.initReactComponent(item);
     }
 

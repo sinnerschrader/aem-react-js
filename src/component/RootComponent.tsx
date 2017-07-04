@@ -23,12 +23,13 @@ export class RootComponent extends React.Component<RootComponentProps, any> {
   }
 
   public render(): React.ReactElement<any> {
-    let childProps: any = {
+    const childProps: any = {
       path: this.props.path,
       root: true,
       skipRenderDialog: !this.props.renderRootDialog,
       wcmmode: this.props.wcmmode
     };
+
     return React.createElement(this.props.comp, childProps);
   }
 }

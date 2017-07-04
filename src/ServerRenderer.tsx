@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {RootComponent} from './component/RootComponent';
-import {RootComponentRegistry} from './RootComponentRegistry';
-import {AemContext} from './AemContext';
-import {Cache} from './store/Cache';
 import * as ReactDom from 'react-dom/server';
+import {AemContext} from './AemContext';
+import {RootComponentRegistry} from './RootComponentRegistry';
+import {RootComponent} from './component/RootComponent';
 import {Container} from './di/Container';
+import {Cache} from './store/Cache';
 
 export interface ServerResponse {
   html: string;
@@ -15,7 +15,7 @@ export class ServerRenderer {
   private registry: RootComponentRegistry;
   private container: Container;
 
-  constructor(registry: RootComponentRegistry, container: Container) {
+  public constructor(registry: RootComponentRegistry, container: Container) {
     this.registry = registry;
     this.container = container;
   }
@@ -34,17 +34,20 @@ export class ServerRenderer {
     console.log('render react on path ' + path);
     console.log('render react component ' + resourceType);
 
-    let comp = this.registry.getComponent(resourceType);
+    const comp = this.registry.getComponent(resourceType);
 
     if (!comp) {
       throw new Error('cannot find component for resourceType ' + resourceType);
     }
 
-    let ctx: AemContext = {registry: this.registry, container: this.container};
+    const ctx: AemContext = {
+      registry: this.registry,
+      container: this.container
+    };
 
-    console.log('render root dialog ' + renderRootDialog);
+    console.log('render root dialog ' + String(renderRootDialog));
 
-    let html: string = ReactDom.renderToString(
+    const html: string = ReactDom.renderToString(
       <RootComponent
         aemContext={ctx}
         comp={comp}
@@ -54,8 +57,8 @@ export class ServerRenderer {
       />
     );
 
-    let cache: Cache = this.container.get('cache');
+    const cache: Cache = this.container.get('cache');
 
-    return {html: html, state: JSON.stringify(cache.getFullState())};
+    return {html, state: JSON.stringify(cache.getFullState())};
   }
 }

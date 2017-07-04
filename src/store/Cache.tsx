@@ -6,6 +6,32 @@ interface ResourceEntry {
   data: any;
 }
 
+function merge(target: any, source: any): void {
+  if (source) {
+    Object.keys(source).forEach((key: string) => {
+      target[key] = source[key];
+    });
+  }
+}
+
+function normalizeDepth(depth?: number): number {
+  if (depth < 0 || depth === null || typeof depth === 'undefined') {
+    return -1;
+  }
+
+  return depth;
+}
+
+function getProperty(data: any, path: string[]): any {
+  const subData = ResourceUtils.getProperty(data, path);
+
+  if (typeof subData === 'undefined' || subData === null) {
+    return {};
+  } else {
+    return subData;
+  }
+}
+
 /**
  * This cache is used to store server side data and pass it to the client.
  */
@@ -15,7 +41,7 @@ export class Cache {
   private included: {[path: string]: string};
   private serviceCalls: {[path: string]: any};
 
-  constructor() {
+  public constructor() {
     this.resources = {};
     this.scripts = {};
     this.included = {};
@@ -27,10 +53,10 @@ export class Cache {
     method: string,
     args: any[]
   ): string {
-    let cacheKey: string = service + '.' + method + '(';
+    let cacheKey = `${service}.${method}(`;
 
     for (let i = 0; i < args.length; i++) {
-      cacheKey += args[i] + '';
+      cacheKey += String(args[i]) + '';
       if (i < args.length - 1) {
         cacheKey += ',';
       }
@@ -55,7 +81,7 @@ export class Cache {
   public mergeCache(cache: any): void {
     if (cache) {
       ['resources', 'included', 'scripts', 'serviceCalls'].forEach(key => {
-        this.merge((this as any)[key], cache[key]);
+        merge((this as any)[key], cache[key]);
       });
     }
   }
@@ -66,18 +92,19 @@ export class Cache {
     } else {
       this.resources[path] = {
         data: resource,
-        depth: this.normalizeDepth(depth)
+        depth: normalizeDepth(depth)
       };
     }
   }
 
-  public get(path: string, depth?: number): void {
-    let normalizedDepth: number = this.normalizeDepth(depth);
-    let subPath: string[] = [];
+  public get(path: string, depth?: number): any {
+    const normalizedDepth: number = normalizeDepth(depth);
+    const subPath: string[] = [];
+
     let resource: ResourceEntry = this.resources[path];
 
     while (!resource && path != null) {
-      let result = ResourceUtils.findAncestor(path, 1);
+      const result = ResourceUtils.findAncestor(path, 1);
 
       if (result !== null) {
         path = result.path;
@@ -91,11 +118,11 @@ export class Cache {
     if (typeof resource === 'undefined' || resource === null) {
       return null;
     } else if (resource.depth < 0) {
-      return this.getProperty(resource.data, subPath);
+      return getProperty(resource.data, subPath);
     } else if (normalizedDepth < 0) {
       return null;
     } else if (subPath.length + normalizedDepth - 1 <= resource.depth) {
-      return this.getProperty(resource.data, subPath);
+      return getProperty(resource.data, subPath);
     } else {
       return null;
     }
@@ -139,31 +166,5 @@ export class Cache {
     this.scripts = {};
     this.included = {};
     this.serviceCalls = {};
-  }
-
-  private merge(target: any, source: any): void {
-    if (source) {
-      Object.keys(source).forEach((key: string) => {
-        target[key] = source[key];
-      });
-    }
-  }
-
-  private normalizeDepth(depth?: number): number {
-    if (depth < 0 || depth === null || typeof depth === 'undefined') {
-      return -1;
-    }
-
-    return depth;
-  }
-
-  private getProperty(data: any, path: string[]): any {
-    let subData: any = ResourceUtils.getProperty(data, path);
-
-    if (typeof subData === 'undefined' || subData === null) {
-      return {};
-    } else {
-      return subData;
-    }
   }
 }

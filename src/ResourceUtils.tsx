@@ -2,16 +2,17 @@ export class ResourceUtils {
   public static ABSOLUTE_PATH_PATTERN: RegExp = /^\//;
 
   /**
-   * returns only the properties of the given object whoe have a property named sling:resourceType
+   * returns only the properties of the given object
+   * whoe have a property named sling:resourceType
    * @param resource the resource
    * @returns {any} the sub object
    */
   public static getChildren(resource: any): any {
-    let children: any = {};
+    const children: any = {};
 
     if (resource) {
       Object.keys(resource).forEach((propertyName: string): void => {
-        let child = resource[propertyName];
+        const child = resource[propertyName];
 
         if (child['sling:resourceType']) {
           children[propertyName] = child;
@@ -23,6 +24,7 @@ export class ResourceUtils {
   }
 
   public static getProperty(data: any, path: string[]): any {
+    /* tslint:disable-next-line prefer-for-of */
     for (let i = 0; i < path.length; i++) {
       data = data[path[i]];
 
@@ -39,10 +41,10 @@ export class ResourceUtils {
   }
 
   public static findAncestor(resourcePath: string, depth: number): PathResult {
-    let subPath: string[] = [];
+    const subPath: string[] = [];
 
     for (let i = 0; i < depth; i++) {
-      let index: number = resourcePath.lastIndexOf('/');
+      const index: number = resourcePath.lastIndexOf('/');
 
       if (index < 0) {
         return null;
@@ -52,17 +54,17 @@ export class ResourceUtils {
       resourcePath = resourcePath.substring(0, index);
     }
 
-    return {path: resourcePath, subPath: subPath};
+    return {path: resourcePath, subPath};
   }
 
   public static getContainingPagePath(requestPath: string): string {
-    let index: number = requestPath.indexOf('jcr:content');
+    const index: number = requestPath.indexOf('jcr:content');
 
     if (index < 0) {
       return requestPath;
     }
 
-    let dot: number = requestPath.indexOf('.');
+    const dot: number = requestPath.indexOf('.');
 
     return (
       requestPath.substring(0, index - 1) +

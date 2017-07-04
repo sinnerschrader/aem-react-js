@@ -1,11 +1,10 @@
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
 import * as React from 'react';
-import {CommonWrapper} from 'enzyme';
-import {EditDialog} from '../EditDialog';
-import {MockSling} from '../../test/MockSling';
 import {ClientAemContext} from '../../AemContext';
-import {Container, Cq} from '../../di/Container';
+import {Container} from '../../di/Container';
+import {MockSling} from '../../test/MockSling';
+import {EditDialog} from '../EditDialog';
 
 describe('EditDialog', () => {
   class Wrapper extends React.Component<any, any> {
@@ -28,18 +27,18 @@ describe('EditDialog', () => {
     }
   }
 
-  let container: Container = new Container({} as Cq);
+  const container: Container = new Container({} as any);
 
-  let aemContext: ClientAemContext = {
+  const aemContext: ClientAemContext = {
     componentManager: null,
-    container: container,
+    container,
     registry: null
   };
 
   it('should render wrapper element', () => {
     container.register('sling', new MockSling(null));
 
-    let item: CommonWrapper<any, any> = enzyme.mount(
+    const item = enzyme.mount(
       <Wrapper aemContext={aemContext}>
         <EditDialog path="/test" resourceType="components/test" />
       </Wrapper>
@@ -51,7 +50,7 @@ describe('EditDialog', () => {
   it('should render wrapper element with extra className', () => {
     container.register('sling', new MockSling());
 
-    let item: CommonWrapper<any, any> = enzyme.mount(
+    const item = enzyme.mount(
       <Wrapper aemContext={aemContext}>
         <EditDialog
           className="hi"
@@ -64,28 +63,32 @@ describe('EditDialog', () => {
     expect(item.html()).to.equal('<div><div class="dialog hi"></div></div>');
   });
 
-  it('should render wrapper element with extra className and existing className', () => {
-    container.register(
-      'sling',
-      new MockSling(null, {
-        child: {
-          element: 'script',
-          html: 'Cq.makeEditable()'
-        },
-        element: 'ul'
-      })
-    );
+  it(
+    'should render wrapper element ' +
+      'with extra className and existing className',
+    () => {
+      container.register(
+        'sling',
+        new MockSling(null, {
+          child: {
+            element: 'script',
+            html: 'Cq.makeEditable()'
+          },
+          element: 'ul'
+        })
+      );
 
-    let item: CommonWrapper<any, any> = enzyme.mount(
-      <Wrapper aemContext={aemContext}>
-        <EditDialog path="/test" resourceType="components/test" />
-      </Wrapper>
-    );
+      const item = enzyme.mount(
+        <Wrapper aemContext={aemContext}>
+          <EditDialog path="/test" resourceType="components/test" />
+        </Wrapper>
+      );
 
-    expect(item.html()).to.equal(
-      '<div><ul><script>Cq.makeEditable()</script></ul></div>'
-    );
-  });
+      expect(item.html()).to.equal(
+        '<div><ul><script>Cq.makeEditable()</script></ul></div>'
+      );
+    }
+  );
 
   it('should render classic ui', () => {
     container.register(
@@ -107,14 +110,15 @@ describe('EditDialog', () => {
       })
     );
 
-    let item: CommonWrapper<any, any> = enzyme.mount(
+    const item = enzyme.mount(
       <Wrapper aemContext={aemContext}>
         <EditDialog path="/test" resourceType="components/test" />
       </Wrapper>
     );
 
     expect(item.html()).to.equal(
-      '<div><div class="more react-parsys"><script type="text/javascript">CQ.WCM.edit();</script></div></div>'
+      '<div><div class="more react-parsys">' +
+        '<script type="text/javascript">CQ.WCM.edit();</script></div></div>'
     );
   });
 
@@ -136,14 +140,15 @@ describe('EditDialog', () => {
       })
     );
 
-    let item: CommonWrapper<any, any> = enzyme.mount(
+    const item = enzyme.mount(
       <Wrapper aemContext={aemContext}>
         <EditDialog path="/test" resourceType="components/test" />
       </Wrapper>
     );
 
     expect(item.html()).to.equal(
-      '<div><div><cq data-config="{&quot;path&quot;:&quot;/content&quot;}" data-path="/content/"></cq></div></div>'
+      '<div><div><cq data-config="{&quot;path&quot;:&quot;/content&quot;}" ' +
+        'data-path="/content/"></cq></div></div>'
     );
   });
 });

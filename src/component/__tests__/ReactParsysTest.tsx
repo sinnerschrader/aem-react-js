@@ -1,16 +1,17 @@
 import {expect} from 'chai';
-import {AemTest} from '../../test/AemTest';
-import {ResourceComponent} from '../ResourceComponent';
 import * as React from 'react';
 import {ComponentRegistry} from '../../ComponentRegistry';
+import {AemTest} from '../../test/AemTest';
 import {ReactParsys} from '../ReactParsys';
+import {ResourceComponent} from '../ResourceComponent';
 
 describe('ReactParsys', () => {
   class Text extends ResourceComponent<any, any, any> {
     public renderBody(): React.ReactElement<any> {
-      let text: string = this.getResource()
+      const text: string = this.getResource()
         ? this.getResource().text
         : 'unknown';
+
       return (
         <span>
           {text}
@@ -19,18 +20,18 @@ describe('ReactParsys', () => {
     }
   }
 
-  let registry: ComponentRegistry = new ComponentRegistry('/components');
+  const registry = new ComponentRegistry('/components');
 
   registry.register(Text);
   registry.register(ReactParsys);
 
-  let aemTest: AemTest = new AemTest();
+  const aemTest = new AemTest();
 
   aemTest.addRegistry(registry);
   aemTest.init();
 
   it('should render ReactParsys with a single child', () => {
-    let wrapper = aemTest.render({
+    const wrapper = aemTest.render({
       child_1: {
         'sling:resourceType': '/components/text',
         text: 'Hallo'
@@ -44,7 +45,7 @@ describe('ReactParsys', () => {
   });
 
   it('should render ReactParsys with no children', () => {
-    let wrapper = aemTest.render({
+    const wrapper = aemTest.render({
       resourceType: '/components/react-parsys'
     });
 

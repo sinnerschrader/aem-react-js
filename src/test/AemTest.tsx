@@ -1,11 +1,11 @@
 import * as enzyme from 'enzyme';
-import {ClientAemContext} from '../AemContext';
-import {RootComponent} from '../component/RootComponent';
-import {RootComponentRegistry} from '../RootComponentRegistry';
-import {ComponentRegistry} from '../ComponentRegistry';
-import {Container, Cq} from '../di/Container';
-import {ComponentManager} from '../ComponentManager';
 import * as React from 'react';
+import {ClientAemContext} from '../AemContext';
+import {ComponentManager} from '../ComponentManager';
+import {ComponentRegistry} from '../ComponentRegistry';
+import {RootComponentRegistry} from '../RootComponentRegistry';
+import {RootComponent} from '../component/RootComponent';
+import {Container} from '../di/Container';
 import {Cache} from '../store/Cache';
 import {MockSling} from './MockSling';
 
@@ -17,21 +17,21 @@ export class AemTest {
   public init(): void {
     this.registry.init();
 
-    let container: Container = new Container({} as Cq);
-    let cache: Cache = new Cache();
+    const container: Container = new Container({} as any);
+    const cache: Cache = new Cache();
 
     container.register('cache', cache);
     container.register('sling', new MockSling(cache));
 
-    let componentManager: ComponentManager = new ComponentManager(
+    const componentManager: ComponentManager = new ComponentManager(
       this.registry,
       container,
-      {} as Document
+      {} as any
     );
 
     this.currentAemContext = {
-      componentManager: componentManager,
-      container: container,
+      componentManager,
+      container,
       registry: this.registry
     };
   }
@@ -41,7 +41,7 @@ export class AemTest {
   }
 
   public addResource(path: string, resource: any, depth?: number): void {
-    let cache: Cache = this.currentAemContext.container.get('cache');
+    const cache: Cache = this.currentAemContext.container.get('cache');
 
     cache.put(path, resource, depth);
   }
@@ -49,10 +49,12 @@ export class AemTest {
   public render(resource: any, path?: string): any {
     this.addResource(path || '/', resource);
 
-    let component: any = this.registry.getComponent(resource.resourceType);
+    const component: any = this.registry.getComponent(resource.resourceType);
 
     if (!component) {
-      throw new Error('cannot find component for ' + resource.resourceType);
+      throw new Error(
+        'cannot find component for ' + String(resource.resourceType)
+      );
     }
 
     return enzyme.render(

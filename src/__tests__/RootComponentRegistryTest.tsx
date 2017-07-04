@@ -2,10 +2,10 @@
 
 import {expect} from 'chai';
 import * as React from 'react';
+import {ComponentManager} from '../ComponentManager';
+import {ComponentRegistry} from '../ComponentRegistry';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {ResourceComponent} from '../component/ResourceComponent';
-import {ComponentRegistry} from '../ComponentRegistry';
-import {ComponentManager} from '../ComponentManager';
 
 describe('RootComponentRegistry', () => {
   class TestView extends ResourceComponent<any, any, any> {
@@ -18,11 +18,11 @@ describe('RootComponentRegistry', () => {
     }
   }
 
-  let actualResourceType: string = '/components/test-view';
+  const actualResourceType = '/components/test-view';
 
   it('should register component', () => {
-    let rootRegistry: RootComponentRegistry = new RootComponentRegistry();
-    let registry: ComponentRegistry = new ComponentRegistry('/components');
+    const rootRegistry: RootComponentRegistry = new RootComponentRegistry();
+    const registry: ComponentRegistry = new ComponentRegistry('/components');
 
     registry.register(TestView);
 
@@ -51,19 +51,19 @@ describe('RootComponentRegistry', () => {
   });
 
   it('should register vanilla component', () => {
-    let rootRegistry: RootComponentRegistry = new RootComponentRegistry();
-    let registry: ComponentRegistry = new ComponentRegistry('/components');
+    const rootRegistry: RootComponentRegistry = new RootComponentRegistry();
+    const registry: ComponentRegistry = new ComponentRegistry('/components');
 
     registry.registerVanilla({component: TestView});
 
     rootRegistry.add(registry);
     rootRegistry.init();
 
-    let component: any = rootRegistry.getComponent(actualResourceType);
+    const component: any = rootRegistry.getComponent(actualResourceType);
 
     expect(component).to.not.be.null;
 
-    let resourceType: string = rootRegistry.getResourceType(TestView);
+    const resourceType = rootRegistry.getResourceType(TestView);
 
     expect(resourceType).to.be.undefined;
   });
