@@ -118,6 +118,9 @@ exports.release = () => {
     sh.exit(1);
   }
 
+  exec('npm', 'prune');
+  exec('npm', 'install');
+
   exports.test();
 
   sh.echo('# Releasing a new version ########################################');
