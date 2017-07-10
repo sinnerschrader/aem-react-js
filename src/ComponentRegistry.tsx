@@ -31,10 +31,11 @@ export class ComponentRegistry {
     this.mapping = mapping;
   }
 
-  public register(componentClass: React.ComponentClass<any>): void {
-    /* tslint:disable:no-string-literal */
-    const componentClassName: string = (componentClass as any)['name'];
-    /* tsslint:enable:no-string-literal */
+  public register(
+    componentClass: React.ComponentClass<any>,
+    name?: string
+  ): void {
+    const componentClassName: string = name || (componentClass as any).name;
     const resourceType: string = this.mapToResourceType(componentClassName);
 
     this.mappings.push(new Mapping(resourceType, componentClass, null));
@@ -42,9 +43,11 @@ export class ComponentRegistry {
 
   public registerVanilla(config: ComponentConfig): void {
     /* tslint:disable:no-string-literal */
-    const componentClassName: string = (config.component as any)['name'];
+    const componentClassName: string =
+      config.name || (config.component as any)['name'];
     /* tsslint:enable:no-string-literal */
-    const resourceType: string = this.mapToResourceType(componentClassName);
+    const resourceType: string =
+      config.name || this.mapToResourceType(componentClassName);
     const wrapperClass: React.ComponentClass<
       any
     > = WrapperFactory.createWrapper(config, resourceType);

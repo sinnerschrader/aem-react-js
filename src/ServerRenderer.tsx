@@ -57,7 +57,7 @@ export class ServerRenderer {
       />
     );
 
-    const cache: Cache = this.container.get('cache');
+    const cache: Cache = this.container.get('cache') as Cache;
 
     return {html, state: JSON.stringify(cache.getFullState())};
   }

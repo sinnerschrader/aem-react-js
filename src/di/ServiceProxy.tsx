@@ -2,6 +2,8 @@ import {Cache} from '../store/Cache';
 
 export interface JsProxy {
   invoke(name: string, args: any[]): string;
+  get(name: string): string;
+  getObject(): string;
 }
 
 /**
@@ -13,7 +15,7 @@ export class ServiceProxy {
   private name: string;
   private locator: () => any;
 
-  public constructor(cache: Cache, locator: () => any, name: string) {
+  public constructor(cache: Cache, locator: () => JsProxy, name: string) {
     this.cache = cache;
     this.locator = locator;
     this.name = name;
@@ -36,6 +38,44 @@ export class ServiceProxy {
     return this.cache.wrapServiceCall(cacheKey, (): any => {
       const service: JsProxy = this.locator();
       const result = service.invoke(method, args);
+
+      if (result == null) {
+        return null;
+      }
+
+      return JSON.parse(result);
+    });
+  }
+
+  public get(name: string): any {
+    const cacheKey: string = this.cache.generateServiceCacheKey(
+      this.name,
+      name,
+      []
+    );
+
+    return this.cache.wrapServiceCall(cacheKey, (): any => {
+      const service: JsProxy = this.locator();
+      const result = service.get(name);
+
+      if (result == null) {
+        return null;
+      }
+
+      return JSON.parse(result);
+    });
+  }
+
+  public getObject(): any {
+    const cacheKey: string = this.cache.generateServiceCacheKey(
+      this.name,
+      '',
+      []
+    );
+
+    return this.cache.wrapServiceCall(cacheKey, (): any => {
+      const service: JsProxy = this.locator();
+      const result = service.getObject();
 
       if (result == null) {
         return null;

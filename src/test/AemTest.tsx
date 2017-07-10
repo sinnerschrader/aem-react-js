@@ -41,7 +41,7 @@ export class AemTest {
   }
 
   public addResource(path: string, resource: any, depth?: number): void {
-    const cache: Cache = this.currentAemContext.container.get('cache');
+    const cache: Cache = this.currentAemContext.container.get('cache') as Cache;
 
     cache.put(path, resource, depth);
   }

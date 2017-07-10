@@ -25,7 +25,9 @@ export class ResourceInclude extends AemComponent<IncludeProps, any> {
         ? this.props.path
         : `${this.getPath()}/` + this.props.path;
 
-      const sling: Sling = this.context.aemContext.container.get('sling');
+      const sling: Sling = this.context.aemContext.container.get(
+        'sling'
+      ) as Sling;
 
       innerHTML = sling.includeResource(path, this.props.resourceType);
 

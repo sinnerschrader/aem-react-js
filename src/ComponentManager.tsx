@@ -51,7 +51,7 @@ export class ComponentManager {
               'does not exist in component list.'
           );
         } else {
-          const cache: Cache = this.container.get('cache');
+          const cache: Cache = this.container.get('cache') as Cache;
 
           cache.mergeCache(props.cache);
 

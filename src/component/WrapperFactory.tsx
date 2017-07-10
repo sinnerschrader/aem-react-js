@@ -9,6 +9,7 @@ export type Transform = (
 
 export interface ComponentConfig {
   depth?: number;
+  name?: string;
   parsys?: ReactParsysProps;
   component: React.ComponentClass<any>;
   props?: {[name: string]: any};

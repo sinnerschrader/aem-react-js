@@ -2,6 +2,7 @@
   "extends": "./node_modules/ts-config/tslint.json",
   "rules": {
     "no-any": false,
-    "object-literal-key-quotes": [true, "as-needed"]
+    "object-literal-key-quotes": [true, "as-needed"],
+    "prefer-function-over-method": false
   }
 }
