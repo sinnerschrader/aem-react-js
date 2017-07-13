@@ -43,7 +43,10 @@
     "@types/enzyme": "2.8.1",
     "@types/jsdom": "11.0.0",
     "@types/mocha": "2.2.41",
+    "@types/react": "15.0.33",
+    "@types/react-addons-shallow-compare": "0.14.20",
     "@types/react-addons-test-utils": "0.14.19",
+    "@types/react-dom": "15.5.1",
     "chai": "4.0.2",
     "codecov": "2.2.0",
     "commitizen": "2.9.6",
@@ -66,11 +69,13 @@
     "typescript": "2.4.1"
   },
   "dependencies": {
-    "@types/react": "15.0.33",
-    "@types/react-addons-shallow-compare": "0.14.20",
-    "@types/react-dom": "15.5.1",
     "react": "15.6.1",
     "react-addons-shallow-compare": "15.6.0",
     "react-dom": "15.6.1"
+  },
+  "peerDependencies": {
+    "@types/react": "15.0.38",
+    "@types/react-addons-shallow-compare": "0.14.20",
+    "@types/react-dom": "15.5.1"
   }
 }
