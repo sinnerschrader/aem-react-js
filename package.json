@@ -43,7 +43,7 @@
     "@types/enzyme": "2.8.1",
     "@types/jsdom": "11.0.0",
     "@types/mocha": "2.2.41",
-    "@types/react": "15.0.33",
+    "@types/react": "15.0.38",
     "@types/react-addons-shallow-compare": "0.14.20",
     "@types/react-addons-test-utils": "0.14.19",
     "@types/react-dom": "15.5.1",
