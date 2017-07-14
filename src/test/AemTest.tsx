@@ -1,7 +1,6 @@
 import * as enzyme from 'enzyme';
 import * as React from 'react';
-import {ClientAemContext} from '../AemContext';
-import {ComponentManager} from '../ComponentManager';
+import {AemContext} from '../AemContext';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {RootComponent} from '../component/RootComponent';
@@ -10,7 +9,7 @@ import {Cache} from '../store/Cache';
 import {MockSling} from './MockSling';
 
 export class AemTest {
-  public currentAemContext: ClientAemContext;
+  public currentAemContext: AemContext;
 
   private registry: RootComponentRegistry = new RootComponentRegistry();
 
@@ -23,14 +22,7 @@ export class AemTest {
     container.register('cache', cache);
     container.register('sling', new MockSling(cache));
 
-    const componentManager: ComponentManager = new ComponentManager(
-      this.registry,
-      container,
-      {} as any
-    );
-
     this.currentAemContext = {
-      componentManager,
       container,
       registry: this.registry
     };

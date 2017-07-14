@@ -1,8 +1,7 @@
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
 import * as React from 'react';
-import {ClientAemContext} from '../../AemContext';
-import {ComponentManager} from '../../ComponentManager';
+import {AemContext} from '../../AemContext';
 import {ComponentRegistry} from '../../ComponentRegistry';
 import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
@@ -44,10 +43,7 @@ describe('WrapperFactory', () => {
 
   const container = new Container({} as any);
 
-  const componentManager = new ComponentManager(registry, container, {} as any);
-
-  const aemContext: ClientAemContext = {
-    componentManager,
+  const aemContext: AemContext = {
     container,
     registry
   };

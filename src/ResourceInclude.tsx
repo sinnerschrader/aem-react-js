@@ -31,7 +31,7 @@ export class ResourceInclude extends AemComponent<IncludeProps, any> {
 
       innerHTML = sling.includeResource(path, this.props.resourceType);
 
-      return React.createElement(this.props.element || ('div' as any), {
+      return React.createElement(this.props.element || 'div', {
         dangerouslySetInnerHTML: {__html: innerHTML},
         hidden: !!this.props.hidden
       });

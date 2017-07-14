@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {AemContext, ClientAemContext} from '../AemContext';
+import {AemContext} from '../AemContext';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {Container} from '../di/Container';
 
@@ -17,7 +17,7 @@ export class AemComponent<P, S> extends React.Component<P, S> {
   public context: {
     wcmmode: string;
     path: string;
-    aemContext: ClientAemContext;
+    aemContext: AemContext;
   };
 
   /* istanbul ignore next */

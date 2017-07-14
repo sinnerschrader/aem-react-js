@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
 import * as React from 'react';
-import {ClientAemContext} from '../../AemContext';
+import {AemContext} from '../../AemContext';
 import {Container} from '../../di/Container';
 import {MockSling} from '../../test/MockSling';
 import {EditDialog} from '../EditDialog';
@@ -29,8 +29,7 @@ describe('EditDialog', () => {
 
   const container: Container = new Container({} as any);
 
-  const aemContext: ClientAemContext = {
-    componentManager: null,
+  const aemContext: AemContext = {
     container,
     registry: null
   };

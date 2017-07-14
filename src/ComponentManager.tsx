@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
+import {AemContext} from './AemContext';
 import {RootComponentRegistry} from './RootComponentRegistry';
 import {RootComponent} from './component/RootComponent';
 import {Container} from './di/Container';
@@ -34,7 +35,7 @@ export class ComponentManager {
    * initialize react component in dom.
    * @param item
    */
-  public initReactComponent(item: any): void {
+  public initReactComponent(item: Element): void {
     const textarea = this.document.getElementById(
       item.getAttribute('data-react-id')
     ) as HTMLTextAreaElement;
@@ -55,8 +56,7 @@ export class ComponentManager {
 
           cache.mergeCache(props.cache);
 
-          const ctx: any = {
-            componentManager: this,
+          const ctx: AemContext = {
             container: this.container,
             registry: this.registry
           };
@@ -92,7 +92,9 @@ export class ComponentManager {
    * find all root elements and initialize the react components
    */
   public initReactComponents(): number {
-    const items = [].slice.call(this.document.querySelectorAll('[data-react]'));
+    const items: Element[] = [].slice.call(
+      this.document.querySelectorAll('[data-react]')
+    );
 
     for (const item of items) {
       this.initReactComponent(item);

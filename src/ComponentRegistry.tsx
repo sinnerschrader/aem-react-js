@@ -22,7 +22,7 @@ function mapClassToResourceType(componentClassName: string): string {
 export class ComponentRegistry {
   public mappings: Mapping[];
 
-  private mapping: any;
+  private mapping: ((componentClassName: string) => string) | string;
 
   public constructor(
     mapping?: ((componentClassName: string) => string) | string
@@ -35,7 +35,7 @@ export class ComponentRegistry {
     componentClass: React.ComponentClass<any>,
     name?: string
   ): void {
-    const componentClassName: string = name || (componentClass as any).name;
+    const componentClassName: string = name || componentClass.name;
     const resourceType: string = this.mapToResourceType(componentClassName);
 
     this.mappings.push(new Mapping(resourceType, componentClass, null));
@@ -43,14 +43,11 @@ export class ComponentRegistry {
 
   public registerVanilla(config: ComponentConfig): void {
     /* tslint:disable:no-string-literal */
-    const componentClassName: string =
-      config.name || (config.component as any)['name'];
+    const componentClassName: string = config.name || config.component.name;
     /* tsslint:enable:no-string-literal */
     const resourceType: string =
       config.name || this.mapToResourceType(componentClassName);
-    const wrapperClass: React.ComponentClass<
-      any
-    > = WrapperFactory.createWrapper(config, resourceType);
+    const wrapperClass = WrapperFactory.createWrapper(config, resourceType);
 
     this.mappings.push(
       new Mapping(resourceType, wrapperClass, config.component)
