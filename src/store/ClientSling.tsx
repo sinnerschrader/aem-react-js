@@ -12,16 +12,15 @@ export interface FetchWindow {
  * corresponds to the given component from the server.
  */
 export class ClientSling extends AbstractSling {
-  private cache: Cache;
-  private origin: string;
-  private fetch: FetchWindow;
-  private delayInMillis: number;
+  private readonly cache: Cache;
+  private readonly origin: string;
+  private readonly fetchWindow: FetchWindow;
+  private readonly delayInMillis: number;
 
-  // TODO change params arry into map
   public constructor(
     cache: Cache,
     origin: string,
-    fetch?: FetchWindow,
+    fetchWindow?: FetchWindow,
     delayInMillis?: number
   ) {
     super();
@@ -29,7 +28,9 @@ export class ClientSling extends AbstractSling {
     this.cache = cache;
     this.origin = origin;
 
-    this.fetch = !fetch ? (window as any) as FetchWindow : fetch;
+    this.fetchWindow = !fetchWindow
+      ? (window as any) as FetchWindow
+      : fetchWindow;
   }
 
   public subscribe(
@@ -60,7 +61,7 @@ export class ClientSling extends AbstractSling {
         url += '?' + serverRenderingParam;
       }
 
-      return this.fetch
+      return this.fetchWindow
         .fetch(url, {credentials: 'same-origin'})
         .then((response: any) => {
           if (response.status === 404) {

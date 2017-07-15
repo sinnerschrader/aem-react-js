@@ -2,8 +2,8 @@ import {ResourceUtils} from '../ResourceUtils';
 import {EditDialogData} from './Sling';
 
 interface ResourceEntry {
-  depth: number;
-  data: any;
+  readonly depth: number;
+  readonly data: any;
 }
 
 function merge(target: any, source: any): void {

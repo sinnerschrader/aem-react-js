@@ -11,8 +11,8 @@ export interface JavaSling {
 }
 
 export class ServerSling extends AbstractSling {
-  private sling: JavaSling;
-  private cache: Cache;
+  private readonly sling: JavaSling;
+  private readonly cache: Cache;
 
   public constructor(cache: Cache, sling: JavaSling) {
     super();

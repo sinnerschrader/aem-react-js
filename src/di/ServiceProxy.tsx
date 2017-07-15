@@ -1,43 +1,37 @@
 import {Cache} from '../store/Cache';
-
-export interface JsProxy {
-  invoke(name: string, args: any[]): string;
-  get(name: string): string;
-  getObject(): string;
-}
+import {Locator} from './Locator';
 
 /**
- * this class is a proxy that wraps java object of type JsProxy. The  proxy
- * put all calls into the cache.
+ * This class is a proxy that wraps a java object of type JsProxy.
+ * The proxy put all calls into the cache.
  */
 export class ServiceProxy {
-  private cache: Cache;
-  private name: string;
-  private locator: () => any;
+  private readonly cache: Cache;
+  private readonly name: string;
+  private readonly locator: Locator;
 
-  public constructor(cache: Cache, locator: () => JsProxy, name: string) {
+  public constructor(cache: Cache, locator: Locator, name: string) {
     this.cache = cache;
     this.locator = locator;
     this.name = name;
   }
 
   /**
-   * call a method on the proxied object. returns the cached value if available.
+   * Call a method on the proxied object. returns the cached value if available.
    *
    * @param name of java method to call
    * @param args to java method
-   * @returns {any}
+   * @returns {T}
    */
-  public invoke(method: string, ...args: any[]): any {
+  public invoke<T>(method: string, ...args: any[]): T {
     const cacheKey: string = this.cache.generateServiceCacheKey(
       this.name,
       method,
       args
     );
 
-    return this.cache.wrapServiceCall(cacheKey, (): any => {
-      const service: JsProxy = this.locator();
-      const result = service.invoke(method, args);
+    return this.cache.wrapServiceCall(cacheKey, () => {
+      const result = this.locator().invoke(method, args);
 
       if (result == null) {
         return null;
@@ -47,16 +41,15 @@ export class ServiceProxy {
     });
   }
 
-  public get(name: string): any {
+  public get<T>(name: string): T {
     const cacheKey: string = this.cache.generateServiceCacheKey(
       this.name,
       name,
       []
     );
 
-    return this.cache.wrapServiceCall(cacheKey, (): any => {
-      const service: JsProxy = this.locator();
-      const result = service.get(name);
+    return this.cache.wrapServiceCall(cacheKey, () => {
+      const result = this.locator().get(name);
 
       if (result == null) {
         return null;
@@ -66,16 +59,15 @@ export class ServiceProxy {
     });
   }
 
-  public getObject(): any {
+  public getObject<T extends object>(): T {
     const cacheKey: string = this.cache.generateServiceCacheKey(
       this.name,
       '',
       []
     );
 
-    return this.cache.wrapServiceCall(cacheKey, (): any => {
-      const service: JsProxy = this.locator();
-      const result = service.getObject();
+    return this.cache.wrapServiceCall(cacheKey, () => {
+      const result = this.locator().getObject();
 
       if (result == null) {
         return null;

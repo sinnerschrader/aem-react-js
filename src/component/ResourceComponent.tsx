@@ -3,12 +3,11 @@ import * as shallowCompare from 'react-addons-shallow-compare';
 import {ResourceInclude} from '../ResourceInclude';
 import {ResourceUtils} from '../ResourceUtils';
 import {RootComponentRegistry} from '../RootComponentRegistry';
-import {Sling} from '../store/Sling';
 import {AemComponent} from './AemComponent';
 import {EditDialog} from './EditDialog';
 
 export interface Resource {
-  'sling:resourceType': string;
+  readonly 'sling:resourceType': string;
 }
 
 export enum STATE {
@@ -18,17 +17,17 @@ export enum STATE {
 }
 
 export interface ResourceState {
-  absolutePath: string;
-  resource?: any;
-  state: STATE;
+  readonly absolutePath: string;
+  readonly resource?: any;
+  readonly state: STATE;
 }
 
 export interface ResourceProps {
-  path: string;
-  skipRenderDialog?: boolean;
-  root?: boolean;
-  wcmmode?: string;
-  className?: string;
+  readonly path: string;
+  readonly skipRenderDialog?: boolean;
+  readonly root?: boolean;
+  readonly wcmmode?: string;
+  readonly className?: string;
 }
 
 /**
@@ -39,7 +38,7 @@ export abstract class ResourceComponent<
   P extends ResourceProps,
   S extends ResourceState
 > extends AemComponent<P, S> {
-  public static childContextTypes: any = {
+  public static readonly childContextTypes: any = {
     path: React.PropTypes.string, //
     wcmmode: React.PropTypes.string //
   };
@@ -71,9 +70,9 @@ export abstract class ResourceComponent<
     if (absolutePath !== this.getPath()) {
       this.setState({absolutePath, state: STATE.LOADING});
 
-      (this.getAemContext().container.get(
-        'sling'
-      ) as Sling).subscribe(this, absolutePath, {depth: this.getDepth()});
+      this.getAemContext().container.sling.subscribe(this, absolutePath, {
+        depth: this.getDepth()
+      });
     }
   }
 

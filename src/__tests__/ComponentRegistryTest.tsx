@@ -1,4 +1,4 @@
-/* tslint:disable no-unused-expression */
+/* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
 import * as React from 'react';

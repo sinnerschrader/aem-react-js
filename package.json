@@ -64,8 +64,8 @@
     "react-addons-test-utils": "15.6.0",
     "shelljs": "0.7.8",
     "standard-version": "4.2.0",
-    "ts-config": "9.4.0",
-    "tslint": "5.4.3",
+    "ts-config": "10.0.1",
+    "tslint": "5.5.0",
     "typescript": "2.4.1"
   },
   "dependencies": {

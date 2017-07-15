@@ -1,4 +1,4 @@
-/* tslint:disable no-unused-expression */
+/* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
 import {ServiceProxy} from '../../di/ServiceProxy';
@@ -6,7 +6,7 @@ import {Cache} from '../../store/Cache';
 
 describe('ServiceProxy', () => {
   it('should invoke target and cache result', () => {
-    const target: any = {
+    const target = {
       invoke(method: string, args: any[]): string {
         if (method === 'add' && args.length === 2) {
           const arg1: number = args[0];
@@ -19,11 +19,11 @@ describe('ServiceProxy', () => {
       }
     };
 
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     const proxy: ServiceProxy = new ServiceProxy(
       cache,
-      () => target,
+      () => target as any,
       'javaClass'
     );
 
@@ -34,22 +34,22 @@ describe('ServiceProxy', () => {
   });
 
   it('should invoke target and not cache result when error is thrown', () => {
-    const target: any = {
+    const target = {
       invoke(method: string, args: any[]): string {
         throw new Error('unknown method');
       }
     };
 
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     const proxy: ServiceProxy = new ServiceProxy(
       cache,
-      () => target,
+      () => target as any,
       'javaClass'
     );
 
     try {
-      proxy.invoke('add', 1, 3);
+      proxy.invoke<void>('add', 1, 3);
 
       expect.fail('expected error');
     } catch (e) {
@@ -59,21 +59,21 @@ describe('ServiceProxy', () => {
   });
 
   it('should invoke target and return null', () => {
-    const target: any = {
+    const target = {
       invoke(method: string, args: any[]): string {
         return null;
       }
     };
 
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     const proxy: ServiceProxy = new ServiceProxy(
       cache,
-      () => target,
+      () => target as any,
       'javaClass'
     );
 
-    const result: any = proxy.invoke('add', 1, 3);
+    const result = proxy.invoke<null>('add', 1, 3);
 
     expect(result).to.be.null;
   });

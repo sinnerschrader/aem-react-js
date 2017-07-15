@@ -7,19 +7,19 @@ import {Container} from './di/Container';
 import {Cache} from './store/Cache';
 
 export interface ComponentTreeConfig {
-  wcmmode: string;
-  path: string;
-  resourceType: string;
-  cache: Cache;
+  readonly wcmmode: string;
+  readonly path: string;
+  readonly resourceType: string;
+  readonly cache: Cache;
 }
 
 /**
  * The Component
  */
 export class ComponentManager {
-  private container: Container;
-  private document: Document;
-  private registry: RootComponentRegistry;
+  private readonly container: Container;
+  private readonly document: Document;
+  private readonly registry: RootComponentRegistry;
 
   public constructor(
     registry: RootComponentRegistry,
@@ -52,9 +52,7 @@ export class ComponentManager {
               'does not exist in component list.'
           );
         } else {
-          const cache: Cache = this.container.get('cache') as Cache;
-
-          cache.mergeCache(props.cache);
+          this.container.cache.mergeCache(props.cache);
 
           const ctx: AemContext = {
             container: this.container,

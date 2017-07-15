@@ -2,23 +2,24 @@ import * as React from 'react';
 import {AemContext} from '../AemContext';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {Container} from '../di/Container';
+import {ServiceProxy} from '../di/ServiceProxy';
 
-/**
- * Provides base functionality for components that are
- */
+export interface AemComponentContext {
+  readonly aemContext: AemContext;
+  readonly path: string;
+  readonly rootPath: string;
+  readonly wcmmode: string;
+}
+
 export class AemComponent<P, S> extends React.Component<P, S> {
-  public static contextTypes: any = {
-    aemContext: React.PropTypes.any,
-    path: React.PropTypes.string, //
-    rootPath: React.PropTypes.string, //
-    wcmmode: React.PropTypes.string //
+  public static readonly contextTypes: object = {
+    aemContext: React.PropTypes.object,
+    path: React.PropTypes.string,
+    rootPath: React.PropTypes.string,
+    wcmmode: React.PropTypes.string
   };
 
-  public context: {
-    wcmmode: string;
-    path: string;
-    aemContext: AemContext;
-  };
+  public readonly context: AemComponentContext;
 
   /* istanbul ignore next */
   public getWcmmode(): string {
@@ -39,22 +40,17 @@ export class AemComponent<P, S> extends React.Component<P, S> {
   }
 
   /* istanbul ignore next */
-  public getComponent(name: string): any {
-    return this.getContainer().get(name);
-  }
-
-  /* istanbul ignore next */
-  public getOsgiService(name: string): any {
+  public getOsgiService(name: string): ServiceProxy {
     return this.getContainer().getOsgiService(name);
   }
 
   /* istanbul ignore next */
-  public getResourceModel(name: string): any {
+  public getResourceModel(name: string): ServiceProxy {
     return this.getContainer().getResourceModel(this.getPath(), name);
   }
 
   /* istanbul ignore next */
-  public getRequestModel(name: string): any {
+  public getRequestModel(name: string): ServiceProxy {
     return this.getContainer().getRequestModel(this.getPath(), name);
   }
 

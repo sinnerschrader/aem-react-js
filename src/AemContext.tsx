@@ -2,6 +2,6 @@ import {RootComponentRegistry} from './RootComponentRegistry';
 import {Container} from './di/Container';
 
 export interface AemContext {
-  registry: RootComponentRegistry;
-  container: Container;
+  readonly container: Container;
+  readonly registry: RootComponentRegistry;
 }

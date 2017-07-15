@@ -1,4 +1,4 @@
-/* tslint:disable no-unused-expression */
+/* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
 import * as React from 'react';
@@ -20,19 +20,19 @@ describe('ServerRenderer', () => {
       }
     }
 
-    const sling: any = {
-      subscribe(
-        component: ResourceComponent<any, any, any>,
-        path: string
-      ): void {
-        component.changedResource(path, {text: 'hi'});
-      }
-    };
+    const cache = new Cache();
 
-    const container: Container = new Container({} as any);
-
-    container.register('sling', sling);
-    container.register('cache', new Cache());
+    const container = new Container(
+      cache,
+      {
+        subscribe(
+          component: ResourceComponent<any, any, any>,
+          path: string
+        ): void {
+          component.changedResource(path, {text: 'hi'});
+        }
+      } as any
+    );
 
     const registry: RootComponentRegistry = {
       getComponent(resourceType: string): any {

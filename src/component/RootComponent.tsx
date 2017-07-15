@@ -2,15 +2,15 @@ import * as React from 'react';
 import {AemContext} from '../AemContext';
 
 export interface RootComponentProps {
-  comp: React.ComponentClass<any>;
-  aemContext: AemContext;
-  path: string;
-  renderRootDialog?: boolean;
-  wcmmode?: string;
+  readonly comp: React.ComponentClass<any>;
+  readonly aemContext: AemContext;
+  readonly path: string;
+  readonly renderRootDialog?: boolean;
+  readonly wcmmode?: string;
 }
 
 export class RootComponent extends React.Component<RootComponentProps, any> {
-  public static childContextTypes: any = {
+  public static readonly childContextTypes: any = {
     aemContext: React.PropTypes.any,
     path: React.PropTypes.any
   };

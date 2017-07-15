@@ -2,8 +2,8 @@ import * as React from 'react';
 import {AemComponent} from './AemComponent';
 
 export interface VanillaProps {
-  component: React.ComponentClass<any>;
-  path: string;
+  readonly component: React.ComponentClass<any>;
+  readonly path: string;
 }
 
 export class VanillaInclude extends AemComponent<VanillaProps, any> {

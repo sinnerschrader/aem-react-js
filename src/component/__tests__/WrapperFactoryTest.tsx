@@ -1,7 +1,8 @@
+// tslint:disable no-any
+
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
 import * as React from 'react';
-import {AemContext} from '../../AemContext';
 import {ComponentRegistry} from '../../ComponentRegistry';
 import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
@@ -41,25 +42,23 @@ describe('WrapperFactory', () => {
   registry.add(testRegistry);
   registry.init();
 
-  const container = new Container({} as any);
-
-  const aemContext: AemContext = {
-    container,
-    registry
-  };
-
   it('should render simple vanilla component', () => {
     const cache = new Cache();
 
     cache.put('/test', {text: 'hallo'});
-    container.register('sling', new MockSling(cache));
 
-    const reactClass: any = WrapperFactory.createWrapper(
+    const container = new Container(cache, new MockSling(cache));
+
+    const reactClass = WrapperFactory.createWrapper(
       {component: Test, props: {global: 'bye'}},
       'components/test'
     );
     const item = enzyme.mount(
-      <RootComponent aemContext={aemContext} comp={reactClass} path="/test" />
+      <RootComponent
+        aemContext={{container, registry}}
+        comp={reactClass}
+        path="/test"
+      />
     );
     const html = item.html();
 
@@ -67,18 +66,25 @@ describe('WrapperFactory', () => {
   });
 
   it('should render loading component', () => {
-    const loader: any = () => <span>...</span>;
+    const loader = () => <span>...</span>;
     const cache = new Cache();
+    const container = new Container(cache, new MockSling(cache));
 
-    container.register('sling', new MockSling(cache));
-
-    const reactClass: any = WrapperFactory.createWrapper(
-      {component: Test, props: {global: 'bye'}, loadingComponent: loader},
+    const reactClass = WrapperFactory.createWrapper(
+      {
+        component: Test,
+        loadingComponent: loader as any,
+        props: {global: 'bye'}
+      },
       'components/test'
     );
 
     const item = enzyme.mount(
-      <RootComponent aemContext={aemContext} comp={reactClass} path="/test" />
+      <RootComponent
+        aemContext={{container, registry}}
+        comp={reactClass}
+        path="/test"
+      />
     );
 
     const html = item.html();
@@ -88,16 +94,19 @@ describe('WrapperFactory', () => {
 
   it('should render default loading ui', () => {
     const cache = new Cache();
+    const container = new Container(cache, new MockSling(cache));
 
-    container.register('sling', new MockSling(cache));
-
-    const reactClass: any = WrapperFactory.createWrapper(
+    const reactClass = WrapperFactory.createWrapper(
       {component: Test, props: {global: 'bye'}},
       'components/test'
     );
 
     const item = enzyme.mount(
-      <RootComponent aemContext={aemContext} comp={reactClass} path="/test" />
+      <RootComponent
+        aemContext={{container, registry}}
+        comp={reactClass}
+        path="/test"
+      />
     );
 
     const html: string = item.html();
@@ -106,7 +115,7 @@ describe('WrapperFactory', () => {
   });
 
   it('should render simple vanilla include', () => {
-    class Test extends ResourceComponent<any, any, any> {
+    class MyTest extends ResourceComponent<any, any, any> {
       public renderBody(): any {
         return (
           <div>
@@ -119,10 +128,15 @@ describe('WrapperFactory', () => {
     const cache = new Cache();
 
     cache.put('/test', {vanilla: {text: 'good bye'}});
-    container.register('sling', new MockSling(cache));
+
+    const container = new Container(cache, new MockSling(cache));
 
     const item = enzyme.mount(
-      <RootComponent aemContext={aemContext} comp={Test} path="/test" />
+      <RootComponent
+        aemContext={{container, registry}}
+        comp={MyTest}
+        path="/test"
+      />
     );
 
     const html: string = item.html();
@@ -133,26 +147,27 @@ describe('WrapperFactory', () => {
   });
 
   it('should render simple vanilla component with transform', () => {
-    const transform = (resource: any, c: ResourceComponent<any, any, any>) => {
-      const props: any = {};
-
-      props.text = resource.textProperty;
-
-      return props;
-    };
+    const transform = (resource: any, c: ResourceComponent<any, any, any>) => ({
+      text: resource.textProperty
+    });
 
     const cache = new Cache();
 
     cache.put('/test', {textProperty: 'hallo'});
-    container.register('sling', new MockSling(cache));
 
-    const reactClass: any = WrapperFactory.createWrapper(
+    const container = new Container(cache, new MockSling(cache));
+
+    const reactClass = WrapperFactory.createWrapper(
       {component: Text, transform},
       'components/text'
     );
 
     const item = enzyme.mount(
-      <RootComponent aemContext={aemContext} comp={reactClass} path="/test" />
+      <RootComponent
+        aemContext={{container, registry}}
+        comp={reactClass}
+        path="/test"
+      />
     );
 
     const html: string = item.html();
@@ -172,9 +187,9 @@ describe('WrapperFactory', () => {
       }
     });
 
-    container.register('sling', new MockSling(cache));
+    const container = new Container(cache, new MockSling(cache));
 
-    const reactClass: any = WrapperFactory.createWrapper(
+    const reactClass = WrapperFactory.createWrapper(
       {component: Test, parsys: {path: 'children'}},
       'components/test'
     );
@@ -182,7 +197,7 @@ describe('WrapperFactory', () => {
     const item = enzyme.mount(
       <RootComponent
         wcmmode="disabled"
-        aemContext={aemContext}
+        aemContext={{container, registry}}
         comp={reactClass}
         path="/test"
       />

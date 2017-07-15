@@ -2,7 +2,7 @@ import * as React from 'react';
 import {AemComponent} from './AemComponent';
 
 export interface EditMarkerProps {
-  label?: string;
+  readonly label?: string;
 }
 
 export class EditMarker extends AemComponent<EditMarkerProps, any> {

@@ -1,8 +1,11 @@
+// tslint:disable no-any
+
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
 import * as React from 'react';
-import {AemContext} from '../../AemContext';
+import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
+import {Cache} from '../../store/Cache';
 import {MockSling} from '../../test/MockSling';
 import {EditDialog} from '../EditDialog';
 
@@ -27,18 +30,12 @@ describe('EditDialog', () => {
     }
   }
 
-  const container: Container = new Container({} as any);
-
-  const aemContext: AemContext = {
-    container,
-    registry: null
-  };
-
   it('should render wrapper element', () => {
-    container.register('sling', new MockSling(null));
+    const cache = new Cache();
+    const container = new Container(cache, new MockSling(cache));
 
     const item = enzyme.mount(
-      <Wrapper aemContext={aemContext}>
+      <Wrapper aemContext={{container, registry: new RootComponentRegistry()}}>
         <EditDialog path="/test" resourceType="components/test" />
       </Wrapper>
     );
@@ -47,10 +44,11 @@ describe('EditDialog', () => {
   });
 
   it('should render wrapper element with extra className', () => {
-    container.register('sling', new MockSling());
+    const cache = new Cache();
+    const container = new Container(cache, new MockSling(cache));
 
     const item = enzyme.mount(
-      <Wrapper aemContext={aemContext}>
+      <Wrapper aemContext={{container, registry: new RootComponentRegistry()}}>
         <EditDialog
           className="hi"
           path="/test"
@@ -66,9 +64,11 @@ describe('EditDialog', () => {
     'should render wrapper element ' +
       'with extra className and existing className',
     () => {
-      container.register(
-        'sling',
-        new MockSling(null, {
+      const cache = new Cache();
+
+      const container = new Container(
+        cache,
+        new MockSling(cache, {
           child: {
             element: 'script',
             html: 'Cq.makeEditable()'
@@ -78,7 +78,9 @@ describe('EditDialog', () => {
       );
 
       const item = enzyme.mount(
-        <Wrapper aemContext={aemContext}>
+        <Wrapper
+          aemContext={{container, registry: new RootComponentRegistry()}}
+        >
           <EditDialog path="/test" resourceType="components/test" />
         </Wrapper>
       );
@@ -90,9 +92,11 @@ describe('EditDialog', () => {
   );
 
   it('should render classic ui', () => {
-    container.register(
-      'sling',
-      new MockSling(null, {
+    const cache = new Cache();
+
+    const container = new Container(
+      cache,
+      new MockSling(cache, {
         attributes: {
           className: 'more react-parsys'
         },
@@ -110,7 +114,7 @@ describe('EditDialog', () => {
     );
 
     const item = enzyme.mount(
-      <Wrapper aemContext={aemContext}>
+      <Wrapper aemContext={{container, registry: new RootComponentRegistry()}}>
         <EditDialog path="/test" resourceType="components/test" />
       </Wrapper>
     );
@@ -122,9 +126,11 @@ describe('EditDialog', () => {
   });
 
   it('should render touch ui', () => {
-    container.register(
-      'sling',
-      new MockSling(null, {
+    const cache = new Cache();
+
+    const container = new Container(
+      cache,
+      new MockSling(cache, {
         child: {
           attributes: {
             'data-config': '{"path":"/content"}',
@@ -140,7 +146,7 @@ describe('EditDialog', () => {
     );
 
     const item = enzyme.mount(
-      <Wrapper aemContext={aemContext}>
+      <Wrapper aemContext={{container, registry: new RootComponentRegistry()}}>
         <EditDialog path="/test" resourceType="components/test" />
       </Wrapper>
     );

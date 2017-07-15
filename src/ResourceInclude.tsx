@@ -1,13 +1,12 @@
 import * as React from 'react';
 import {ResourceUtils} from './ResourceUtils';
 import {AemComponent} from './component/AemComponent';
-import {Sling} from './store/Sling';
 
 export interface IncludeProps {
-  path: string;
-  resourceType: string;
-  element?: string;
-  hidden?: boolean;
+  readonly path: string;
+  readonly resourceType: string;
+  readonly element?: string;
+  readonly hidden?: boolean;
 }
 
 export class ResourceInclude extends AemComponent<IncludeProps, any> {
@@ -25,9 +24,7 @@ export class ResourceInclude extends AemComponent<IncludeProps, any> {
         ? this.props.path
         : `${this.getPath()}/` + this.props.path;
 
-      const sling: Sling = this.context.aemContext.container.get(
-        'sling'
-      ) as Sling;
+      const sling = this.context.aemContext.container.sling;
 
       innerHTML = sling.includeResource(path, this.props.resourceType);
 

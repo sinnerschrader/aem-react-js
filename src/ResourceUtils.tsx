@@ -1,5 +1,5 @@
 export class ResourceUtils {
-  public static ABSOLUTE_PATH_PATTERN: RegExp = /^\//;
+  public static readonly ABSOLUTE_PATH_PATTERN: RegExp = /^\//;
 
   /**
    * returns only the properties of the given object

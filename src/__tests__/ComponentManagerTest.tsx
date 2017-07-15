@@ -1,15 +1,17 @@
+// tslint:disable no-any
+
 import {expect} from 'chai';
 import {JSDOM} from 'jsdom';
 import * as React from 'react';
 import {ComponentManager, ComponentTreeConfig} from '../ComponentManager';
 import {ResourceComponent} from '../component/ResourceComponent';
-import {Container, Cq} from '../di/Container';
+import {Container} from '../di/Container';
 import {Cache} from '../store/Cache';
 import {SlingResourceOptions} from '../store/Sling';
 
 describe('ComponentManager', () => {
   it('should not install components when wcmmode is not disabled', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     const data: ComponentTreeConfig = {
       cache,
@@ -36,7 +38,7 @@ describe('ComponentManager', () => {
       }
     }
 
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     const data: ComponentTreeConfig = {
       cache,
@@ -45,22 +47,18 @@ describe('ComponentManager', () => {
       wcmmode: 'disabled'
     };
 
-    const cqx: any = {};
-    const container: Container = new Container(cqx as Cq);
-
-    container.register('cache', cache);
-
-    const sling: any = {
-      subscribe: (
-        listener: ResourceComponent<any, any, any>,
-        path: string,
-        options?: SlingResourceOptions
-      ) => {
-        listener.changedResource(path, {});
-      }
-    };
-
-    container.register('sling', sling);
+    const container = new Container(
+      cache,
+      {
+        subscribe: (
+          listener: ResourceComponent<any, any, any>,
+          path: string,
+          options?: SlingResourceOptions
+        ) => {
+          listener.changedResource(path, {});
+        }
+      } as any
+    );
 
     const registry: any = {
       getComponent: (resourceType: string) => Test

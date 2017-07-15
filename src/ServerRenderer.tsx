@@ -4,61 +4,55 @@ import {AemContext} from './AemContext';
 import {RootComponentRegistry} from './RootComponentRegistry';
 import {RootComponent} from './component/RootComponent';
 import {Container} from './di/Container';
-import {Cache} from './store/Cache';
 
 export interface ServerResponse {
-  html: string;
-  state: string;
+  readonly html: string;
+  readonly state: string;
 }
 
 export class ServerRenderer {
-  private registry: RootComponentRegistry;
-  private container: Container;
+  private readonly container: Container;
+  private readonly registry: RootComponentRegistry;
 
   public constructor(registry: RootComponentRegistry, container: Container) {
     this.registry = registry;
     this.container = container;
   }
 
-  /* render component as string.
-     * @param component
-     * @param props
-     * @returns {string}
-     */
   public renderReactComponent(
     path: string,
     resourceType: string,
     wcmmode: string,
     renderRootDialog?: boolean
   ): ServerResponse {
-    console.log('render react on path ' + path);
-    console.log('render react component ' + resourceType);
+    console.log('Render react on path: ' + path);
+    console.log('Render react component: ' + resourceType);
 
-    const comp = this.registry.getComponent(resourceType);
+    const component = this.registry.getComponent(resourceType);
 
-    if (!comp) {
-      throw new Error('cannot find component for resourceType ' + resourceType);
+    if (!component) {
+      throw new Error(
+        'Cannot find component for resourceType: ' + resourceType
+      );
     }
 
     const ctx: AemContext = {
-      registry: this.registry,
-      container: this.container
+      container: this.container,
+      registry: this.registry
     };
 
-    console.log('render root dialog ' + String(renderRootDialog));
+    console.log('Render root dialog ' + String(renderRootDialog));
 
     const html: string = ReactDom.renderToString(
       <RootComponent
         aemContext={ctx}
-        comp={comp}
+        comp={component}
         path={path}
         wcmmode={wcmmode}
         renderRootDialog={!!renderRootDialog}
       />
     );
 
-    const cache: Cache = this.container.get('cache') as Cache;
-
-    return {html, state: JSON.stringify(cache.getFullState())};
+    return {html, state: JSON.stringify(this.container.cache.getFullState())};
   }
 }

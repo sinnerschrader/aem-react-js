@@ -2,9 +2,9 @@ import * as React from 'react';
 import {ComponentRegistry} from './ComponentRegistry';
 
 export class Mapping {
-  public resourceType: string;
-  public vanillaClass: React.ComponentClass<any>;
-  public componentClass: React.ComponentClass<any>;
+  public readonly resourceType: string;
+  public readonly vanillaClass: React.ComponentClass<any>;
+  public readonly componentClass: React.ComponentClass<any>;
 
   public constructor(
     resourceType: string,
@@ -18,12 +18,17 @@ export class Mapping {
 }
 
 export class RootComponentRegistry {
-  private registries: ComponentRegistry[];
-  private resourceTypeToComponent: {
+  private readonly registries: ComponentRegistry[];
+
+  private readonly resourceTypeToComponent: {
     [name: string]: React.ComponentClass<any>;
   } = {};
-  private componentToResourceType: {[componentClassName: string]: string} = {};
-  private vanillaToWrapper: {
+
+  private readonly componentToResourceType: {
+    [componentClassName: string]: string;
+  } = {};
+
+  private readonly vanillaToWrapper: {
     [componentClassName: string]: React.ComponentClass<any>;
   } = {};
 

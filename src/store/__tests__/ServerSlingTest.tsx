@@ -1,4 +1,4 @@
-/* tslint:disable no-unused-expression */
+/* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
 import {ResourceComponent} from '../../component/ResourceComponent';
@@ -9,9 +9,9 @@ import {EditDialogData} from '../Sling';
 describe('ServerSling', () => {
   it('should include resource', () => {
     const html = '<div></div>';
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
-    const javaSling: any = {
+    const javaSling = {
       includeResource(path: string, resourceType: string): string {
         return html;
       }
@@ -25,15 +25,15 @@ describe('ServerSling', () => {
   });
 
   it('should subscribe to resource', () => {
-    const resource: any = {text: 'hi'};
+    const resource = {text: 'hi'};
     const path = '/test';
 
     let actualResource: any;
     let actualPath: string;
 
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
-    const javaSling: any = {
+    const javaSling = {
       getResource(_path: string, depth?: number): string {
         if (_path === path && depth === 3) {
           return JSON.stringify(resource);
@@ -60,9 +60,9 @@ describe('ServerSling', () => {
 
   it('should include dialog', () => {
     const dialog: EditDialogData = {element: 'el'};
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
-    const javaSling: any = {
+    const javaSling = {
       renderDialogScript(path: string, resourceType: string): string {
         return JSON.stringify(dialog);
       }
@@ -80,9 +80,9 @@ describe('ServerSling', () => {
   });
 
   it('should include null dialog', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
-    const javaSling: any = {
+    const javaSling = {
       renderDialogScript(path: string, resourceType: string): string {
         return null;
       }

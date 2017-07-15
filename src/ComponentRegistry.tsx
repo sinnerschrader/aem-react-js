@@ -20,9 +20,9 @@ function mapClassToResourceType(componentClassName: string): string {
 }
 
 export class ComponentRegistry {
-  public mappings: Mapping[];
+  public readonly mappings: Mapping[];
 
-  private mapping: ((componentClassName: string) => string) | string;
+  private readonly mapping: ((componentClassName: string) => string) | string;
 
   public constructor(
     mapping?: ((componentClassName: string) => string) | string

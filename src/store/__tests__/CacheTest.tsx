@@ -5,100 +5,100 @@ import {Cache} from '../Cache';
 
 describe('Cache', () => {
   it('should return direct match', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content', {test: 'Test'});
 
-    const result: any = cache.get('/content');
+    const result = cache.get('/content');
 
     expect(result).to.exist;
   });
 
   it('should return sub match', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content', {test: {text: 'Hallo'}});
 
-    const result: any = cache.get('/content/test');
+    const result = cache.get('/content/test');
 
     expect(result).to.exist;
     expect(result.text).to.equal('Hallo');
   });
 
   it('should return empty sub match', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content', {test: null});
 
-    const result: any = cache.get('/content/test');
+    const result = cache.get('/content/test');
 
     expect(result).to.exist;
     expect(result).to.deep.equal({});
   });
 
   it('should not return insufficiently deep match', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content', {test: {text: 'Hallo'}}, 1);
 
-    const result: any = cache.get('/content/test');
+    const result = cache.get('/content/test');
 
     expect(result).to.not.exist;
   });
 
   it('should return inifinity deep match', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content', {test: {text: 'Hallo'}}, -1);
 
-    const result: any = cache.get('/content/test/text');
+    const result = cache.get('/content/test/text');
 
     expect(result).to.exist;
   });
 
   it('should return sufficiently deep match', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content', {test: {text: 'Hallo'}});
 
-    const result: any = cache.get('/content', 2);
+    const result = cache.get('/content', 2);
 
     expect(result).to.exist;
   });
 
   it('should return sufficiently deep sub match', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content', {test: {text: 'Hallo'}}, 2);
 
-    const result: any = cache.get('/content/test', 1);
+    const result = cache.get('/content/test', 1);
 
     expect(result).to.exist;
     expect(result.text).to.equal('Hallo');
   });
 
   it('should return null if no match', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content', {test: {text: 'Hallo'}}, 1);
 
-    const result: any = cache.get('/something', 1);
+    const result = cache.get('/something', 1);
 
     expect(result).to.not.exist;
   });
 
   it('should return match of depth 1', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content', {level1: {level2: 'Hallo'}}, 1);
 
-    const result: any = cache.get('/content/level1/level2', 0);
+    const result = cache.get('/content/level1/level2', 0);
 
     expect(result).to.equals('Hallo');
   });
 
   it('should create a cache key that resembles the method invocation', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     function test(x: string, y: string): string {
       return cache.generateServiceCacheKey('javaClass', 'make', [x, y]);
@@ -110,7 +110,7 @@ describe('Cache', () => {
   });
 
   it('should create a cache key that resembles the method invocation', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     function test(x: string, y: string): string {
       return cache.generateServiceCacheKey('javaClass', 'make', [x, y]);
@@ -122,7 +122,7 @@ describe('Cache', () => {
   });
 
   it('should merge caches', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.putIncluded('new', 'oldValue');
     cache.putIncluded('existing', 'existingValue');
@@ -134,14 +134,14 @@ describe('Cache', () => {
   });
 
   it('should merge null caches', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.mergeCache(null);
     // expect no error
   });
 
   it('should clear cache', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('incl', {x: 1});
 
@@ -168,7 +168,7 @@ describe('Cache', () => {
   });
 
   it('should write and read entries', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.putIncluded('incl', 'value');
 
@@ -184,8 +184,8 @@ describe('Cache', () => {
   });
 
   it('should wrap service call', () => {
-    const cache: Cache = new Cache();
-    const result: any = cache.wrapServiceCall('x', () => 'done');
+    const cache = new Cache();
+    const result = cache.wrapServiceCall('x', () => 'done');
 
     expect(result).to.equals('done');
   });

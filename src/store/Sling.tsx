@@ -2,14 +2,14 @@ import {ResourceUtils} from '../ResourceUtils';
 import {ResourceComponent} from '../component/ResourceComponent';
 
 export interface SlingResourceOptions {
-  depth?: number;
+  readonly depth?: number;
 }
 
 export interface EditDialogData {
-  element: string;
-  html?: string;
-  attributes?: {[name: string]: any};
-  child?: EditDialogData;
+  readonly element: string;
+  readonly html?: string;
+  readonly attributes?: {[name: string]: any};
+  readonly child?: EditDialogData;
 }
 
 /**

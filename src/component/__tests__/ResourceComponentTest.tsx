@@ -1,8 +1,9 @@
+// tslint:disable no-any
+
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
 import * as React from 'react';
 import * as ReactTestUtils from 'react-addons-test-utils';
-import {AemContext} from '../../AemContext';
 import {ComponentRegistry} from '../../ComponentRegistry';
 import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
@@ -75,19 +76,13 @@ describe('ResourceComponent', () => {
   registry.add(testRegistry);
   registry.init();
 
-  const container: Container = new Container({} as any);
-
-  const aemContext: AemContext = {
-    container,
-    registry
-  };
-
   it('should render loading message', () => {
-    container.register('sling', new MockSling(null));
+    const cache = new Cache();
+    const container = new Container(cache, new MockSling(cache));
 
     const item = enzyme.mount(
       <RootComponent
-        aemContext={aemContext}
+        aemContext={{container, registry}}
         comp={Test}
         path="/content/notfound"
       />
@@ -97,7 +92,7 @@ describe('ResourceComponent', () => {
   });
 
   it('should get resource directly', () => {
-    const cache: Cache = new Cache();
+    const cache = new Cache();
 
     cache.put('/content/embed', {
       test: {
@@ -105,15 +100,15 @@ describe('ResourceComponent', () => {
       }
     });
 
-    container.register('sling', new MockSling(cache));
+    const container = new Container(cache, new MockSling(cache));
 
-    const item: any = ReactTestUtils.renderIntoDocument(
+    const item = ReactTestUtils.renderIntoDocument(
       <RootComponent
-        aemContext={aemContext}
+        aemContext={{container, registry}}
         comp={Embedded}
         path="/content/embed"
       />
-    );
+    ) as any;
 
     const test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
 
@@ -126,11 +121,16 @@ describe('ResourceComponent', () => {
     const cache = new Cache();
 
     cache.put('/content/test', {text: 'Hallo'});
-    container.register('sling', new MockSling(cache));
 
-    const item: any = ReactTestUtils.renderIntoDocument(
-      <RootComponent aemContext={aemContext} comp={Test} path="/content/test" />
-    );
+    const container = new Container(cache, new MockSling(cache));
+
+    const item = ReactTestUtils.renderIntoDocument(
+      <RootComponent
+        aemContext={{container, registry}}
+        comp={Test}
+        path="/content/test"
+      />
+    ) as any;
 
     const test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
 
@@ -150,24 +150,26 @@ describe('ResourceComponent', () => {
       }
     });
 
-    container.register('sling', new MockSling(cache));
+    const container = new Container(cache, new MockSling(cache));
 
     const item = enzyme.render(
       <RootComponent
         wcmmode="disabled"
-        aemContext={aemContext}
+        aemContext={{container, registry}}
         comp={AemContainer}
         path="/content"
       />
     );
 
-    const include: any = item.find('include');
+    const include = item.find('include');
 
     expect(include[0].attribs.path).to.equal('/content/child1');
     expect(include[0].attribs.resourcetype).to.equal('htl/test');
   });
 
   describe('should render htl children wcmmode enabled', () => {
+    let container: Container;
+
     before(() => {
       const cache = new Cache();
 
@@ -179,20 +181,20 @@ describe('ResourceComponent', () => {
         }
       });
 
-      container.register('sling', new MockSling(cache));
+      container = new Container(cache, new MockSling(cache));
     });
 
     it('default ', () => {
       const item = enzyme.render(
         <RootComponent
           wcmmode="edit"
-          aemContext={aemContext}
+          aemContext={{container, registry}}
           comp={AemContainer}
           path="/content"
         />
       );
 
-      const include: any = item.find('include');
+      const include = item.find('include');
 
       expect(include[1].attribs.path).to.equal('/content/*');
       expect(include[1].attribs.resourcetype).to.equal(
@@ -204,7 +206,7 @@ describe('ResourceComponent', () => {
       const item = enzyme.mount(
         <RootComponent
           wcmmode="disabled"
-          aemContext={aemContext}
+          aemContext={{container, registry}}
           comp={createContainer('childClass', 'el')}
           path="/content"
         />
@@ -221,6 +223,8 @@ describe('ResourceComponent', () => {
   });
 
   describe('should render react children wcmmode disabled', () => {
+    let container: Container;
+
     before(() => {
       const cache = new Cache();
 
@@ -232,35 +236,35 @@ describe('ResourceComponent', () => {
         }
       });
 
-      container.register('sling', new MockSling(cache));
+      container = new Container(cache, new MockSling(cache));
     });
 
     it('default ', () => {
       const item = enzyme.render(
         <RootComponent
           wcmmode="disabled"
-          aemContext={aemContext}
+          aemContext={{container, registry}}
           comp={AemContainer}
           path="/content"
         />
       );
 
-      const test: any = item.find('.test');
+      const test = item.find('.test');
 
-      expect(test[0].children[0].data).to.equal('OOPS');
+      expect((test[0].children[0] as any).data).to.equal('OOPS');
     });
 
     it('with child wrapper', () => {
       const item = enzyme.render(
         <RootComponent
           wcmmode="disabled"
-          aemContext={aemContext}
+          aemContext={{container, registry}}
           comp={createContainer('childClass', 'el')}
           path="/content"
         />
       );
 
-      const test: any = item.find('el');
+      const test = item.find('el');
 
       expect(test.length).to.equal(1);
       expect(test[0].attribs.class).to.equal('childClass');
@@ -270,21 +274,23 @@ describe('ResourceComponent', () => {
       const item = enzyme.render(
         <RootComponent
           wcmmode="disabled"
-          aemContext={aemContext}
+          aemContext={{container, registry}}
           comp={createContainer('childClass')}
           path="/content"
         />
       );
 
-      const dialog: any = item.find('.dialog');
+      const dialog = item.find('.dialog');
 
       expect(dialog[0].attribs.class.split(' ')).to.contain('childClass');
     });
   });
 
   describe('should render react children with child path', () => {
+    let container: Container;
+
     before(() => {
-      const cache: Cache = new Cache();
+      const cache = new Cache();
 
       cache.put('/content', {
         children: {
@@ -296,22 +302,22 @@ describe('ResourceComponent', () => {
         }
       });
 
-      container.register('sling', new MockSling(cache));
+      container = new Container(cache, new MockSling(cache));
     });
 
     it('with child path', () => {
       const item = enzyme.render(
         <RootComponent
           wcmmode="disabled"
-          aemContext={aemContext}
+          aemContext={{container, registry}}
           comp={createContainer('childClass', null, 'children')}
           path="/content"
         />
       );
 
-      const child: any = item.find('.test');
+      const child = item.find('.test');
 
-      expect(child[0].children[0].data).to.equal('OOPS');
+      expect((child[0].children[0] as any).data).to.equal('OOPS');
     });
   });
 });

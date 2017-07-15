@@ -8,17 +8,17 @@ export type Transform = (
 ) => {[name: string]: any};
 
 export interface ComponentConfig {
-  depth?: number;
-  name?: string;
-  parsys?: ReactParsysProps;
-  component: React.ComponentClass<any>;
-  props?: {[name: string]: any};
-  transform?: Transform;
-  loadingComponent?: React.ComponentClass<any>;
+  readonly depth?: number;
+  readonly name?: string;
+  readonly parsys?: ReactParsysProps;
+  readonly component: React.ComponentClass<any>;
+  readonly props?: {[name: string]: any};
+  readonly transform?: Transform;
+  readonly loadingComponent?: React.ComponentClass<any>;
 }
 
 export class Wrapper extends ResourceComponent<any, any, any> {
-  protected config: ComponentConfig;
+  protected readonly config: ComponentConfig;
 
   public constructor(config: ComponentConfig, props?: any, context?: any) {
     super(props, context);

@@ -1,4 +1,4 @@
-/* tslint:disable no-unused-expression */
+/* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
 import * as React from 'react';
@@ -29,7 +29,7 @@ describe('RootComponentRegistry', () => {
     rootRegistry.add(registry);
     rootRegistry.init();
 
-    let component: any = rootRegistry.getComponent(actualResourceType);
+    let component = rootRegistry.getComponent(actualResourceType);
 
     expect(component).to.equal(TestView);
 
@@ -59,7 +59,7 @@ describe('RootComponentRegistry', () => {
     rootRegistry.add(registry);
     rootRegistry.init();
 
-    const component: any = rootRegistry.getComponent(actualResourceType);
+    const component = rootRegistry.getComponent(actualResourceType);
 
     expect(component).to.not.be.null;
 

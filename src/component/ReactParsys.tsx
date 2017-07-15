@@ -2,10 +2,10 @@ import * as React from 'react';
 import {Resource, ResourceComponent, ResourceProps} from './ResourceComponent';
 
 export interface ReactParsysProps extends ResourceProps {
-  className?: string;
-  elementName?: string;
-  childClassName?: string;
-  childElementName?: string;
+  readonly className?: string;
+  readonly elementName?: string;
+  readonly childClassName?: string;
+  readonly childElementName?: string;
 }
 
 export class ReactParsys extends ResourceComponent<

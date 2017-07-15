@@ -1,3 +1,5 @@
+// tslint:disable no-any
+
 import {expect} from 'chai';
 import {ResourceComponent} from '../../component/ResourceComponent';
 import {Cache} from '../Cache';
@@ -7,8 +9,8 @@ import {EditDialogData} from '../Sling';
 describe('ClientSling', () => {
   it('should include resource', () => {
     const html = '<div></div>';
-    const cache: Cache = new Cache();
-    const sling: ClientSling = new ClientSling(cache, null);
+    const cache = new Cache();
+    const sling = new ClientSling(cache, null);
 
     cache.putIncluded('/test', html);
 
@@ -22,8 +24,8 @@ describe('ClientSling', () => {
 
   it('should include dialog', () => {
     const dialog: EditDialogData = {element: 'el'};
-    const cache: Cache = new Cache();
-    const sling: ClientSling = new ClientSling(cache, null);
+    const cache = new Cache();
+    const sling = new ClientSling(cache, null);
 
     cache.putScript('/test', dialog);
 
@@ -36,9 +38,9 @@ describe('ClientSling', () => {
   });
 
   it('should subscribe to cached resource', () => {
-    const resource: any = {};
-    const cache: Cache = new Cache();
-    const sling: ClientSling = new ClientSling(cache, null);
+    const resource = {};
+    const cache = new Cache();
+    const sling = new ClientSling(cache, null);
     const path = '/test';
 
     cache.put(path, resource);
@@ -73,11 +75,11 @@ describe('ClientSling', () => {
 
   it('should subscribe to resource', () => {
     let actualUrl: string;
-    const resource: any = {data: {text: 'hi'}, depth: 1};
-    const resources: any = {resources: {'/test': resource}};
-    const cache: Cache = new Cache();
+    const resource = {data: {text: 'hi'}, depth: 1};
+    const resources = {resources: {'/test': resource}};
+    const cache = new Cache();
 
-    const sling: ClientSling = new ClientSling(cache, '/url', {
+    const sling = new ClientSling(cache, '/url', {
       fetch(url: string, options: any): any {
         actualUrl = url;
 
@@ -102,7 +104,7 @@ describe('ClientSling', () => {
     let actualResource: any;
     let actualPath: string;
 
-    const listener: any = {
+    const listener = {
       changedResource(_path: string, _resource: any): void {
         actualResource = _resource;
         actualPath = _path;

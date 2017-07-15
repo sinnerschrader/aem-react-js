@@ -1,60 +1,33 @@
 import {Cache} from '../store/Cache';
-import {JavaSling} from '../store/ServerSling';
-import {JsProxy, ServiceProxy} from './ServiceProxy';
-
-export interface Cq {
-  sling: JavaSling;
-  getOsgiService(name: string): JsProxy;
-  getResourceModel(path: string, name: string): JsProxy;
-  getRequestModel(path: string, name: string): JsProxy;
-}
-
-declare var Cqx: Cq;
+import {Sling} from '../store/Sling';
+import {Cqx} from './Cqx';
+import {Locator} from './Locator';
+import {ServiceProxy} from './ServiceProxy';
 
 /**
- * a container for sharing global services and other objects like the cache.
+ * A container for sharing global services and other objects like the cache.
  * Also provides access to the Java API.
- *
- * TODO add cache as a separate field instead of another object in the
- * container.
  */
 export class Container {
-  private services: {[name: string]: object};
-  private cqx: Cq;
+  public readonly cache: Cache;
+  public readonly sling: Sling;
 
-  public constructor(cqx: Cq) {
-    this.services = {};
+  private readonly cqx: Cqx | undefined;
 
-    this.cqx = !cqx ? Cqx : cqx;
+  public constructor(cache: Cache, sling: Sling, cqx?: Cqx) {
+    this.cache = cache;
+    this.sling = sling;
+    this.cqx = cqx;
   }
 
   /**
-   * add an object to the container
-   * @param name
-   * @param service
-   */
-  public register(name: string, service: object): void {
-    this.services[name] = service;
-  }
-
-  /**
-   * retrieve object from container
-   * @param name
-   * @returns {any}
-   */
-  public get(name: string): object {
-    return this.services[name];
-  }
-
-  /**
-   *
-   * @param name fully qualified java class name
+   * @param name Fully qualified java class name
    * @returns {ServiceProxy}
    */
   public getOsgiService(name: string): ServiceProxy {
     return this.getServiceProxy(arguments, () => {
       if (!this.cqx) {
-        throw new Error('cannot find osgi service ' + name);
+        throw new Error('Cannot find OSGi service: ' + name);
       }
 
       return this.cqx.getOsgiService(name);
@@ -62,14 +35,14 @@ export class Container {
   }
 
   /**
-   * get a sling mdoel adapted from request
+   * Get a sling model adapted from request
    * @param name fully qualified java class name
    * @returns {ServiceProxy}
    */
   public getRequestModel(path: string, name: string): ServiceProxy {
     return this.getServiceProxy(arguments, () => {
       if (!this.cqx) {
-        throw new Error('cannot find request model ' + name);
+        throw new Error('Cannot find request model: ' + name);
       }
 
       return this.cqx.getRequestModel(path, name);
@@ -77,29 +50,22 @@ export class Container {
   }
 
   /**
-   * get a sling mdoel adapted from current resource
+   * Get a sling model adapted from current resource
    * @param name fully qualified java class name
    * @returns {ServiceProxy}
    */
   public getResourceModel(path: string, name: string): ServiceProxy {
     return this.getServiceProxy(arguments, () => {
       if (!this.cqx) {
-        throw new Error('cannot find resource model ' + name);
+        throw new Error('Cannot find resource model: ' + name);
       }
 
       return this.cqx.getResourceModel(path, name);
     });
   }
 
-  private getServiceProxy(
-    args: IArguments,
-    getter: () => JsProxy
-  ): ServiceProxy {
-    return new ServiceProxy(
-      this.get('cache') as Cache,
-      getter,
-      this.createKey(args)
-    );
+  private getServiceProxy(args: IArguments, locator: Locator): ServiceProxy {
+    return new ServiceProxy(this.cache, locator, this.createKey(args));
   }
 
   private createKey(params: IArguments): string {

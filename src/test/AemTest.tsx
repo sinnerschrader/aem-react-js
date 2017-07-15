@@ -16,11 +16,8 @@ export class AemTest {
   public init(): void {
     this.registry.init();
 
-    const container: Container = new Container({} as any);
-    const cache: Cache = new Cache();
-
-    container.register('cache', cache);
-    container.register('sling', new MockSling(cache));
+    const cache = new Cache();
+    const container = new Container(cache, new MockSling(cache));
 
     this.currentAemContext = {
       container,
@@ -33,7 +30,7 @@ export class AemTest {
   }
 
   public addResource(path: string, resource: any, depth?: number): void {
-    const cache: Cache = this.currentAemContext.container.get('cache') as Cache;
+    const cache = this.currentAemContext.container.cache;
 
     cache.put(path, resource, depth);
   }
