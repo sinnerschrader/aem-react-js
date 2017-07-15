@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.7.0"></a>
+# [0.7.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.6.1...v0.7.0) (2017-07-15)
+
+
+### Features
+
+* improve container api, improve typings, update ts-config and tslint ([f45d42a](http://www.github.com/sinnerschrader/aem-react-js/commit/f45d42a))
+
+
+
 <a name="0.6.1"></a>
 ## [0.6.1](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.6.0...v0.6.1) (2017-07-13)
 
