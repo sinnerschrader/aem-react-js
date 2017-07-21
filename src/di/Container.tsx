@@ -4,6 +4,10 @@ import {Cqx} from './Cqx';
 import {Locator} from './Locator';
 import {ServiceProxy} from './ServiceProxy';
 
+interface Services {
+  [name: string]: object | undefined;
+}
+
 /**
  * A container for sharing global services and other objects like the cache.
  * Also provides access to the Java API.
@@ -13,11 +17,23 @@ export class Container {
   public readonly sling: Sling;
 
   private readonly cqx: Cqx | undefined;
+  private readonly services: Services;
 
   public constructor(cache: Cache, sling: Sling, cqx?: Cqx) {
     this.cache = cache;
     this.sling = sling;
     this.cqx = cqx;
+    this.services = Object.create(null);
+  }
+
+  public setService(name: string, service: object): this {
+    this.services[name] = service;
+
+    return this;
+  }
+
+  public getService<T extends object = object>(name: string): T | undefined {
+    return this.services[name] as T;
   }
 
   /**

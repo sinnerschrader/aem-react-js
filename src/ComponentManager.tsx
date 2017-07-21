@@ -32,7 +32,7 @@ export class ComponentManager {
   }
 
   /**
-   * initialize react component in dom.
+   * Initialize react component in dom.
    * @param item
    */
   public initReactComponent(item: Element): void {
