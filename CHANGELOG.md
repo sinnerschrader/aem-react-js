@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.8.1"></a>
+## [0.8.1](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.8.0...v0.8.1) (2017-07-21)
+
+
+### Bug Fixes
+
+* child context of the root component, improve typings ([eb3c3cc](http://www.github.com/sinnerschrader/aem-react-js/commit/eb3c3cc))
+
+
+
 <a name="0.8.0"></a>
 # [0.8.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.7.0...v0.8.0) (2017-07-21)
 
