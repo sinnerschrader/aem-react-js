@@ -46,7 +46,7 @@ export class ServerRenderer {
     const html: string = ReactDom.renderToString(
       <RootComponent
         aemContext={ctx}
-        comp={component}
+        component={component}
         path={path}
         wcmmode={wcmmode}
         renderRootDialog={!!renderRootDialog}

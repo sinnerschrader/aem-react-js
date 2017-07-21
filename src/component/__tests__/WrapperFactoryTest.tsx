@@ -56,7 +56,7 @@ describe('WrapperFactory', () => {
     const item = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        comp={reactClass}
+        component={reactClass}
         path="/test"
       />
     );
@@ -82,7 +82,7 @@ describe('WrapperFactory', () => {
     const item = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        comp={reactClass}
+        component={reactClass}
         path="/test"
       />
     );
@@ -104,7 +104,7 @@ describe('WrapperFactory', () => {
     const item = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        comp={reactClass}
+        component={reactClass}
         path="/test"
       />
     );
@@ -134,7 +134,7 @@ describe('WrapperFactory', () => {
     const item = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        comp={MyTest}
+        component={MyTest}
         path="/test"
       />
     );
@@ -165,7 +165,7 @@ describe('WrapperFactory', () => {
     const item = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        comp={reactClass}
+        component={reactClass}
         path="/test"
       />
     );
@@ -198,7 +198,7 @@ describe('WrapperFactory', () => {
       <RootComponent
         wcmmode="disabled"
         aemContext={{container, registry}}
-        comp={reactClass}
+        component={reactClass}
         path="/test"
       />
     );

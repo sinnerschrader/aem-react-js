@@ -44,9 +44,9 @@ export class ComponentManager {
       const props: ComponentTreeConfig = JSON.parse(textarea.value);
 
       if (props.wcmmode === 'disabled') {
-        const comp = this.registry.getComponent(props.resourceType);
+        const component = this.registry.getComponent(props.resourceType);
 
-        if (comp === null) {
+        if (component === null) {
           console.error(
             `React component '${props.resourceType}' ` +
               'does not exist in component list.'
@@ -62,7 +62,7 @@ export class ComponentManager {
           ReactDom.render(
             <RootComponent
               aemContext={ctx}
-              comp={comp}
+              component={component}
               path={props.path}
               wcmmode={props.wcmmode}
             />,

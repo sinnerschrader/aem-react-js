@@ -7,22 +7,20 @@ import {ServiceProxy} from '../di/ServiceProxy';
 export interface AemComponentContext {
   readonly aemContext: AemContext;
   readonly path: string;
-  readonly rootPath: string;
-  readonly wcmmode: string;
+  readonly wcmmode?: string;
 }
 
-export class AemComponent<P, S> extends React.Component<P, S> {
+export class AemComponent<P = {}, S = {}> extends React.Component<P, S> {
   public static readonly contextTypes: object = {
-    aemContext: React.PropTypes.object,
-    path: React.PropTypes.string,
-    rootPath: React.PropTypes.string,
+    aemContext: React.PropTypes.object.isRequired,
+    path: React.PropTypes.string.isRequired,
     wcmmode: React.PropTypes.string
   };
 
   public readonly context: AemComponentContext;
 
   /* istanbul ignore next */
-  public getWcmmode(): string {
+  public getWcmmode(): string | undefined {
     return this.context.wcmmode;
   }
 

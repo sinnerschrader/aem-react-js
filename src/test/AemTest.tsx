@@ -48,7 +48,7 @@ export class AemTest {
 
     return enzyme.render(
       <RootComponent
-        comp={component}
+        component={component}
         path={path || '/'}
         wcmmode="disabled"
         aemContext={this.currentAemContext}

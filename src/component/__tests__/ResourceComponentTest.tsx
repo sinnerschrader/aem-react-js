@@ -83,7 +83,7 @@ describe('ResourceComponent', () => {
     const item = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        comp={Test}
+        component={Test}
         path="/content/notfound"
       />
     );
@@ -105,7 +105,7 @@ describe('ResourceComponent', () => {
     const item = ReactTestUtils.renderIntoDocument(
       <RootComponent
         aemContext={{container, registry}}
-        comp={Embedded}
+        component={Embedded}
         path="/content/embed"
       />
     ) as any;
@@ -127,7 +127,7 @@ describe('ResourceComponent', () => {
     const item = ReactTestUtils.renderIntoDocument(
       <RootComponent
         aemContext={{container, registry}}
-        comp={Test}
+        component={Test}
         path="/content/test"
       />
     ) as any;
@@ -156,7 +156,7 @@ describe('ResourceComponent', () => {
       <RootComponent
         wcmmode="disabled"
         aemContext={{container, registry}}
-        comp={AemContainer}
+        component={AemContainer}
         path="/content"
       />
     );
@@ -189,7 +189,7 @@ describe('ResourceComponent', () => {
         <RootComponent
           wcmmode="edit"
           aemContext={{container, registry}}
-          comp={AemContainer}
+          component={AemContainer}
           path="/content"
         />
       );
@@ -207,7 +207,7 @@ describe('ResourceComponent', () => {
         <RootComponent
           wcmmode="disabled"
           aemContext={{container, registry}}
-          comp={createContainer('childClass', 'el')}
+          component={createContainer('childClass', 'el')}
           path="/content"
         />
       );
@@ -244,7 +244,7 @@ describe('ResourceComponent', () => {
         <RootComponent
           wcmmode="disabled"
           aemContext={{container, registry}}
-          comp={AemContainer}
+          component={AemContainer}
           path="/content"
         />
       );
@@ -259,7 +259,7 @@ describe('ResourceComponent', () => {
         <RootComponent
           wcmmode="disabled"
           aemContext={{container, registry}}
-          comp={createContainer('childClass', 'el')}
+          component={createContainer('childClass', 'el')}
           path="/content"
         />
       );
@@ -275,7 +275,7 @@ describe('ResourceComponent', () => {
         <RootComponent
           wcmmode="disabled"
           aemContext={{container, registry}}
-          comp={createContainer('childClass')}
+          component={createContainer('childClass')}
           path="/content"
         />
       );
@@ -310,7 +310,7 @@ describe('ResourceComponent', () => {
         <RootComponent
           wcmmode="disabled"
           aemContext={{container, registry}}
-          comp={createContainer('childClass', null, 'children')}
+          component={createContainer('childClass', null, 'children')}
           path="/content"
         />
       );

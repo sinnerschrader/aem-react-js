@@ -39,8 +39,8 @@ export abstract class ResourceComponent<
   S extends ResourceState
 > extends AemComponent<P, S> {
   public static readonly childContextTypes: any = {
-    path: React.PropTypes.string, //
-    wcmmode: React.PropTypes.string //
+    path: React.PropTypes.string.isRequired,
+    wcmmode: React.PropTypes.string
   };
 
   public getChildContext(): any {
@@ -76,7 +76,7 @@ export abstract class ResourceComponent<
     }
   }
 
-  public getWcmmode(): string {
+  public getWcmmode(): string | undefined {
     return this.props.wcmmode || this.context.wcmmode;
   }
 
