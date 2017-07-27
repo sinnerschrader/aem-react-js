@@ -10,7 +10,7 @@ export interface AemComponentContext {
   readonly wcmmode?: string;
 }
 
-export class AemComponent<P = {}, S = {}> extends React.Component<P, S> {
+export class AemComponent<P = {}, S = {}> extends React.PureComponent<P, S> {
   public static readonly contextTypes: object = {
     aemContext: React.PropTypes.object.isRequired,
     path: React.PropTypes.string.isRequired,
