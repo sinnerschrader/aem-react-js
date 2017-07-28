@@ -8,6 +8,7 @@ import {ResourceComponent} from '../component/ResourceComponent';
 import {Container} from '../di/Container';
 import {Cache} from '../store/Cache';
 import {SlingResourceOptions} from '../store/Sling';
+import {MockSling} from '../test/MockSling';
 
 describe('ComponentManager', () => {
   it('should not install components when wcmmode is not disabled', () => {
@@ -25,7 +26,8 @@ describe('ComponentManager', () => {
         `${JSON.stringify(data)}</textarea></html>`
     ).window.document;
 
-    const cm: ComponentManager = new ComponentManager(null, null, doc);
+    const container = new Container(cache, new MockSling(cache));
+    const cm: ComponentManager = new ComponentManager(null, container, doc);
     const element: Element = doc.querySelector('div');
 
     cm.initReactComponent(element);

@@ -43,17 +43,17 @@ export class ComponentManager {
     if (textarea) {
       const props: ComponentTreeConfig = JSON.parse(textarea.value);
 
+      this.container.cache.mergeCache(props.cache);
+
       if (props.wcmmode === 'disabled') {
         const component = this.registry.getComponent(props.resourceType);
 
-        if (component === null) {
+        if (!component) {
           console.error(
             `React component '${props.resourceType}' ` +
               'does not exist in component list.'
           );
         } else {
-          this.container.cache.mergeCache(props.cache);
-
           const ctx: AemContext = {
             container: this.container,
             registry: this.registry
