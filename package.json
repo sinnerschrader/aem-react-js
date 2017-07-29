@@ -41,7 +41,7 @@
     "espower-typescript": "^8.0.0",
     "jsdom": "^9.8.3",
     "mocha": "^3.1.2",
-    "nyc": "^11.0.2",
+    "nyc": "11.0.3",
     "power-assert": "^1.2.0",
     "react-addons-test-utils": "^15.3.1",
     "tslint": "^5.0.0",
