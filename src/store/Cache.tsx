@@ -37,15 +37,17 @@ function getProperty(data: any, path: string[]): any {
  */
 export class Cache {
   private resources: {[path: string]: ResourceEntry};
-  private scripts: {[path: string]: EditDialogData};
+  private wrapper: {[path: string]: EditDialogData};
   private included: {[path: string]: string};
   private serviceCalls: {[path: string]: any};
+  private components: {[id: string]: any};
 
   public constructor() {
     this.resources = {};
-    this.scripts = {};
+    this.wrapper = {};
     this.included = {};
     this.serviceCalls = {};
+    this.components = {};
   }
 
   public generateServiceCacheKey(
@@ -80,7 +82,7 @@ export class Cache {
 
   public mergeCache(cache: any): void {
     if (cache) {
-      ['resources', 'included', 'scripts', 'serviceCalls'].forEach(key => {
+      Object.keys(cache).forEach(key => {
         merge((this as any)[key], cache[key]);
       });
     }
@@ -136,12 +138,12 @@ export class Cache {
     return this.serviceCalls[key];
   }
 
-  public putScript(path: string, script: EditDialogData): void {
-    this.scripts[path] = script;
+  public putScript(path: string, wrapper: EditDialogData): void {
+    this.wrapper[path] = wrapper;
   }
 
   public getScript(path: string): EditDialogData {
-    return this.scripts[path];
+    return this.wrapper[path];
   }
 
   public putIncluded(path: string, included: string): void {
@@ -152,19 +154,29 @@ export class Cache {
     return this.included[path];
   }
 
+  public putComponent(id: string, data: any): void {
+    this.components[id] = data;
+  }
+
+  public getComponent<C>(id: string): C | undefined {
+    return this.components[id];
+  }
+
   public getFullState(): any {
     return {
+      components: this.components,
       included: this.included,
       resources: this.resources,
-      scripts: this.scripts,
+      scripts: this.wrapper,
       serviceCalls: this.serviceCalls
     };
   }
 
   public clear(): void {
     this.resources = {};
-    this.scripts = {};
+    this.wrapper = {};
     this.included = {};
     this.serviceCalls = {};
+    this.components = {};
   }
 }
