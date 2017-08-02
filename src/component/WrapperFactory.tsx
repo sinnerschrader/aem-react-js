@@ -1,14 +1,13 @@
 import * as React from 'react';
+import {JavaApi} from './JavaApi';
 import {ReactParsysProps} from './ReactParsys';
 import {ResourceComponent} from './ResourceComponent';
 
-export type Transform<C, R> = (
-  content: C,
-  r: ResourceComponent<any, any, any>
-) => R;
+export type Transform<R, C = object> = (content: C, api: JavaApi) => R;
 
-export interface ComponentConfig<C, R> {
+export interface ComponentConfig<R, C = object> {
   readonly depth?: number;
+  readonly shortName?: string;
   readonly name?: string;
   readonly parsys?: ReactParsysProps;
   readonly component: React.ComponentClass<any>;
@@ -17,11 +16,11 @@ export interface ComponentConfig<C, R> {
   readonly loadingComponent?: React.ComponentClass<any>;
 }
 
-export class Wrapper<C, R> extends ResourceComponent<any, any, any> {
-  protected readonly config: ComponentConfig<C, R>;
+export class Wrapper<R, C = object> extends ResourceComponent<any, any, any> {
+  protected readonly config: ComponentConfig<R, C>;
 
   public constructor(
-    config: ComponentConfig<C, R>,
+    config: ComponentConfig<R, C>,
     props?: any,
     context?: any
   ) {

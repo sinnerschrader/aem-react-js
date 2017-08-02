@@ -43,7 +43,8 @@ export class ComponentRegistry {
 
   public registerVanilla<C, R>(config: ComponentConfig<C, R>): void {
     /* tslint:disable:no-string-literal */
-    const componentClassName: string = config.name || config.component.name;
+    const componentClassName: string =
+      config.shortName || config.component.name;
     /* tsslint:enable:no-string-literal */
     const resourceType: string =
       config.name || this.mapToResourceType(componentClassName);

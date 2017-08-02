@@ -3,6 +3,7 @@ import {AemContext} from '../AemContext';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {Container} from '../di/Container';
 import {ServiceProxy} from '../di/ServiceProxy';
+import {JavaApi} from './JavaApi';
 
 export interface AemComponentContext {
   readonly aemContext: AemContext;
@@ -10,7 +11,8 @@ export interface AemComponentContext {
   readonly wcmmode?: string;
 }
 
-export class AemComponent<P = {}, S = {}> extends React.PureComponent<P, S> {
+export class AemComponent<P = {}, S = {}> extends React.PureComponent<P, S>
+  implements JavaApi {
   public static readonly contextTypes: object = {
     aemContext: React.PropTypes.object.isRequired,
     path: React.PropTypes.string.isRequired,
