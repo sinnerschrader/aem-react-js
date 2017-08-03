@@ -6,6 +6,7 @@ import {RootComponentRegistry} from '../RootComponentRegistry';
 import {ServerRenderer, ServerResponse} from '../ServerRenderer';
 import {ResourceComponent} from '../component/ResourceComponent';
 import {Container} from '../di/Container';
+import {identity} from '../rootDecorator';
 import {Cache} from '../store/Cache';
 
 describe('ServerRenderer', () => {
@@ -35,6 +36,7 @@ describe('ServerRenderer', () => {
     );
 
     const registry: RootComponentRegistry = {
+      rootDecorator: identity,
       getComponent(resourceType: string): any {
         return Test;
       }
@@ -56,6 +58,7 @@ describe('ServerRenderer', () => {
 
   it('should throw error if component is not found', () => {
     const registry: RootComponentRegistry = {
+      rootDecorator: identity,
       getComponent(resourceType: string): any {
         return null;
       }

@@ -43,7 +43,7 @@ export class ServerRenderer {
 
     console.log('Render root dialog ' + String(renderRootDialog));
 
-    const html: string = ReactDom.renderToString(
+    const root: JSX.Element = this.registry.rootDecorator(
       <RootComponent
         aemContext={ctx}
         component={component}
@@ -52,6 +52,8 @@ export class ServerRenderer {
         renderRootDialog={!!renderRootDialog}
       />
     );
+
+    const html: string = ReactDom.renderToString(root);
 
     return {html, state: JSON.stringify(this.container.cache.getFullState())};
   }

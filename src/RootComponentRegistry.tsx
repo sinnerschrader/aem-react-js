@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {ComponentRegistry} from './ComponentRegistry';
+import {identity, rootDecorator} from './rootDecorator';
 
 export class Mapping {
   public readonly resourceType: string;
@@ -18,6 +19,8 @@ export class Mapping {
 }
 
 export class RootComponentRegistry {
+  public rootDecorator: rootDecorator = identity;
+
   private readonly registries: ComponentRegistry[];
 
   private readonly resourceTypeToComponent: {

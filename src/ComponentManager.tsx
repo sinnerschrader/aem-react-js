@@ -59,15 +59,15 @@ export class ComponentManager {
             registry: this.registry
           };
 
-          ReactDom.render(
+          const root: JSX.Element = this.registry.rootDecorator(
             <RootComponent
               aemContext={ctx}
               component={component}
               path={props.path}
               wcmmode={props.wcmmode}
-            />,
-            item
+            />
           );
+          ReactDom.render(root, item);
         }
       }
     } else {

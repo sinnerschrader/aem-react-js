@@ -6,6 +6,7 @@ import * as React from 'react';
 import {ComponentManager, ComponentTreeConfig} from '../ComponentManager';
 import {ResourceComponent} from '../component/ResourceComponent';
 import {Container} from '../di/Container';
+import {identity} from '../rootDecorator';
 import {Cache} from '../store/Cache';
 import {SlingResourceOptions} from '../store/Sling';
 import {MockSling} from '../test/MockSling';
@@ -63,7 +64,8 @@ describe('ComponentManager', () => {
     );
 
     const registry: any = {
-      getComponent: (resourceType: string) => Test
+      getComponent: (resourceType: string) => Test,
+      rootDecorator: identity
     };
 
     const doc: Document = new JSDOM(
