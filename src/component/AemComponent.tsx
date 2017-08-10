@@ -3,7 +3,7 @@ import {AemContext} from '../AemContext';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {Container} from '../di/Container';
 import {ServiceProxy} from '../di/ServiceProxy';
-import {JavaApi} from './JavaApi';
+import {ApiOptions, JavaApi} from './JavaApi';
 
 export interface AemComponentContext {
   readonly aemContext: AemContext;
@@ -45,13 +45,22 @@ export class AemComponent<P = {}, S = {}> extends React.PureComponent<P, S>
   }
 
   /* istanbul ignore next */
-  public getResourceModel(name: string): ServiceProxy {
-    return this.getContainer().getResourceModel(this.getPath(), name);
+  public getResourceModel(
+    name: string,
+    options: ApiOptions = {}
+  ): ServiceProxy {
+    return this.getContainer().getResourceModel(
+      this.getExtendedPath(options),
+      name
+    );
   }
 
   /* istanbul ignore next */
-  public getRequestModel(name: string): ServiceProxy {
-    return this.getContainer().getRequestModel(this.getPath(), name);
+  public getRequestModel(name: string, options: ApiOptions = {}): ServiceProxy {
+    return this.getContainer().getRequestModel(
+      this.getExtendedPath(options),
+      name
+    );
   }
 
   protected getAemContext(): AemContext {
@@ -60,5 +69,12 @@ export class AemComponent<P = {}, S = {}> extends React.PureComponent<P, S>
 
   protected getContainer(): Container {
     return this.context.aemContext.container;
+  }
+
+  private getExtendedPath(options: ApiOptions): string {
+    return (
+      this.getPath() +
+      (options.path && options.path.length > 0 ? '/' + options.path : '')
+    );
   }
 }

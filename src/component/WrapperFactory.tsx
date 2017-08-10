@@ -5,11 +5,14 @@ import {ResourceComponent} from './ResourceComponent';
 
 export type Transform<R, C = object> = (content: C, api: JavaApi) => R;
 
+export type parsysFactory = (api: JavaApi) => JSX.Element[];
+
 export interface ComponentConfig<R, C = object> {
   readonly depth?: number;
   readonly shortName?: string;
   readonly name?: string;
   readonly parsys?: ReactParsysProps;
+  readonly parsysFactory?: parsysFactory;
   readonly component: React.ComponentClass<any>;
   readonly props?: {[name: string]: any};
   readonly transform?: Transform<C, R>;
@@ -30,13 +33,16 @@ export class Wrapper<R, C = object> extends ResourceComponent<any, any, any> {
   }
 
   public create(): React.ReactElement<any> {
-    let children: React.ReactElement<any>[];
+    let children: JSX.Element[];
 
-    if (!!this.config.parsys) {
+    if (this.config.parsysFactory) {
+      children = this.config.parsysFactory(this);
+    } else if (!!this.config.parsys) {
       children = this.renderChildren(
         this.config.parsys.path,
         this.config.parsys.childClassName,
-        this.config.parsys.childElementName
+        this.config.parsys.childElementName,
+        this.config.parsys.includeOptions
       );
     }
 

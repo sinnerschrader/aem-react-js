@@ -1,6 +1,11 @@
 import {ResourceComponent} from '../component/ResourceComponent';
 import {Cache} from './Cache';
-import {AbstractSling, EditDialogData, SlingResourceOptions} from './Sling';
+import {
+  AbstractSling,
+  EditDialogData,
+  IncludeOptions,
+  SlingResourceOptions
+} from './Sling';
 
 export interface FetchWindow {
   fetch(url: string, options: any): any;
@@ -107,9 +112,13 @@ export class ClientSling extends AbstractSling {
     return this.cache.getScript(path);
   }
 
-  public includeResource(path: string, resourceType: string): string {
+  public includeResource(
+    path: string,
+    resourceType: string,
+    options: IncludeOptions
+  ): string {
     // Currently cannot be loaded from server alone.
-    return this.cache.getIncluded(path);
+    return this.cache.getIncluded(path, options);
   }
 
   public getRequestPath(): string {

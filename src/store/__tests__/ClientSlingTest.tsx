@@ -16,7 +16,8 @@ describe('ClientSling', () => {
 
     const actualHtml: string = sling.includeResource(
       '/test',
-      '/component/test'
+      '/component/test',
+      {}
     );
 
     expect(actualHtml).to.equal(html);

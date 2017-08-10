@@ -1,12 +1,16 @@
 import * as React from 'react';
 import {ResourceUtils} from './ResourceUtils';
 import {AemComponent} from './component/AemComponent';
+import {IncludeOptions} from './store/Sling';
 
 export interface IncludeProps {
   readonly path: string;
   readonly resourceType: string;
   readonly element?: string;
+  readonly className?: string;
   readonly hidden?: boolean;
+  readonly options?: IncludeOptions;
+  readonly attrs?: any;
 }
 
 export class ResourceInclude extends AemComponent<IncludeProps, any> {
@@ -26,11 +30,17 @@ export class ResourceInclude extends AemComponent<IncludeProps, any> {
 
       const sling = this.context.aemContext.container.sling;
 
-      innerHTML = sling.includeResource(path, this.props.resourceType);
+      innerHTML = sling.includeResource(
+        path,
+        this.props.resourceType,
+        this.props.options || {}
+      );
 
       return React.createElement(this.props.element || 'div', {
+        className: this.props.className,
         dangerouslySetInnerHTML: {__html: innerHTML},
-        hidden: !!this.props.hidden
+        hidden: !!this.props.hidden,
+        ...this.props.attrs || {}
       });
     }
   }

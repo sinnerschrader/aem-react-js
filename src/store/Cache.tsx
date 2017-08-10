@@ -1,5 +1,5 @@
 import {ResourceUtils} from '../ResourceUtils';
-import {EditDialogData} from './Sling';
+import {EditDialogData, IncludeOptions} from './Sling';
 
 interface ResourceEntry {
   readonly depth: number;
@@ -146,12 +146,16 @@ export class Cache {
     return this.wrapper[path];
   }
 
-  public putIncluded(path: string, included: string): void {
-    this.included[path] = included;
+  public putIncluded(
+    path: string,
+    included: string,
+    options: IncludeOptions = {}
+  ): void {
+    this.included[this.createIncludedKey(path, options)] = included;
   }
 
-  public getIncluded(path: string): string {
-    return this.included[path];
+  public getIncluded(path: string, options: IncludeOptions = {}): string {
+    return this.included[this.createIncludedKey(path, options)];
   }
 
   public putComponent(id: string, data: any): void {
@@ -178,5 +182,14 @@ export class Cache {
     this.included = {};
     this.serviceCalls = {};
     this.components = {};
+  }
+
+  private createIncludedKey(path: string, options: IncludeOptions): string {
+    return (
+      path +
+      (options && Object.keys(options).length > 0
+        ? '::' + JSON.stringify(options)
+        : '')
+    );
   }
 }

@@ -3,6 +3,7 @@ import * as shallowCompare from 'react-addons-shallow-compare';
 import {ResourceInclude} from '../ResourceInclude';
 import {ResourceUtils} from '../ResourceUtils';
 import {RootComponentRegistry} from '../RootComponentRegistry';
+import {IncludeOptions} from '../store/Sling';
 import {AemComponent} from './AemComponent';
 import {EditDialog} from './EditDialog';
 
@@ -138,8 +139,9 @@ export abstract class ResourceComponent<
 
   protected renderChildren(
     path: string,
-    childClassName?: string,
-    childElementName?: string
+    childClassName: string = '',
+    childElementName?: string,
+    includeOptions: IncludeOptions = {}
   ): React.ReactElement<any>[] {
     if (path && path.match(/^\//)) {
       throw new Error('path must be relative. was ' + path);
@@ -194,6 +196,7 @@ export abstract class ResourceComponent<
               },
               React.createElement(ResourceInclude, {
                 key: nodeName,
+                options: includeOptions,
                 path: actualPath,
                 resourceType
               })
@@ -214,9 +217,12 @@ export abstract class ResourceComponent<
         } else {
           childComponents.push(
             <ResourceInclude
+              className={childClassName}
+              element={childElementName}
               path={actualPath}
               key={nodeName}
               resourceType={resourceType}
+              options={includeOptions}
             />
           );
         }

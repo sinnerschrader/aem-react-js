@@ -1,5 +1,9 @@
 import {ServiceProxy} from '../di/ServiceProxy';
 
+export interface ApiOptions {
+  path?: string;
+}
+
 /**
  * a component instance specific java api
  */
@@ -8,5 +12,7 @@ export interface JavaApi {
 
   getResourceModel(name: string): ServiceProxy;
 
-  getRequestModel(name: string): ServiceProxy;
+  getRequestModel(name: string, options: ApiOptions): ServiceProxy;
+
+  getPath(): string;
 }

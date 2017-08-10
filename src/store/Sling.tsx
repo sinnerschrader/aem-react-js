@@ -12,6 +12,12 @@ export interface EditDialogData {
   readonly child?: EditDialogData;
 }
 
+export interface IncludeOptions {
+  readonly addSelectors?: string[];
+  readonly selectors?: string[];
+  readonly decorationTagName?: string;
+}
+
 /**
  * interface that provides standard aem featres for the resource components.
  */
@@ -41,7 +47,11 @@ export interface Sling {
    * @param path
    * @param resourceType
    */
-  includeResource(path: string, resourceType: string): string;
+  includeResource(
+    path: string,
+    resourceType: string,
+    options: IncludeOptions
+  ): string;
 
   getRequestPath(): string;
   getContainingPagePath(): string;
@@ -57,7 +67,11 @@ export abstract class AbstractSling implements Sling {
     path: string,
     resourceType: string
   ): EditDialogData;
-  public abstract includeResource(path: string, resourceType: string): string;
+  public abstract includeResource(
+    path: string,
+    resourceType: string,
+    options: IncludeOptions
+  ): string;
   public abstract getRequestPath(): string;
 
   public getContainingPagePath(): string {

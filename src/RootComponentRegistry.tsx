@@ -59,6 +59,10 @@ export class RootComponentRegistry {
   }
 
   public getComponent(resourceType: string): React.ComponentClass<any> {
+    if (resourceType && resourceType.match(/^\/apps\//)) {
+      resourceType = resourceType.substring('/apps/'.length);
+    }
+
     return this.resourceTypeToComponent[resourceType];
   }
 

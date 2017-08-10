@@ -1,9 +1,20 @@
 import {ResourceComponent} from '../component/ResourceComponent';
 import {Cache} from './Cache';
-import {AbstractSling, EditDialogData, SlingResourceOptions} from './Sling';
+import {
+  AbstractSling,
+  EditDialogData,
+  IncludeOptions,
+  SlingResourceOptions
+} from './Sling';
 
 export interface JavaSling {
-  includeResource(path: string, resourceType: string): string;
+  includeResource(
+    path: string,
+    resourceType: string,
+    addSelectors: string,
+    selectors: string,
+    decorationTagName: string
+  ): string;
   currentResource(depth: number): any;
   getResource(path: string, depth: number): any;
   renderDialogScript(path: string, resourceType: string): string;
@@ -63,10 +74,22 @@ export class ServerSling extends AbstractSling {
     return dialog;
   }
 
-  public includeResource(path: string, resourceType: string): string {
-    const included: string = this.sling.includeResource(path, resourceType);
+  public includeResource(
+    path: string,
+    resourceType: string,
+    options: IncludeOptions
+  ): string {
+    const included: string = this.sling.includeResource(
+      path,
+      resourceType,
+      options && !!options.addSelectors ? options.addSelectors.join(',') : null,
+      options && !!options.selectors ? options.selectors.join(',') : null,
+      options && typeof options.decorationTagName === 'string'
+        ? options.decorationTagName
+        : null
+    );
 
-    this.cache.putIncluded(path, included);
+    this.cache.putIncluded(path, included, options || {});
 
     return included;
   }

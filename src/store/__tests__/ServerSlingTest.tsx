@@ -12,13 +12,19 @@ describe('ServerSling', () => {
     const cache = new Cache();
 
     const javaSling = {
-      includeResource(path: string, resourceType: string): string {
+      includeResource(
+        path: string,
+        resourceType: string,
+        addSelectors: string,
+        selectors: string,
+        decorationTagName: string
+      ): string {
         return html;
       }
     };
 
     const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
-    const actualHtml = sling.includeResource('/test', '/component/test');
+    const actualHtml = sling.includeResource('/test', '/component/test', {});
 
     expect(actualHtml).to.equal(html);
     expect(cache.getIncluded('/test')).to.equal(html);
