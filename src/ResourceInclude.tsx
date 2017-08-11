@@ -37,10 +37,10 @@ export class ResourceInclude extends AemComponent<IncludeProps, any> {
       );
 
       return React.createElement(this.props.element || 'div', {
+        ...this.props.attrs || {},
         className: this.props.className,
         dangerouslySetInnerHTML: {__html: innerHTML},
-        hidden: !!this.props.hidden,
-        ...this.props.attrs || {}
+        hidden: !!this.props.hidden
       });
     }
   }
