@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.13.0"></a>
+# [0.13.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.12.0...v0.13.0) (2017-08-11)
+
+
+### Features
+
+* features for resource inclusion ([7536b17](http://www.github.com/sinnerschrader/aem-react-js/commit/7536b17))
+* reorder props merging ([70651ac](http://www.github.com/sinnerschrader/aem-react-js/commit/70651ac))
+
+
+
 <a name="0.12.0"></a>
 # [0.12.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.11.0...v0.12.0) (2017-08-04)
 
