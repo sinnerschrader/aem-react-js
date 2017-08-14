@@ -45,7 +45,7 @@ export class ComponentManager {
 
       this.container.cache.mergeCache(props.cache);
 
-      if (props.wcmmode === 'disabled') {
+      if (props.wcmmode === 'disabled' || props.wcmmode === 'preview') {
         const component = this.registry.getComponent(props.resourceType);
 
         if (!component) {
