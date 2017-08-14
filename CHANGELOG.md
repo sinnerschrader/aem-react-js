@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.14.0"></a>
+# [0.14.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.13.0...v0.14.0) (2017-08-14)
+
+
+### Features
+
+* instantiate react components in preview mode ([a9d1626](http://www.github.com/sinnerschrader/aem-react-js/commit/a9d1626))
+
+
+
 <a name="0.13.0"></a>
 # [0.13.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.12.0...v0.13.0) (2017-08-11)
 
