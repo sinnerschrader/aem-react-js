@@ -51,7 +51,7 @@
   "dependencies": {
     "es6-promise": "^4.0.5",
     "function.name": "^1.0.5",
-    "react": "^15.3.1",
+    "react": "^15.6.2",
     "react-addons-shallow-compare": "^15.3.2",
     "react-dom": "^15.3.1",
     "react-router": "^3.0.0"
