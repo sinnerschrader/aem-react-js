@@ -45,7 +45,7 @@
     "power-assert": "^1.2.0",
     "react-addons-test-utils": "^15.3.1",
     "tslint": "^5.0.0",
-    "typescript": "^2.1.1",
+    "typescript": "^2.5.3",
     "typings": "^2.1.0"
   },
   "dependencies": {
