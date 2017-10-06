@@ -41,6 +41,7 @@ export class Cache {
   private included: {[path: string]: string};
   private serviceCalls: {[path: string]: any};
   private components: {[id: string]: any};
+  private transforms: {[id: string]: any};
 
   public constructor() {
     this.resources = {};
@@ -48,6 +49,7 @@ export class Cache {
     this.included = {};
     this.serviceCalls = {};
     this.components = {};
+    this.transforms = {};
   }
 
   public generateServiceCacheKey(
@@ -134,6 +136,14 @@ export class Cache {
     this.serviceCalls[key] = serviceCall;
   }
 
+  public getTransform(key: string): any {
+    return this.transforms[key];
+  }
+
+  public putTransform(key: string, value: any): void {
+    this.transforms[key] = value;
+  }
+
   public getServiceCall(key: string): any {
     return this.serviceCalls[key];
   }
@@ -172,7 +182,8 @@ export class Cache {
       included: this.included,
       resources: this.resources,
       scripts: this.wrapper,
-      serviceCalls: this.serviceCalls
+      serviceCalls: this.serviceCalls,
+      transforms: this.transforms
     };
   }
 
@@ -182,6 +193,7 @@ export class Cache {
     this.included = {};
     this.serviceCalls = {};
     this.components = {};
+    this.transforms = {};
   }
 
   private createIncludedKey(path: string, options: IncludeOptions): string {

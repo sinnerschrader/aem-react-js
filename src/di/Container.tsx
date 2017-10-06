@@ -1,6 +1,9 @@
+import {JavaApi} from '../component/JavaApi';
 import {TextPool} from '../component/text/TextPool';
 import {Cache} from '../store/Cache';
 import {Sling} from '../store/Sling';
+import {javaApiFactory, javaApiFactoryFactory} from '../store/javaApiFactory';
+import {CachedServiceProxy} from './CachedServiceProxy';
 import {Cqx} from './Cqx';
 import {Locator} from './Locator';
 import {ServiceProxy} from './ServiceProxy';
@@ -16,9 +19,10 @@ interface Services {
 export class Container {
   public readonly cache: Cache;
   public readonly sling: Sling;
+  public javaApiFactory: javaApiFactory;
   public textPool: TextPool;
 
-  private readonly cqx: Cqx | undefined;
+  public readonly cqx: Cqx | undefined;
   private readonly services: Services;
 
   public constructor(cache: Cache, sling: Sling, cqx?: Cqx) {
@@ -26,6 +30,7 @@ export class Container {
     this.sling = sling;
     this.cqx = cqx;
     this.services = Object.create(null);
+    this.javaApiFactory = javaApiFactoryFactory(this);
     this.textPool = new TextPool();
   }
 
@@ -83,8 +88,12 @@ export class Container {
     });
   }
 
+  public createJavaApi(path: string): JavaApi {
+    return this.javaApiFactory(path);
+  }
+
   private getServiceProxy(args: IArguments, locator: Locator): ServiceProxy {
-    return new ServiceProxy(this.cache, locator, this.createKey(args));
+    return new CachedServiceProxy(this.cache, locator, this.createKey(args));
   }
 
   private createKey(params: IArguments): string {

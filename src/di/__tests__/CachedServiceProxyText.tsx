@@ -3,8 +3,9 @@
 import {expect} from 'chai';
 import {ServiceProxy} from '../../di/ServiceProxy';
 import {Cache} from '../../store/Cache';
+import {CachedServiceProxy} from '../CachedServiceProxy';
 
-describe('ServiceProxy', () => {
+describe('CachedServiceProxy', () => {
   it('should invoke target and cache result', () => {
     const target = {
       invoke(method: string, args: any[]): string {
@@ -21,7 +22,7 @@ describe('ServiceProxy', () => {
 
     const cache = new Cache();
 
-    const proxy: ServiceProxy = new ServiceProxy(
+    const proxy: ServiceProxy = new CachedServiceProxy(
       cache,
       () => target as any,
       'javaClass'
@@ -42,7 +43,7 @@ describe('ServiceProxy', () => {
 
     const cache = new Cache();
 
-    const proxy: ServiceProxy = new ServiceProxy(
+    const proxy: ServiceProxy = new CachedServiceProxy(
       cache,
       () => target as any,
       'javaClass'
@@ -67,7 +68,7 @@ describe('ServiceProxy', () => {
 
     const cache = new Cache();
 
-    const proxy: ServiceProxy = new ServiceProxy(
+    const proxy: ServiceProxy = new CachedServiceProxy(
       cache,
       () => target as any,
       'javaClass'

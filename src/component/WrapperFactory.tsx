@@ -54,9 +54,16 @@ export class Wrapper<R, C = object> extends ResourceComponent<any, any, any> {
       );
     }
 
-    const newProps = this.config.transform
-      ? this.config.transform(props, this)
-      : props;
+    let newProps: any = this.getContainer().cache.getTransform(this.getPath());
+    if (!newProps) {
+      const javaApi: JavaApi = this.getContainer().createJavaApi(
+        this.getPath()
+      );
+      newProps = this.config.transform
+        ? this.config.transform(props, javaApi)
+        : props;
+      this.getContainer().cache.putTransform(this.getPath(), newProps);
+    }
 
     return React.createElement(this.config.component, newProps, children);
   }
