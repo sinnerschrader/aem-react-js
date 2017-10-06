@@ -3,6 +3,7 @@ import {AemContext} from '../AemContext';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {Container} from '../di/Container';
 import {ServiceProxy} from '../di/ServiceProxy';
+import {XssApi} from '../xss/XssApi';
 import {ApiOptions, JavaApi} from './JavaApi';
 
 export interface AemComponentContext {
@@ -61,6 +62,10 @@ export class AemComponent<P = {}, S = {}> extends React.PureComponent<P, S>
       this.getExtendedPath(options),
       name
     );
+  }
+
+  public getXssApi(): XssApi {
+    return this.getContainer().cqx.getXssApi();
   }
 
   protected getAemContext(): AemContext {

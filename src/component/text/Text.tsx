@@ -1,9 +1,11 @@
 import * as React from 'react';
+import {Context} from '../../xss/XssUtils';
 import {AemComponent} from '../AemComponent';
 
 export interface TextProps {
   el: string;
   value: string | null;
+  context?: Context;
 }
 
 export class Text extends AemComponent<TextProps> {
@@ -20,10 +22,14 @@ export class Text extends AemComponent<TextProps> {
 
     const pool = this.getAemContext().container.textPool;
     const id = pool.put(text);
+    const safeText: string | null = this.getContainer().xssUtils.processText(
+      text,
+      this.props.context
+    );
 
     return (
       <Component
-        dangerouslySetInnerHTML={{__html: text}}
+        dangerouslySetInnerHTML={{__html: safeText}}
         {...passThroughs}
         id={id}
       />

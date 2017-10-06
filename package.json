@@ -72,7 +72,8 @@
   "dependencies": {
     "react": "15.6.1",
     "react-addons-shallow-compare": "15.6.0",
-    "react-dom": "15.6.1"
+    "react-dom": "15.6.1",
+    "xss": "0.3.4"
   },
   "peerDependencies": {
     "@types/react": "15.0.38",

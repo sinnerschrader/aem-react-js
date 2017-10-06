@@ -1,4 +1,5 @@
 import {JavaSling} from '../store/ServerSling';
+import {XssApi} from '../xss/XssApi';
 import {JsProxy} from './JsProxy';
 
 export interface Cqx {
@@ -7,4 +8,5 @@ export interface Cqx {
   getOsgiService(name: string): JsProxy;
   getResourceModel(path: string, name: string): JsProxy;
   getRequestModel(path: string, name: string): JsProxy;
+  getXssApi(): XssApi;
 }

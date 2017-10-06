@@ -1,14 +1,20 @@
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
 import * as React from 'react';
-import {Text} from '../text/Text';
-import {TextPool} from '../text/TextPool';
+import {Context} from '../../../xss/XssUtils';
+import {Text} from '../Text';
+import {TextPool} from '../TextPool';
 
 describe('Text', () => {
   it('should render span with text', () => {
     const textPool = new TextPool();
+    const xssUtils = {
+      processText(text: string, context?: Context): string {
+        return text;
+      }
+    };
     const aemContext = {
-      container: {textPool}
+      container: {textPool, xssUtils}
     };
     const item = enzyme.shallow(<Text value="Some text" el="span" />, {
       context: {aemContext}

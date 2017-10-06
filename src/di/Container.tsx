@@ -3,6 +3,9 @@ import {TextPool} from '../component/text/TextPool';
 import {Cache} from '../store/Cache';
 import {Sling} from '../store/Sling';
 import {javaApiFactory, javaApiFactoryFactory} from '../store/javaApiFactory';
+import {JavaXssUtils} from '../xss/JavaXssUtils';
+import {JsXssUtils} from '../xss/JsXssUtils';
+import {XssUtils} from '../xss/XssUtils';
 import {CachedServiceProxy} from './CachedServiceProxy';
 import {Cqx} from './Cqx';
 import {Locator} from './Locator';
@@ -21,6 +24,7 @@ export class Container {
   public readonly sling: Sling;
   public javaApiFactory: javaApiFactory;
   public textPool: TextPool;
+  public xssUtils: XssUtils;
 
   public readonly cqx: Cqx | undefined;
   private readonly services: Services;
@@ -31,6 +35,10 @@ export class Container {
     this.cqx = cqx;
     this.services = Object.create(null);
     this.javaApiFactory = javaApiFactoryFactory(this);
+    this.xssUtils =
+      !!cqx && cqx.getXssApi
+        ? new JavaXssUtils(cqx.getXssApi())
+        : new JsXssUtils();
     this.textPool = new TextPool();
   }
 
