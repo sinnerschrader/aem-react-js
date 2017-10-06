@@ -1,9 +1,9 @@
 export class TextPool {
-  private map: {[key: string]: string} = {};
+  private map: {[key: string]: string} = Object.create(null);
 
   private id: number = 0;
 
-  private prefix: string = 'text_';
+  private readonly prefix: string = 'text_';
 
   public put(text: string): string {
     const id = this.nextId();
@@ -12,10 +12,10 @@ export class TextPool {
     return id;
   }
 
-  public get(text: string): string {
-    const pooledText = this.map[text];
+  public getId(text: string): string {
+    const id = this.map[text];
 
-    return pooledText;
+    return id;
   }
 
   private nextId(): string {

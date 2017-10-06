@@ -2,7 +2,7 @@ import {JavaApi} from '../component/JavaApi';
 import {TextPool} from '../component/text/TextPool';
 import {Cache} from '../store/Cache';
 import {Sling} from '../store/Sling';
-import {javaApiFactory, javaApiFactoryFactory} from '../store/javaApiFactory';
+import {JavaApiFactory, javaApiFactoryFactory} from '../store/javaApiFactory';
 import {JavaXssUtils} from '../xss/JavaXssUtils';
 import {JsXssUtils} from '../xss/JsXssUtils';
 import {XssUtils} from '../xss/XssUtils';
@@ -22,7 +22,7 @@ interface Services {
 export class Container {
   public readonly cache: Cache;
   public readonly sling: Sling;
-  public javaApiFactory: javaApiFactory;
+  public javaApiFactory: JavaApiFactory;
   public textPool: TextPool;
   public xssUtils: XssUtils;
 

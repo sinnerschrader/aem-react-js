@@ -43,11 +43,7 @@ export class CachedServiceProxy implements ServiceProxy {
   }
 
   public get<T>(name: string): T {
-    const cacheKey: string = this.cache.generateServiceCacheKey(
-      this.name,
-      name,
-      []
-    );
+    const cacheKey = this.cache.generateServiceCacheKey(this.name, name, []);
 
     return this.cache.wrapServiceCall(cacheKey, () => {
       const result = this.locator().get(name);

@@ -6,8 +6,8 @@ import {ServiceProxyImpl} from '../di/ServiceProxyImpl';
 import {XssApi} from '../xss/XssApi';
 
 export class JavaApiImpl implements JavaApi {
-  private container: Container;
-  private path: string;
+  private readonly container: Container;
+  private readonly path: string;
 
   public constructor(path: string, container: Container) {
     this.path = path;
@@ -46,9 +46,9 @@ export class JavaApiImpl implements JavaApi {
   }
 }
 
-type javaApiFactory = (path: string) => JavaApi;
+type JavaApiFactory = (path: string) => JavaApi;
 
 const javaApiFactoryFactory = (container: Container) => (path: string) =>
   new JavaApiImpl(path, container);
 
-export {javaApiFactoryFactory, javaApiFactory};
+export {javaApiFactoryFactory, JavaApiFactory};

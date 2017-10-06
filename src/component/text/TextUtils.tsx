@@ -1,6 +1,6 @@
 import {TextPool} from './TextPool';
 
-const reviveFactory = (document: Document) => (key: any, value: any) => {
+const reviveFactory = (document: Document) => (key: string, value: any) => {
   if (!!value && !!value.$innerHTML) {
     const el = document.getElementById(value.$innerHTML);
     if (!el) {
@@ -13,11 +13,11 @@ const reviveFactory = (document: Document) => (key: any, value: any) => {
   return value;
 };
 
-const replaceFactory = (textPool: TextPool) => (key: any, value: any) => {
+const replaceFactory = (textPool: TextPool) => (key: string, value: any) => {
   if (typeof value === 'string') {
-    const text = textPool.get(value);
-    if (!!text) {
-      return {$innerHTML: text};
+    const id = textPool.getId(value);
+    if (!!id) {
+      return {$innerHTML: id};
     }
   }
 

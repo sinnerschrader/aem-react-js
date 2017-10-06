@@ -26,9 +26,6 @@ export class ServerRenderer {
     wcmmode: string,
     renderAsJson: boolean = false
   ): ServerResponse {
-    console.log('Render react on path: ' + path);
-    console.log('Render react component: ' + resourceType);
-
     const component = this.registry.getComponent(resourceType);
 
     if (!component) {

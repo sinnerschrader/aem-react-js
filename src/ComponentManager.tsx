@@ -27,7 +27,7 @@ export class ComponentManager {
   private readonly container: Container;
   private readonly document: Document;
   private readonly registry: RootComponentRegistry;
-  private readonly reviveFn: (key: any, value: any) => any;
+  private readonly reviver: (key: string, value: any) => any;
 
   public constructor(
     registry: RootComponentRegistry,
@@ -37,7 +37,7 @@ export class ComponentManager {
     this.container = container;
     this.registry = registry;
     this.document = aDocument || document;
-    this.reviveFn = reviveFactory(this.document);
+    this.reviver = reviveFactory(this.document);
   }
 
   /**
@@ -52,7 +52,7 @@ export class ComponentManager {
     if (textarea) {
       const props: ComponentTreeConfig = JSON.parse(
         textarea.value,
-        this.reviveFn
+        this.reviver
       );
 
       this.container.cache.mergeCache(props.cache);
@@ -104,7 +104,7 @@ export class ComponentManager {
   /**
    * find all root elements and initialize the react components
    */
-  public initReactComponents(options: ReactOptions = {}): number {
+  public initReactComponents(options?: ReactOptions): number {
     const items: Element[] = [].slice.call(
       this.document.querySelectorAll('[data-react]')
     );

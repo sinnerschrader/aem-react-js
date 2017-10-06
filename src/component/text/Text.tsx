@@ -3,19 +3,20 @@ import {Context} from '../../xss/XssUtils';
 import {AemComponent} from '../AemComponent';
 
 export interface TextProps {
-  el: string;
+  element: string;
   value: string | null;
   context?: Context;
 }
 
 export class Text extends AemComponent<TextProps> {
   public render(): JSX.Element {
-    const Component = this.props.el;
+    const Component = this.props.element;
     const passThroughs: any = {};
+
     Object.keys(this.props)
       .filter(
         (key: string) =>
-          ['el', 'value', 'dangerouslySetInnerHTML', 'id'].indexOf(key) < 0
+          ['element', 'value', 'dangerouslySetInnerHTML', 'id'].indexOf(key) < 0
       )
       .forEach((key: string) => (passThroughs[key] = (this.props as any)[key]));
     const text = this.props.value;
