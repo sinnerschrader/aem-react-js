@@ -3,6 +3,7 @@ import * as ReactDom from 'react-dom/server';
 import {AemContext} from './AemContext';
 import {RootComponentRegistry} from './RootComponentRegistry';
 import {RootComponent} from './component/RootComponent';
+import {replaceFactory} from './component/text/TextUtils';
 import {Container} from './di/Container';
 
 export interface ServerResponse {
@@ -23,7 +24,7 @@ export class ServerRenderer {
     path: string,
     resourceType: string,
     wcmmode: string,
-    renderRootDialog?: boolean
+    renderAsJson: boolean = false
   ): ServerResponse {
     console.log('Render react on path: ' + path);
     console.log('Render react component: ' + resourceType);
@@ -41,7 +42,7 @@ export class ServerRenderer {
       registry: this.registry
     };
 
-    console.log('Render root dialog ' + String(renderRootDialog));
+    console.log('Render as json ' + String(renderAsJson));
 
     const root: JSX.Element = this.registry.rootDecorator(
       <RootComponent
@@ -49,12 +50,18 @@ export class ServerRenderer {
         component={component}
         path={path}
         wcmmode={wcmmode}
-        renderRootDialog={!!renderRootDialog}
+        renderRootDialog={!!renderAsJson}
       />
     );
 
     const html: string = ReactDom.renderToString(root);
+    const state = renderAsJson
+      ? JSON.stringify(this.container.cache.getFullState())
+      : JSON.stringify(
+          this.container.cache.getFullState(),
+          replaceFactory(this.container.textPool)
+        );
 
-    return {html, state: JSON.stringify(this.container.cache.getFullState())};
+    return {html, state};
   }
 }

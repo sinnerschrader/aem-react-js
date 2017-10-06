@@ -1,3 +1,4 @@
+import {TextPool} from '../component/text/TextPool';
 import {Cache} from '../store/Cache';
 import {Sling} from '../store/Sling';
 import {Cqx} from './Cqx';
@@ -15,6 +16,7 @@ interface Services {
 export class Container {
   public readonly cache: Cache;
   public readonly sling: Sling;
+  public textPool: TextPool;
 
   private readonly cqx: Cqx | undefined;
   private readonly services: Services;
@@ -24,6 +26,7 @@ export class Container {
     this.sling = sling;
     this.cqx = cqx;
     this.services = Object.create(null);
+    this.textPool = new TextPool();
   }
 
   public setService(name: string, service: object): this {
