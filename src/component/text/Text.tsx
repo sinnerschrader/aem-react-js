@@ -1,8 +1,9 @@
 import * as React from 'react';
+import {HTMLAttributes} from 'react';
 import {Context} from '../../xss/XssUtils';
 import {AemComponent} from '../AemComponent';
 
-export interface TextProps {
+export interface TextProps extends HTMLAttributes<HTMLElement> {
   element: string;
   value: string | null;
   context?: Context;
@@ -11,6 +12,7 @@ export interface TextProps {
 export class Text extends AemComponent<TextProps> {
   public render(): JSX.Element {
     const Component = this.props.element;
+    type textProperties = keyof TextProps;
     const passThroughs: any = {};
 
     Object.keys(this.props)
@@ -18,7 +20,7 @@ export class Text extends AemComponent<TextProps> {
         (key: string) =>
           ['element', 'value', 'dangerouslySetInnerHTML', 'id'].indexOf(key) < 0
       )
-      .forEach((key: string) => (passThroughs[key] = (this.props as any)[key]));
+      .forEach((key: textProperties) => (passThroughs[key] = this.props[key]));
     const text = this.props.value;
 
     const pool = this.getAemContext().container.textPool;
