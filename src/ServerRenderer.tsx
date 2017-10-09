@@ -9,6 +9,7 @@ import {Container} from './di/Container';
 export interface ServerResponse {
   readonly html: string;
   readonly state: string;
+  readonly reactContext: any;
 }
 
 export class ServerRenderer {
@@ -24,7 +25,8 @@ export class ServerRenderer {
     path: string,
     resourceType: string,
     wcmmode: string,
-    renderAsJson: boolean = false
+    renderAsJson: boolean = false,
+    reactContext?: any
   ): ServerResponse {
     const component = this.registry.getComponent(resourceType);
 
@@ -57,6 +59,6 @@ export class ServerRenderer {
           replaceFactory(this.container.textPool)
         );
 
-    return {html, state};
+    return {html, state, reactContext};
   }
 }
