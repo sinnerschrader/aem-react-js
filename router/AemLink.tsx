@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Link} from "react-router";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import Router = ReactRouter.Router;
 import LinkProps = ReactRouter.LinkProps;
 import {AemContext} from "../AemContext";

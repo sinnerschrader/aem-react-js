@@ -1,4 +1,5 @@
 import * as enzyme from "enzyme";
+import Adapter from 'enzyme-adapter-react-16';
 import {ClientAemContext} from "../AemContext";
 import RootComponent from "../component/RootComponent";
 import RootComponentRegistry from "../RootComponentRegistry";
@@ -11,6 +12,7 @@ import * as React from "react";
 import Cache from "../store/Cache";
 import MockSling from "./MockSling";
 
+enzyme.configure({ adapter: new Adapter() });
 
 export default class AemTest {
 
