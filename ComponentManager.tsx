@@ -37,11 +37,11 @@ export default class ComponentManager {
      * initialize react component in dom.
      * @param item
      */
-        public initReactComponent(item: any): void {
+        public initReactComponent(item: any, forceHydrate: boolean = false): void {
         let textarea = this.document.getElementById(item.getAttribute("data-react-id")) as HTMLTextAreaElement;
         if (textarea) {
             let props: ComponentTreeConfig = JSON.parse(textarea.value);
-            if (props.wcmmode === "disabled") {
+            if (forceHydrate || props.wcmmode === "disabled") {
                 let comp = this.registry.getComponent(props.resourceType);
                 if (comp === null) {
                     console.error("React component '" + props.resourceType + "' does not exist in component list.");
