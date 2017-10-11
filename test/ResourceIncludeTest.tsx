@@ -1,4 +1,4 @@
-import * as ReactTestUtils from "react-addons-test-utils";
+import * as ReactTestUtils from "react-dom/test-utils";
 import {expect} from "chai";
 import * as enzyme from "enzyme";
 

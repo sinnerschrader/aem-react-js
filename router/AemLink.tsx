@@ -1,5 +1,6 @@
 import * as React from "react";
 import {Link} from "react-router";
+import PropTypes from "prop-types";
 import Router = ReactRouter.Router;
 import LinkProps = ReactRouter.LinkProps;
 import {AemContext} from "../AemContext";
@@ -8,10 +9,10 @@ import LocationDescriptorObject = HistoryModule.LocationDescriptorObject;
 export default class AemLink extends React.Component<LinkProps, void> {
 
     public static contextTypes: any = {
-        aemContext: React.PropTypes.any,
-        history: React.PropTypes.any,
-        router: React.PropTypes.any,
-        wcmmode: React.PropTypes.string,
+        aemContext: PropTypes.any,
+        history: PropTypes.any,
+        router: PropTypes.any,
+        wcmmode: PropTypes.string,
     };
 
     public context: {

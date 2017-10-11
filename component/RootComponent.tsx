@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 import {AemContext} from "../AemContext";
 
 export interface RootComponentProps {
@@ -11,7 +12,8 @@ export interface RootComponentProps {
 
 export default class RootComponent extends React.Component<RootComponentProps, any> {
     public static childContextTypes: any = {
-        aemContext: React.PropTypes.any, path: React.PropTypes.any,
+        aemContext: PropTypes.any,
+        path: PropTypes.any,
     };
 
     public getChildContext(): any {

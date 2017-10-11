@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 import {ClientAemContext, AemContext} from "../AemContext";
 import RootComponentRegistry from "../RootComponentRegistry";
 import {Container} from "../di/Container";
@@ -6,14 +7,14 @@ import {Container} from "../di/Container";
 /**
  * Provides base functionality for components that are
  */
-export default class AemComponent<P, S> extends React.Component<P, S> {
+export default class AemComponent<P, S> extends React.PureComponent<P, S> {
 
 
     public static contextTypes: any = {
-        wcmmode: React.PropTypes.string, //
-        path: React.PropTypes.string, //
-        rootPath: React.PropTypes.string, //
-        aemContext: React.PropTypes.any
+        wcmmode: PropTypes.string, //
+        path: PropTypes.string, //
+        rootPath: PropTypes.string, //
+        aemContext: PropTypes.any
     };
 
     public context: {
