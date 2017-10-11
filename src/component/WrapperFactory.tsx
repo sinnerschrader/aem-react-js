@@ -78,14 +78,17 @@ export class Wrapper<R, C = object> extends ResourceComponent<any, any, any> {
   }
 
   private transform(props: any): any {
-    let newProps: any = this.getContainer().cache.getTransform(this.getPath());
-    if (!newProps) {
-      const javaApi = this.getContainer().createJavaApi(this.getPath());
-      newProps = this.config.transform
-        ? this.config.transform(props, javaApi)
-        : props;
-      this.getContainer().cache.putTransform(this.getPath(), newProps);
+    const existingProps: any = this.getContainer().cache.getTransform(
+      this.getPath()
+    );
+    if (existingProps) {
+      return existingProps;
     }
+    const javaApi = this.getContainer().createJavaApi(this.getPath());
+    const newProps = this.config.transform
+      ? this.config.transform(props, javaApi)
+      : props;
+    this.getContainer().cache.putTransform(this.getPath(), newProps);
 
     return newProps;
   }

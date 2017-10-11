@@ -3,6 +3,8 @@ import {HTMLAttributes} from 'react';
 import {Context} from '../../xss/XssUtils';
 import {AemComponent} from '../AemComponent';
 
+type TextPropertyNames = keyof TextProps;
+
 export interface TextProps extends HTMLAttributes<HTMLElement> {
   element: string;
   value: string | null;
@@ -12,15 +14,7 @@ export interface TextProps extends HTMLAttributes<HTMLElement> {
 export class Text extends AemComponent<TextProps> {
   public render(): JSX.Element {
     const Component = this.props.element;
-    type textProperties = keyof TextProps;
-    const passThroughs: any = {};
-
-    Object.keys(this.props)
-      .filter(
-        (key: string) =>
-          ['element', 'value', 'dangerouslySetInnerHTML', 'id'].indexOf(key) < 0
-      )
-      .forEach((key: textProperties) => (passThroughs[key] = this.props[key]));
+    const passThroughs = this.getPassThroughs();
     const text = this.props.value;
 
     const pool = this.getAemContext().container.textPool;
@@ -37,5 +31,19 @@ export class Text extends AemComponent<TextProps> {
         id={id}
       />
     );
+  }
+
+  private getPassThroughs(): {[key: string]: string} {
+    const passThroughs: {[key: string]: string} = Object.create(null);
+    Object.keys(this.props)
+      .filter(
+        (key: string) =>
+          ['element', 'value', 'dangerouslySetInnerHTML', 'id'].indexOf(key) < 0
+      )
+      .forEach(
+        (key: TextPropertyNames) => (passThroughs[key] = this.props[key])
+      );
+
+    return passThroughs;
   }
 }

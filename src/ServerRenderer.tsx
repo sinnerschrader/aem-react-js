@@ -39,8 +39,6 @@ export class ServerRenderer {
       registry: this.registry
     };
 
-    console.log('Render as json ' + String(renderAsJson));
-
     const root: JSX.Element = this.registry.rootDecorator(
       <RootComponent
         aemContext={ctx}

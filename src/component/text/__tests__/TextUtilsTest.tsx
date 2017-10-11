@@ -11,20 +11,20 @@ describe('TextUtils', () => {
     const doc = new JSDOM(
       `<body><div><span id=${id}>${text}</span></div></body>`
     ).window.document;
-    const reviveFn = reviveFactory(doc);
+    const reviver = reviveFactory(doc);
 
-    const parsed = JSON.parse(`{"$innerHTML": "${id}"}`, reviveFn);
+    const parsed = JSON.parse(`{"$innerHTML": "${id}"}`, reviver);
 
     expect(parsed).to.equal('Hi');
   });
   it('should throw error if text not found', () => {
     const doc = new JSDOM('<body><div><span>Hi</span></div></body>').window
       .document;
-    const reviveFn = reviveFactory(doc);
+    const reviver = reviveFactory(doc);
 
     let error: Error;
     try {
-      JSON.parse('{"$innerHTML": "text_1"}', reviveFn);
+      JSON.parse('{"$innerHTML": "text_1"}', reviver);
     } catch (e) {
       error = e;
     }
