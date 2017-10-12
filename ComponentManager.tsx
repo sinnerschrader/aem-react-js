@@ -70,10 +70,10 @@ export default class ComponentManager {
     /**
      * find all root elements and initialize the react components
      */
-    public initReactComponents(): number {
+    public initReactComponents(forceHydrate: boolean = false): number {
         let items = [].slice.call(this.document.querySelectorAll("[data-react]"));
         for (let item of items) {
-            this.initReactComponent(item);
+            this.initReactComponent(item, forceHydrate);
         }
         return items.length;
     }
