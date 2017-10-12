@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.16.0"></a>
+# [0.16.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.15.0...v0.16.0) (2017-10-12)
+
+
+### Features
+
+* one id for identical text ([30db113](http://www.github.com/sinnerschrader/aem-react-js/commit/30db113))
+
+
+
 <a name="0.15.0"></a>
 # [0.15.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.14.0...v0.15.0) (2017-10-12)
 
