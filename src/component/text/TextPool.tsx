@@ -6,6 +6,10 @@ export class TextPool {
   private readonly prefix: string = 'text_';
 
   public put(text: string): string {
+    const existingId = this.getId(text);
+    if (existingId) {
+      return existingId;
+    }
     const id = this.nextId();
     this.map[text] = id;
 
