@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.15.0"></a>
+# [0.15.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.14.0...v0.15.0) (2017-10-12)
+
+
+### Features
+
+* added css encoding ([4c769a3](http://www.github.com/sinnerschrader/aem-react-js/commit/4c769a3))
+* allow any html attributes on Text ([1475905](http://www.github.com/sinnerschrader/aem-react-js/commit/1475905))
+* allow external context to be passed to server rendering ([def5225](http://www.github.com/sinnerschrader/aem-react-js/commit/def5225))
+* execute transform on server only ([a55ca87](http://www.github.com/sinnerschrader/aem-react-js/commit/a55ca87))
+* text pool ([55f1d7a](http://www.github.com/sinnerschrader/aem-react-js/commit/55f1d7a))
+
+
+
 <a name="0.14.0"></a>
 # [0.14.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.13.0...v0.14.0) (2017-08-14)
 
