@@ -3,8 +3,6 @@ import {HTMLAttributes} from 'react';
 import {Context} from '../../xss/XssUtils';
 import {AemComponent} from '../AemComponent';
 
-type TextPropertyNames = keyof TextProps;
-
 export interface TextProps extends HTMLAttributes<HTMLElement> {
   element: string;
   value: string | null;
@@ -33,16 +31,15 @@ export class Text extends AemComponent<TextProps> {
     );
   }
 
-  private getPassThroughs(): {[key: string]: string} {
-    const passThroughs: {[key: string]: string} = Object.create(null);
-    Object.keys(this.props)
-      .filter(
-        (key: string) =>
-          ['element', 'value', 'dangerouslySetInnerHTML', 'id'].indexOf(key) < 0
-      )
-      .forEach(
-        (key: TextPropertyNames) => (passThroughs[key] = this.props[key])
-      );
+  private getPassThroughs(): HTMLAttributes<HTMLElement> {
+    const {
+      element,
+      value,
+      dangerouslySetInnerHTML,
+      id,
+      context,
+      ...passThroughs
+    } = this.props;
 
     return passThroughs;
   }
