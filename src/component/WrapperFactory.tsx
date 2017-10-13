@@ -5,14 +5,14 @@ import {ResourceComponent} from './ResourceComponent';
 
 export type Transform<R, C = object> = (content: C, api: JavaApi) => R;
 
-export type parsysFactory = (api: JavaApi) => JSX.Element[];
+export type parsysFactory<P> = (api: JavaApi, props: P) => JSX.Element[];
 
 export interface ComponentConfig<R, C = object> {
   readonly depth?: number;
   readonly shortName?: string;
   readonly name?: string;
   readonly parsys?: ReactParsysProps;
-  readonly parsysFactory?: parsysFactory;
+  readonly parsysFactory?: parsysFactory<R>;
   readonly component: React.ComponentClass<any>;
   readonly props?: {[name: string]: any};
   readonly transform?: Transform<C, R>;
@@ -35,17 +35,6 @@ export class Wrapper<R, C = object> extends ResourceComponent<any, any, any> {
   public create(): React.ReactElement<any> {
     let children: JSX.Element[];
 
-    if (this.config.parsysFactory) {
-      children = this.config.parsysFactory(this);
-    } else if (!!this.config.parsys) {
-      children = this.renderChildren(
-        this.config.parsys.path,
-        this.config.parsys.childClassName,
-        this.config.parsys.childElementName,
-        this.config.parsys.includeOptions
-      );
-    }
-
     const props = this.getResource();
 
     if (this.config.props) {
@@ -55,6 +44,17 @@ export class Wrapper<R, C = object> extends ResourceComponent<any, any, any> {
     }
 
     const newProps: any = this.transform(props);
+
+    if (this.config.parsysFactory) {
+      children = this.config.parsysFactory(this, newProps);
+    } else if (!!this.config.parsys) {
+      children = this.renderChildren(
+        this.config.parsys.path,
+        this.config.parsys.childClassName,
+        this.config.parsys.childElementName,
+        this.config.parsys.includeOptions
+      );
+    }
 
     return React.createElement(this.config.component, newProps, children);
   }
