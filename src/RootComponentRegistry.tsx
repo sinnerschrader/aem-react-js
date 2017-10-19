@@ -62,6 +62,9 @@ export class RootComponentRegistry {
     if (resourceType && resourceType.match(/^\/apps\//)) {
       resourceType = resourceType.substring('/apps/'.length);
     }
+    if (resourceType && resourceType.match(/\/$/)) {
+      resourceType = resourceType.substring(0, resourceType.length - 1);
+    }
 
     return this.resourceTypeToComponent[resourceType];
   }
