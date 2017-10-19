@@ -16,11 +16,11 @@ export class Text extends AemComponent<TextProps> {
     const text = this.props.value;
 
     const pool = this.getAemContext().container.textPool;
-    const id = pool.put(text);
     const safeText: string | null = this.getContainer().xssUtils.processText(
       text,
       this.props.context
     );
+    const id = pool.put(safeText);
 
     return (
       <Component
