@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.17.2"></a>
+## [0.17.2](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.17.1...v0.17.2) (2017-10-19)
+
+
+### Bug Fixes
+
+* remove trailing slash from resourceType ([018b009](http://www.github.com/sinnerschrader/aem-react-js/commit/018b009))
+
+
+
 <a name="0.17.1"></a>
 ## [0.17.1](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.17.0...v0.17.1) (2017-10-18)
 
