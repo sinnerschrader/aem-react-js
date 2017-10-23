@@ -35,27 +35,28 @@
     "url": "http://www.github.com/sovanyio/aem-react-js"
   },
   "devDependencies": {
-    "@types/enzyme-adapter-react-16": "^1.0.0",
-    "@types/prop-types": "^15.5.2",
-    "chai": "^4.0.2",
-    "codecov": "^2.0.2",
-    "espower-typescript": "^8.0.0",
-    "jsdom": "^9.8.3",
-    "mocha": "^3.1.2",
-    "nyc": "^11.0.2",
-    "power-assert": "^1.2.0",
-    "tslint": "^5.0.0",
-    "typings": "^2.1.0"
+    "@types/enzyme-adapter-react-16": "1.0.0",
+    "@types/prop-types": "15.5.2",
+    "chai": "4.0.2",
+    "codecov": "2.0.2",
+    "enzyme": "2.5.1",
+    "espower-typescript": "8.0.0",
+    "jsdom": "9.8.3",
+    "mocha": "3.1.2",
+    "nyc": "11.0.2",
+    "power-assert": "1.2.0",
+    "tslint": "5.0.0",
+    "typings": "2.1.0"
   },
   "dependencies": {
-    "enzyme": "^3.1.0",
-    "enzyme-adapter-react-16": "^1.0.1",
-    "es6-promise": "^4.0.5",
-    "function.name": "^1.0.5",
-    "prop-types": "^15.6.0",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
-    "react-router": "^3.0.0",
-    "typescript": "^2.5.3"
+    "enzyme": "3.1.0",
+    "enzyme-adapter-react-16": "1.0.1",
+    "es6-promise": "4.0.5",
+    "function.name": "1.0.5",
+    "prop-types": "15.6.0",
+    "react": "16.0.0",
+    "react-dom": "16.0.0",
+    "react-router": "3.0.0",
+    "typescript": "2.5.3"
   }
 }
