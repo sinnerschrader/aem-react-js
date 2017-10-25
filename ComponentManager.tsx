@@ -59,7 +59,7 @@ export default class ComponentManager {
     }
 
 
-    public getResourceType(component: typeof React.Component): string {
+    public getResourceType(component: any): string {
         return this.registry.getResourceType(component);
     }
 

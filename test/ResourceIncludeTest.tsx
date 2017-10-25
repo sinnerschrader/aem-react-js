@@ -11,7 +11,6 @@ import RootComponentRegistry from "../RootComponentRegistry";
 import ComponentRegistry from "../ComponentRegistry";
 import {ResourceInclude} from "../include";
 import AemTest from "./AemTest";
-import {CheerioWrapper} from "enzyme";
 
 
 describe("ResourceInclude", () => {
@@ -42,25 +41,26 @@ describe("ResourceInclude", () => {
     aemTest.addRegistry(registry);
     aemTest.init();
 
+    // No typings for cheerio v1
 
     it("should render included resource", () => {
 
 
-        let wrapper: CheerioWrapper<any, any> = aemTest.render({resourceType: "/components/test"})
+        let wrapper: any = aemTest.render({resourceType: "/components/test"})
 
-        expect(wrapper.html()).to.equal("<span><div><include resourcetype=\"/components/something\" path=\"//embed\"></include></div></span>");
+        expect(wrapper.html()).to.equal("<div><include resourcetype=\"/components/something\" path=\"//embed\"></include></div>");
 
     });
 
     it("should render included vanilla resource", () => {
 
 
-        let wrapper: CheerioWrapper<any, any> = aemTest.render({
+        let wrapper: any = aemTest.render({
             resourceType: "/components/test2",
             embed: {text: "hallo"}
         }, "/content")
 
-        expect(wrapper.html()).to.equal("<span><div class=\"dialog\"><span>hallo</span></div></span>");
+        expect(wrapper.html()).to.equal("<div class=\"dialog\"><span>hallo</span></div>");
 
     });
 

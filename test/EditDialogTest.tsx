@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import * as enzyme from "enzyme";
 import * as React from "react";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import "./setup";
 import {CommonWrapper} from "enzyme";
 import EditDialog from "../component/EditDialog";

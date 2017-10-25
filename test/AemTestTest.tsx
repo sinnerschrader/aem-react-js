@@ -2,7 +2,6 @@ import {expect} from "chai";
 import AemTest from "./AemTest";
 import {ResourceComponent} from "../component/ResourceComponent";
 import * as React from "react";
-import {CheerioWrapper} from "enzyme";
 import ComponentRegistry from "../ComponentRegistry";
 import ReactParsys from "../component/ReactParsys";
 
@@ -10,7 +9,7 @@ describe("AemTest", () => {
     class Text extends ResourceComponent<any, any, any> {
         public renderBody(): React.ReactElement<any> {
             let text: string = this.getResource() ? this.getResource().text : "unknown";
-            return (<span >{text}</span>);
+            return (<span>{text}</span>);
         }
     }
 
@@ -25,12 +24,12 @@ describe("AemTest", () => {
     it("should render Text", () => {
 
 
-
-        let wrapper: CheerioWrapper<any, any> = aemTest.render( {
+        // No typings for cheerio v1 yet
+        let wrapper: any = aemTest.render( {
             resourceType: "/components/text",
             text: "Hallo"
         });
-        expect(wrapper.html()).to.equal("<span>Hallo</span>");
+        expect(wrapper.html()).to.equal("Hallo");
 
     });
 

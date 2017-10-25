@@ -3,7 +3,6 @@ import AemTest from "./AemTest";
 
 import {ResourceComponent} from "../component/ResourceComponent";
 import * as React from "react";
-import {CheerioWrapper} from "enzyme";
 import ComponentRegistry from "../ComponentRegistry";
 import ReactParsys from "../component/ReactParsys";
 
@@ -23,25 +22,28 @@ describe("ReactParsys", () => {
     aemTest.addRegistry(registry);
     aemTest.init();
 
+
+    // No typings for cheerio v1 yet
+
     it("should render ReactParsys with a single child", () => {
 
-        let wrapper: CheerioWrapper<any, any> = aemTest.render({
+        let wrapper: any = aemTest.render({
             resourceType: "/components/react-parsys",
             child_1: {
                 "sling:resourceType": "/components/text",
                 text: "Hallo"
             }
         });
-        expect(wrapper.html()).to.equal("<div><div class=\"dialog\"><span>Hallo</span></div></div>");
+        expect(wrapper.html()).to.equal("<div class=\"dialog\"><span>Hallo</span></div>");
 
     });
 
     it("should render ReactParsys with no children", () => {
 
-        let wrapper: CheerioWrapper<any, any> = aemTest.render({
+        let wrapper: any = aemTest.render({
             resourceType: "/components/react-parsys",
         });
-        expect(wrapper.html()).to.equal("<div></div>");
+        expect(wrapper.html()).to.equal("");
 
     });
 });

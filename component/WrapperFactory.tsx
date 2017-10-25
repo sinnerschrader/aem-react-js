@@ -5,7 +5,7 @@ import {ReactParsysProps} from "./ReactParsys";
 export interface ComponentConfig {
     depth?: number;
     parsys?: ReactParsysProps;
-    component: typeof React.Component;
+    component: any;
     props?: { [name: string]: any };
     transform?: (props: { [name: string]: any }, r: ResourceComponent<any, any, any>) => { [name: string]: any };
     loadingComponent?: typeof React.Component;

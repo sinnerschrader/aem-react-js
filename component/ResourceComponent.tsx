@@ -52,7 +52,7 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
         this.initialize();
     }
 
-    public componentWillReceiveProps(prevProps: ResourceProps): void {
+    public componentWillReceiveProps(newProps: ResourceProps, newContext: any): void {
         this.initialize();
     }
 

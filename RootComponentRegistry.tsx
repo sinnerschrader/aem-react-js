@@ -4,9 +4,9 @@ import ComponentRegistry from "./ComponentRegistry";
 export class Mapping {
     public resourceType: string;
     public vanillaClass: typeof React.Component;
-    public componentClass: typeof React.Component;
+    public componentClass: any;
 
-    constructor(resourceType: string, componentClass: typeof React.Component, vanillaClass: typeof React.Component) {
+    constructor(resourceType: string, componentClass: any, vanillaClass: typeof React.Component) {
         this.resourceType = resourceType;
         this.componentClass = componentClass;
         this.vanillaClass = vanillaClass;
@@ -29,8 +29,6 @@ export default class RootComponentRegistry {
         this.registries.push(registry);
     }
 
-    public getResourceType(component: typeof React.Component): string;
-    public getResourceType(component: React.Component<any, any>): string;
     public getResourceType(component: any): string {
         if (component instanceof React.Component) {
             let componentClassName: string = Object.getPrototypeOf(component).constructor.name;

@@ -3,7 +3,6 @@ import AemTest from "./AemTest";
 
 import {ResourceComponent} from "../component/ResourceComponent";
 import * as React from "react";
-import {CheerioWrapper} from "enzyme";
 import ComponentRegistry from "../ComponentRegistry";
 import ReactParsys from "../component/ReactParsys";
 import AemLink from "../router/AemLink";
@@ -11,10 +10,14 @@ import {Router, Route, createMemoryHistory} from "react-router";
 import ResourceRoute from "../router/ResourceRoute";
 import ResourceMappingImpl from "../router/ResourceMappingImpl";
 import {RouteProps} from "react-router";
+import {History, MemoryHistoryOptions} from 'history';
 
 describe("ResourceRoute", () => {
 
-    let history: HistoryModule.History = createMemoryHistory("/index.html");
+    let index: MemoryHistoryOptions = {
+        entries: "/index.html"
+    };
+    let history: History = createMemoryHistory(index);
 
     class LinkComponent extends ResourceComponent<any, any, any> {
         public renderBody(): React.ReactElement<any> {
@@ -50,20 +53,20 @@ describe("ResourceRoute", () => {
         aemTest.addResource("/index", {
             text: "hallo"
         });
-        let wrapper: CheerioWrapper<any, any> = aemTest.render({
+        let wrapper: any = aemTest.render({
             resourceType: "/components/router-component"
         });
-        expect(wrapper.html()).to.equal("<div><div class=\"dialog\"><span><a href=\"/bla.html\"></a></span></div></div>");
+        expect(wrapper.html()).to.equal("<div class=\"dialog\"><span><a href=\"/bla.html\"></a></span></div>");
 
     });
 
     it("should render loading for unavailable content", () => {
 
         aemTest.addResource("/index", null);
-        let wrapper: CheerioWrapper<any, any> = aemTest.render({
+        let wrapper: any = aemTest.render({
             resourceType: "/components/router-component"
         });
-        expect(wrapper.html()).to.equal("<div><div class=\"dialog\"><span>Loading</span></div></div>");
+        expect(wrapper.html()).to.equal("<div class=\"dialog\"><span>Loading</span></div>");
 
     });
 

@@ -35,8 +35,15 @@
     "url": "http://www.github.com/sovanyio/aem-react-js"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.3",
+    "@types/enzyme": "3.1.1",
     "@types/enzyme-adapter-react-16": "1.0.0",
+    "@types/history": "3.2.2",
     "@types/prop-types": "15.5.2",
+    "@types/react": "16.0.18",
+    "@types/react-dom": "16.0.2",
+    "@types/react-portal": "3.0.3",
+    "@types/react-router": "3.0.13",
     "chai": "4.0.2",
     "codecov": "2.0.2",
     "enzyme": "2.5.1",
@@ -45,6 +52,7 @@
     "mocha": "3.1.2",
     "nyc": "11.0.2",
     "power-assert": "1.2.0",
+    "react-test-renderer": "16.0.0",
     "tslint": "5.0.0",
     "typings": "2.1.0"
   },
@@ -56,7 +64,7 @@
     "prop-types": "15.6.0",
     "react": "16.0.0",
     "react-dom": "16.0.0",
-    "react-router": "3.0.0",
+    "react-router": "3.2.0",
     "typescript": "2.5.3"
   }
 }

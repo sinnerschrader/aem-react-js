@@ -3,7 +3,7 @@ import * as PropTypes from "prop-types";
 import {AemContext} from "../AemContext";
 
 export interface RootComponentProps {
-    comp: typeof React.Component;
+    comp: any;
     aemContext: AemContext;
     path: string;
     renderRootDialog?: boolean;
