@@ -1,3 +1,4 @@
+import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import {AemContext} from '../AemContext';
 
@@ -24,9 +25,9 @@ export interface RootComponentProps {
 
 export class RootComponent extends React.Component<RootComponentProps> {
   public static readonly childContextTypes: object = {
-    aemContext: React.PropTypes.object.isRequired,
-    path: React.PropTypes.string.isRequired,
-    wcmmode: React.PropTypes.string
+    aemContext: PropTypes.object.isRequired,
+    path: PropTypes.string.isRequired,
+    wcmmode: PropTypes.string
   };
 
   public getChildContext(): ChildContext {

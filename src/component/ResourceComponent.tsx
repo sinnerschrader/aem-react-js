@@ -1,9 +1,10 @@
+import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import * as shallowCompare from 'react-addons-shallow-compare';
 import {ResourceInclude} from '../ResourceInclude';
 import {ResourceUtils} from '../ResourceUtils';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {IncludeOptions} from '../store/Sling';
+import {shallowEqual} from '../utils/compare';
 import {AemComponent} from './AemComponent';
 import {EditDialog} from './EditDialog';
 
@@ -40,8 +41,8 @@ export abstract class ResourceComponent<
   S extends ResourceState
 > extends AemComponent<P, S> {
   public static readonly childContextTypes: any = {
-    path: React.PropTypes.string.isRequired,
-    wcmmode: React.PropTypes.string
+    path: PropTypes.string.isRequired,
+    wcmmode: PropTypes.string
   };
 
   public getChildContext(): any {
@@ -52,7 +53,10 @@ export abstract class ResourceComponent<
   }
 
   public shouldComponentUpdate(nextProps: P, nextState: S): boolean {
-    return shallowCompare(this, nextProps, nextState);
+    return (
+      !shallowEqual(this.props, nextProps) ||
+      !shallowEqual(this.state, nextState)
+    );
   }
 
   public componentWillMount(): void {

@@ -50,10 +50,7 @@ describe('ServerRenderer', () => {
       'disabled'
     );
 
-    expect(response.html).to.equal(
-      '<span data-reactroot="" data-reactid="1" ' +
-        'data-react-checksum="-1096281847">hi</span>'
-    );
+    expect(response.html).to.equal('<span data-reactroot="">hi</span>');
   });
 
   it('should throw error if component is not found', () => {

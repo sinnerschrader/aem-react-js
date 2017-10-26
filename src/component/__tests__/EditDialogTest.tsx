@@ -2,6 +2,7 @@
 
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
+import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
@@ -12,7 +13,7 @@ import {EditDialog} from '../EditDialog';
 describe('EditDialog', () => {
   class Wrapper extends React.Component<any, any> {
     public static childContextTypes: any = {
-      aemContext: React.PropTypes.any
+      aemContext: PropTypes.any
     };
 
     public getChildContext(): any {

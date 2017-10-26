@@ -38,6 +38,6 @@ describe('AemTest', () => {
       text: 'Hallo'
     });
 
-    expect(wrapper.html()).to.equal('<span>Hallo</span>');
+    expect(wrapper.html()).to.equal('Hallo');
   });
 });

@@ -1,3 +1,4 @@
+import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import {AemContext} from '../AemContext';
 import {RootComponentRegistry} from '../RootComponentRegistry';
@@ -12,12 +13,12 @@ export interface AemComponentContext {
   readonly wcmmode?: string;
 }
 
-export class AemComponent<P = {}, S = {}> extends React.PureComponent<P, S>
+export class AemComponent<P = {}, S = {}> extends React.Component<P, S>
   implements JavaApi {
   public static readonly contextTypes: object = {
-    aemContext: React.PropTypes.object.isRequired,
-    path: React.PropTypes.string.isRequired,
-    wcmmode: React.PropTypes.string
+    aemContext: PropTypes.object.isRequired,
+    path: PropTypes.string.isRequired,
+    wcmmode: PropTypes.string
   };
 
   public readonly context: AemComponentContext;

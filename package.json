@@ -40,19 +40,20 @@
   },
   "devDependencies": {
     "@types/chai": "4.0.1",
-    "@types/enzyme": "2.8.1",
+    "@types/enzyme": "3.1.1",
+    "@types/enzyme-adapter-react-16": "1.0.0",
     "@types/jsdom": "11.0.0",
     "@types/mocha": "2.2.41",
-    "@types/react": "15.0.38",
-    "@types/react-addons-shallow-compare": "0.14.20",
-    "@types/react-addons-test-utils": "0.14.19",
-    "@types/react-dom": "15.5.1",
+    "@types/prop-types": "15.5.2",
+    "@types/react": "16.0.18",
+    "@types/react-dom": "16.0.2",
     "chai": "4.0.2",
     "codecov": "2.2.0",
     "commitizen": "2.9.6",
     "conventional-changelog-lint": "1.1.9",
     "cz-customizable": "5.0.0",
-    "enzyme": "2.9.1",
+    "enzyme": "3.1.0",
+    "enzyme-adapter-react-16": "1.0.2",
     "espower-typescript": "8.0.0",
     "husky": "0.14.2",
     "jsdom": "11.0.0",
@@ -61,7 +62,7 @@
     "nyc": "11.0.3",
     "power-assert": "1.4.4",
     "prettier": "1.5.2",
-    "react-addons-test-utils": "15.6.0",
+    "react-test-renderer": "16.0.0",
     "shelljs": "0.7.8",
     "standard-version": "4.2.0",
     "ts-config": "10.0.1",
@@ -70,14 +71,13 @@
     "typescript": "2.4.1"
   },
   "dependencies": {
-    "react": "15.6.1",
-    "react-addons-shallow-compare": "15.6.0",
-    "react-dom": "15.6.1",
+    "prop-types": "15.6.0",
+    "react": "16.0.0",
+    "react-dom": "16.0.0",
     "xss": "0.3.4"
   },
   "peerDependencies": {
     "@types/react": "15.0.38",
-    "@types/react-addons-shallow-compare": "0.14.20",
     "@types/react-dom": "15.5.1"
   }
 }

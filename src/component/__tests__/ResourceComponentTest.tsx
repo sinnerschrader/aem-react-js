@@ -3,7 +3,7 @@
 import {expect} from 'chai';
 import * as enzyme from 'enzyme';
 import * as React from 'react';
-import * as ReactTestUtils from 'react-addons-test-utils';
+import * as ReactTestUtils from 'react-dom/test-utils';
 import {ComponentRegistry} from '../../ComponentRegistry';
 import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
@@ -75,6 +75,56 @@ describe('ResourceComponent', () => {
 
   registry.add(testRegistry);
   registry.init();
+
+  it('shouldComponentUpdate return false', () => {
+    const props = {
+      path: '/content/notfound'
+    };
+    const state = {};
+    const shouldUpdate = Embedded.prototype.shouldComponentUpdate.call(
+      {props, state},
+      props,
+      state
+    );
+
+    expect(shouldUpdate).to.equal(false);
+  });
+
+  it('shouldComponentUpdate return true for simple prop', () => {
+    const props = {
+      path: '/content/notfound'
+    };
+    const nextProps = {
+      path: '/page/first'
+    };
+    const state = {};
+    const shouldUpdate = Embedded.prototype.shouldComponentUpdate.call(
+      {props, state},
+      nextProps,
+      state
+    );
+
+    expect(shouldUpdate).to.equal(true);
+  });
+
+  it('shouldComponentUpdate return true for complex prop', () => {
+    const props = {
+      path: '/content/notfound',
+      resource: '/my/resource'
+    };
+    const nextProps = {
+      path: '/content/notfound',
+      resource: '/my/second/resource'
+    };
+    const state = {};
+    const shouldUpdate = Embedded.prototype.shouldComponentUpdate.call(
+      {props, state},
+      nextProps,
+      state
+    );
+
+    expect(shouldUpdate).to.equal(true);
+  });
 
   it('should render loading message', () => {
     const cache = new Cache();

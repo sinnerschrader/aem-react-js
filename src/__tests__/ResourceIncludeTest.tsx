@@ -53,8 +53,8 @@ describe('ResourceInclude', () => {
     const wrapper = aemTest.render({resourceType: '/components/test'});
 
     expect(wrapper.html()).to.equal(
-      '<span><div><include resourcetype="/components/something" ' +
-        'path="//embed"></include></div></span>'
+      '<div><include resourcetype="/components/something" ' +
+        'path="//embed"></include></div>'
     );
   });
 
@@ -68,7 +68,7 @@ describe('ResourceInclude', () => {
     );
 
     expect(wrapper.html()).to.equal(
-      '<span><div class="dialog"><span>hallo</span></div></span>'
+      '<div class="dialog"><span>hallo</span></div>'
     );
   });
 });

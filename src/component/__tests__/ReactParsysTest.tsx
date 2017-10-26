@@ -42,7 +42,7 @@ describe('ReactParsys', () => {
     });
 
     expect(wrapper.html()).to.equal(
-      '<div><div class="dialog"><span>Hallo</span></div></div>'
+      '<div class="dialog"><span>Hallo</span></div>'
     );
   });
 
@@ -51,6 +51,6 @@ describe('ReactParsys', () => {
       resourceType: '/components/react-parsys'
     });
 
-    expect(wrapper.html()).to.equal('<div></div>');
+    expect(wrapper.html()).to.equal('');
   });
 });
