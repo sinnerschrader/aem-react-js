@@ -1,3 +1,4 @@
+import {JavaUtils} from './JavaUtils';
 import {JsProxy} from './JsProxy';
 import {ServiceProxy} from './ServiceProxy';
 
@@ -9,7 +10,9 @@ export class ServiceProxyImpl implements ServiceProxy {
   }
 
   public invoke<T>(method: string, ...args: any[]): T {
-    return JSON.parse(this.jsProxy.invoke(method, args));
+    const argsArray = JavaUtils.convertArrayToJava(args);
+
+    return JSON.parse(this.jsProxy.invoke(method, argsArray));
   }
 
   public get<T>(name: string): T {

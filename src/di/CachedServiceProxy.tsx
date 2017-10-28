@@ -1,4 +1,5 @@
 import {Cache} from '../store/Cache';
+import {JavaUtils} from './JavaUtils';
 import {Locator} from './Locator';
 import {ServiceProxy} from './ServiceProxy';
 
@@ -30,9 +31,10 @@ export class CachedServiceProxy implements ServiceProxy {
       method,
       args
     );
+    const argsArray = JavaUtils.convertArrayToJava(args);
 
     return this.cache.wrapServiceCall(cacheKey, () => {
-      const result = this.locator().invoke(method, args);
+      const result = this.locator().invoke(method, argsArray);
 
       if (result == null) {
         return null;

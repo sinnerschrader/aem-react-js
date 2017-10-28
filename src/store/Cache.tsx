@@ -181,9 +181,9 @@ export class Cache {
       components: this.components,
       included: this.included,
       resources: this.resources,
-      scripts: this.wrapper,
       serviceCalls: this.serviceCalls,
-      transforms: this.transforms
+      transforms: this.transforms,
+      wrapper: this.wrapper
     };
   }
 
