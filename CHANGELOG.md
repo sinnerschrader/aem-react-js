@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.17.4"></a>
+## [0.17.4](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.17.3...v0.17.4) (2017-10-30)
+
+
+### Bug Fixes
+
+* invoke method param conversion ([87eefc0](http://www.github.com/sinnerschrader/aem-react-js/commit/87eefc0))
+
+
+
 <a name="0.17.3"></a>
 ## [0.17.3](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.17.2...v0.17.3) (2017-10-30)
 
