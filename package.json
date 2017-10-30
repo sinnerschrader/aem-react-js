@@ -1,7 +1,7 @@
 {
-  "name": "aem-react-js",
-  "version": "0.4.3",
-  "description": "Aem components written in React.",
+  "name": "aem-react-js-alt",
+  "version": "0.4.3-alt.1",
+  "description": "Aem components written in React. This version utilizes React v16 and adds a toggle for enabling client hydration outside of Publish mode.",
   "typings": "dist/src/index.d.ts",
   "scripts": {
     "posttest": "nyc report --reporter=json && codecov -f coverage/*.json",
@@ -15,12 +15,12 @@
     "postversion": "git push origin master --tags && npm publish"
   },
   "author": {
-    "name": "Stefan Meyer",
-    "email": "stefan.meyer@sinnerschrader.com"
+    "name": "Brian Bolton",
+    "email": "sovanyio@gmail.com"
   },
   "license": {
     "type": "MIT",
-    "url": "https://github.com/sinnerschrader/aem-react/blob/master/LICENSE.md"
+    "url": "https://github.com/sovanyio/aem-react/blob/master/LICENSE.md"
   },
   "keywords": [
     "aem",
@@ -32,7 +32,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://www.github.com/sinnerschrader/aem-react-js"
+    "url": "http://www.github.com/sovanyio/aem-react-js"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.3",
