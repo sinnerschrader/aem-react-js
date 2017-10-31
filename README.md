@@ -1,3 +1,6 @@
+# React 16 Modification
+This is a fork of the upstream aem-react-js project which upgrades React to version 16. Additionally, it adds a toggle to force hydration in author mode and moves npm react dependencies to peerDependencies. It is likely that the react-router will be ripped out in the future.
+
 # AEM React integration module
 
 
@@ -23,7 +26,7 @@ This library uses the following _new_ features:
 Use a polyfill.
 [support for function.name](http://kangax.github.io/compat-table/es6/#test-function_name_property)
 
-### `window.fetch` 
+### `window.fetch`
 
 Pass an object with method `fetch()` to `ClientSling` constructor or use a polyfill.
 [caniuse fetch](http://caniuse.com/#search=fetch)
