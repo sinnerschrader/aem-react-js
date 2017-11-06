@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.18.1"></a>
+## [0.18.1](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.18.0...v0.18.1) (2017-11-06)
+
+
+### Bug Fixes
+
+* TextPool must use original text as key ([af1bc2a](http://www.github.com/sinnerschrader/aem-react-js/commit/af1bc2a))
+
+
+
 <a name="0.18.0"></a>
 # [0.18.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.17.4...v0.18.0) (2017-11-02)
 
