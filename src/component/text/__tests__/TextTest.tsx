@@ -12,13 +12,9 @@ describe('Text', () => {
     const aemContext = {
       container: {textPool, xssUtils}
     };
+    const text = "<a>text</a><script>alert('hi')</script>";
     const item = enzyme.shallow(
-      <Text
-        value="<a>text</a>"
-        element="span"
-        className="test"
-        context="html"
-      />,
+      <Text value={text} element="span" className="test" context="html" />,
       {
         context: {aemContext}
       }
@@ -28,7 +24,7 @@ describe('Text', () => {
       '<span class="test" id="text_1"><a>text</a></span>'
     );
 
-    expect(textPool.getId('<a>text</a>')).to.equal('text_1');
+    expect(textPool.getId(text)).to.equal('text_1');
   });
   it('should render span with context text', () => {
     const textPool = new TextPool();

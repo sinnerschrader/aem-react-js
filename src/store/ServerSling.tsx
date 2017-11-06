@@ -43,8 +43,6 @@ export class ServerSling extends AbstractSling {
     let resource: any = this.cache.get(path, depth);
 
     if (!resource) {
-      console.log(' ServerSling has no resource' + path);
-
       resource = JSON.parse(this.sling.getResource(path, depth));
 
       if (!resource) {
