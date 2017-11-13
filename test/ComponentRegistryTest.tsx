@@ -5,6 +5,7 @@ import * as React from "react";
 import {ResourceComponent} from "../component/ResourceComponent";
 import ComponentRegistry from "../ComponentRegistry";
 import {Mapping} from "../RootComponentRegistry";
+import {ComponentConfig} from "../component/WrapperFactory";
 
 describe("ComponentRegistry", () => {
 
@@ -41,7 +42,8 @@ describe("ComponentRegistry", () => {
     it("should register vanilla component", () => {
 
         let registry: ComponentRegistry = new ComponentRegistry("/components/vanilla");
-        registry.registerVanilla({component: TestView});
+        let componentConfig: ComponentConfig = {component: TestView};
+        registry.registerVanilla(componentConfig);
         let mapping: Mapping = registry.mappings[0];
         expect(mapping.componentClass).to.not.equal(TestView);
         expect(mapping.resourceType).to.equal("/components/vanilla/test-view");

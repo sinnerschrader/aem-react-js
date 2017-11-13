@@ -19,7 +19,7 @@ export default class ComponentRegistry {
         this.mapping = mapping;
     }
 
-    public register(componentClass: typeof React.Component): void {
+    public register(componentClass: React.ComponentClass): void {
         /* tslint:disable:no-string-literal */
         let componentClassName: string = (componentClass as any)["name"];
         /* tsslint:enable:no-string-literal */

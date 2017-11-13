@@ -1,4 +1,5 @@
 import * as enzyme from "enzyme";
+import * as Adapter from 'enzyme-adapter-react-16';
 import {ClientAemContext} from "../AemContext";
 import RootComponent from "../component/RootComponent";
 import RootComponentRegistry from "../RootComponentRegistry";
@@ -6,11 +7,11 @@ import ComponentRegistry from "../ComponentRegistry";
 import {Container} from "../di/Container";
 import ComponentManager from "../ComponentManager";
 import {Cq} from "../references";
-import {CheerioWrapper} from "enzyme";
 import * as React from "react";
 import Cache from "../store/Cache";
 import MockSling from "./MockSling";
 
+enzyme.configure({ adapter: new Adapter() });
 
 export default class AemTest {
 
@@ -40,7 +41,8 @@ export default class AemTest {
         cache.put(path, resource, depth);
     }
 
-    public render(resource: any, path?: string): CheerioWrapper<any, any> {
+    // Cheerio v1 has no typings!
+    public render(resource: any, path?: string): any {
         this.addResource(path || "/", resource);
         let component: any = this.registry.getComponent(resource.resourceType);
         if (!component) {

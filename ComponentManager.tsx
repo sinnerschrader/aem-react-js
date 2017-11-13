@@ -37,11 +37,11 @@ export default class ComponentManager {
      * initialize react component in dom.
      * @param item
      */
-        public initReactComponent(item: any): void {
+        public initReactComponent(item: any, forceHydrate: boolean = false): void {
         let textarea = this.document.getElementById(item.getAttribute("data-react-id")) as HTMLTextAreaElement;
         if (textarea) {
             let props: ComponentTreeConfig = JSON.parse(textarea.value);
-            if (props.wcmmode === "disabled") {
+            if (forceHydrate || props.wcmmode === "disabled") {
                 let comp = this.registry.getComponent(props.resourceType);
                 if (comp === null) {
                     console.error("React component '" + props.resourceType + "' does not exist in component list.");
@@ -59,7 +59,7 @@ export default class ComponentManager {
     }
 
 
-    public getResourceType(component: typeof React.Component): string {
+    public getResourceType(component: any): string {
         return this.registry.getResourceType(component);
     }
 
@@ -70,10 +70,10 @@ export default class ComponentManager {
     /**
      * find all root elements and initialize the react components
      */
-    public initReactComponents(): number {
+    public initReactComponents(forceHydrate: boolean = false): number {
         let items = [].slice.call(this.document.querySelectorAll("[data-react]"));
         for (let item of items) {
-            this.initReactComponent(item);
+            this.initReactComponent(item, forceHydrate);
         }
         return items.length;
     }

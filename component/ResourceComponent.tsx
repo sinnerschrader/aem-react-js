@@ -1,11 +1,11 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 import AemComponent from "./AemComponent";
 import EditDialog from "./EditDialog";
 import {Sling} from "../store/Sling";
 import RootComponentRegistry from "../RootComponentRegistry";
 import ResourceUtils from "../ResourceUtils";
 import {ResourceInclude} from "../include";
-import * as shallowCompare from "react-addons-shallow-compare";
 
 export interface Resource {
     "sling:resourceType": string;
@@ -36,8 +36,8 @@ export interface ResourceProps {
 export abstract class ResourceComponent<C extends Resource, P extends ResourceProps, S extends ResourceState> extends AemComponent<P, S> {
 
     public static childContextTypes: any = {
-        wcmmode: React.PropTypes.string, //
-        path: React.PropTypes.string, //
+        wcmmode: PropTypes.string, //
+        path: PropTypes.string, //
     };
 
     public getChildContext(): any {
@@ -48,15 +48,11 @@ export abstract class ResourceComponent<C extends Resource, P extends ResourcePr
 
     }
 
-    public shouldComponentUpdate(nextProps: P, nextState: S): boolean {
-        return shallowCompare(this, nextProps, nextState);
-    }
-
     public componentWillMount(): void {
         this.initialize();
     }
 
-    public componentWillReceiveProps(prevProps: ResourceProps): void {
+    public componentWillReceiveProps(newProps: ResourceProps, newContext: any): void {
         this.initialize();
     }
 

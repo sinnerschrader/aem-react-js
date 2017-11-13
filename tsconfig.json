@@ -9,8 +9,12 @@
     "jsx": "react",
     "noImplicitAny": true,
     "preserveConstEnums": false,
-    "declaration": true
+    "declaration": true,
+    "allowSyntheticDefaultImports": true
   },
+  "exclude": [
+    "node_modules"
+  ],
   "files": [
     "./ComponentManager.tsx",
     "./component/ResourceComponent.tsx",

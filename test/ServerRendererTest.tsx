@@ -37,7 +37,7 @@ describe("ServerRenderer", () => {
         let renderer: ServerRenderer = new ServerRenderer(registry, container);
         let response: ServerResponse = renderer.renderReactComponent("/test", "/components/test", "disabled");
 
-        expect(response.html).to.equal('<span data-reactroot="" data-reactid="1" data-react-checksum="-1096281847">hi</span>');
+        expect(response.html).to.equal('<span data-reactroot="">hi</span>');
 
 
     });

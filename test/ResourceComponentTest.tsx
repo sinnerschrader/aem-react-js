@@ -1,4 +1,4 @@
-import * as ReactTestUtils from "react-addons-test-utils";
+import * as ReactTestUtils from "react-dom/test-utils";
 import {expect} from "chai";
 import * as enzyme from "enzyme";
 
@@ -11,7 +11,6 @@ import RootComponentRegistry from "../RootComponentRegistry";
 import ComponentRegistry from "../ComponentRegistry";
 import {Container} from "../di/Container";
 import ComponentManager from "../ComponentManager";
-import {CommonWrapper} from "enzyme";
 import MockSling from "./MockSling";
 import {Cq} from "../references";
 import Cache from "../store/Cache";
@@ -67,7 +66,7 @@ describe("ResourceComponent", () => {
 
         container.register("sling", new MockSling(null));
 
-        let item: CommonWrapper<any, any> = enzyme.mount(<RootComponent aemContext={aemContext} comp={Test} path="/content/notfound"/>);
+        let item: any = enzyme.mount(<RootComponent aemContext={aemContext} comp={Test} path="/content/notfound"/>);
         expect(item.find("span").html()).to.equal("<span>Loading</span>");
 
     });
@@ -124,7 +123,7 @@ describe("ResourceComponent", () => {
         });
         container.register("sling", new MockSling(cache));
 
-        const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={AemContainer}
+        const item: any = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={AemContainer}
                                                                                      path="/content"/>);
 
         let include: any = item.find("include");
@@ -145,7 +144,7 @@ describe("ResourceComponent", () => {
         });
 
         it("default ", () => {
-            const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="edit" aemContext={aemContext} comp={AemContainer}
+            const item: any = enzyme.render(<RootComponent wcmmode="edit" aemContext={aemContext} comp={AemContainer}
                                                                                          path="/content"/>);
 
             let include: any = item.find("include");
@@ -154,11 +153,11 @@ describe("ResourceComponent", () => {
         });
 
         it("with child wrapper ", () => {
-            const item: CommonWrapper<RootComponent, any> = enzyme.mount(<RootComponent wcmmode="disabled" aemContext={aemContext}
+            const item: any = enzyme.mount(<RootComponent wcmmode="disabled" aemContext={aemContext}
                                                                                         comp={createContainer("childClass", "el")}
                                                                                         path="/content"/>);
 
-            let dialog: CommonWrapper<any, any> = item.find("el");
+            let dialog: any = item.find("el");
             expect(dialog.props().className).to.equal("childClass");
             expect(dialog.html()).to.equal('<el class="childClass"><div><include resourcetype="htl/test" path="/content/child1"></include></div></el>');
         });
@@ -179,7 +178,7 @@ describe("ResourceComponent", () => {
         it("default ", () => {
 
 
-            const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={AemContainer}
+            const item: any = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext} comp={AemContainer}
                                                                                          path="/content"/>);
 
             let test: any = item.find(".test");
@@ -189,7 +188,7 @@ describe("ResourceComponent", () => {
         it("with child wrapper", () => {
 
 
-            const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext}
+            const item: any = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext}
                                                                                          comp={createContainer("childClass","el")}
                                                                                          path="/content"/>);
 
@@ -201,7 +200,7 @@ describe("ResourceComponent", () => {
         it("with child class name", () => {
 
 
-            const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext}
+            const item: any = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext}
                                                                                          comp={createContainer("childClass")}
                                                                                          path="/content"/>);
 
@@ -229,7 +228,7 @@ describe("ResourceComponent", () => {
         it("with child path", () => {
 
 
-            const item: CommonWrapper<RootComponent, any> = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext}
+            const item: any = enzyme.render(<RootComponent wcmmode="disabled" aemContext={aemContext}
                                                                                          comp={createContainer("childClass", null, "children")}
                                                                                          path="/content"/>);
 

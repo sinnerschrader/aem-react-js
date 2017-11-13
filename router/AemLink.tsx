@@ -1,17 +1,16 @@
 import * as React from "react";
-import {Link} from "react-router";
-import Router = ReactRouter.Router;
-import LinkProps = ReactRouter.LinkProps;
+import {Link, Router, LinkProps} from "react-router";
+import * as PropTypes from "prop-types";
 import {AemContext} from "../AemContext";
-import LocationDescriptorObject = HistoryModule.LocationDescriptorObject;
+import {History, Location, LocationDescriptor} from 'history';
 
-export default class AemLink extends React.Component<LinkProps, void> {
+export default class AemLink extends React.Component<LinkProps> {
 
     public static contextTypes: any = {
-        aemContext: React.PropTypes.any,
-        history: React.PropTypes.any,
-        router: React.PropTypes.any,
-        wcmmode: React.PropTypes.string,
+        aemContext: PropTypes.any,
+        history: PropTypes.any,
+        router: PropTypes.any,
+        wcmmode: PropTypes.string,
     };
 
     public context: {
@@ -25,14 +24,15 @@ export default class AemLink extends React.Component<LinkProps, void> {
         return !this.context.wcmmode || this.context.wcmmode !== "disabled";
     }
 
-    protected isClickable(targetLocation: LocationDescriptorObject, router: Router): boolean {
+    protected isClickable(targetLocation: Location, router: Router): boolean {
         return targetLocation.pathname !== window.location.pathname;
     }
 
     public handleClick(event: any): void {
         let router: any = this.context.router;
-        let history = this.context.aemContext.container.get("history") as ReactRouter.History;
-        let targetLocation: LocationDescriptorObject = history.createLocation(this.props.to);
+        let history = this.context.aemContext.container.get("history") as History;
+        let to = this.props.to as LocationDescriptor;
+        let targetLocation: Location = history.createLocation(to);
         if (router && !this.isClickable(targetLocation, router)) {
             event.preventDefault();
         }
