@@ -59,7 +59,7 @@ export class ComponentManager {
 
       if (
         (options.shouldStartReact && options.shouldStartReact(props)) ||
-        props.wcmmode === 'di sabled'
+        props.wcmmode === 'disabled'
       ) {
         const component = this.registry.getComponent(props.resourceType);
 
