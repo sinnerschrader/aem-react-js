@@ -22,7 +22,11 @@ describe('ResourceInclude', () => {
     public renderBody(): React.ReactElement<any> {
       return (
         <span>
-          <ResourceInclude path="embed" resourceType="/components/text" />
+          <ResourceInclude
+            path="embed"
+            resourceType="/components/text"
+            extraProps={this.props.myClass}
+          />
         </span>
       );
     }
@@ -31,7 +35,7 @@ describe('ResourceInclude', () => {
   class Text extends React.Component<any, any> {
     public render(): React.ReactElement<any> {
       return (
-        <span>
+        <span className={this.props.className}>
           {this.props.text}
         </span>
       );
@@ -61,14 +65,14 @@ describe('ResourceInclude', () => {
   it('should render included vanilla resource', () => {
     const wrapper = aemTest.render(
       {
-        embed: {text: 'hallo'},
+        embed: {text: 'hallo', className: 'myClass'},
         resourceType: '/components/test2'
       },
       '/content'
     );
 
     expect(wrapper.html()).to.equal(
-      '<div class="dialog"><span>hallo</span></div>'
+      '<div class="dialog"><span class="myClass">hallo</span></div>'
     );
   });
 });

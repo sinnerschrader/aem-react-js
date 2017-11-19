@@ -13,6 +13,12 @@ import {RootComponent} from '../RootComponent';
 import {VanillaInclude} from '../VanillaInclude';
 import {WrapperFactory} from '../WrapperFactory';
 
+/*tslint:disable-next-line*/
+import '../../test/setup';
+import * as Enzyme from 'enzyme';
+import ReactSixteenAdapter = require('enzyme-adapter-react-16');
+Enzyme.configure({adapter: new ReactSixteenAdapter()});
+
 describe('WrapperFactory', () => {
   class Test extends React.Component<any, any> {
     public render(): React.ReactElement<any> {
@@ -27,7 +33,7 @@ describe('WrapperFactory', () => {
   class Text extends React.Component<any, any> {
     public render(): React.ReactElement<any> {
       return (
-        <span>
+        <span className={this.props.className}>
           {this.props.text}
         </span>
       );
@@ -143,6 +149,42 @@ describe('WrapperFactory', () => {
 
     expect(html).to.equal(
       '<div><div class="dialog"><span>good bye</span></div></div>'
+    );
+  });
+
+  it('should render simple vanilla include with extraProps', () => {
+    class MyTest extends ResourceComponent<any, any, any> {
+      public renderBody(): any {
+        return (
+          <div>
+            <VanillaInclude
+              path="vanilla"
+              component={Text}
+              extraProps={{className: 'OOO'}}
+            />
+          </div>
+        );
+      }
+    }
+
+    const cache = new Cache();
+
+    cache.put('/test', {vanilla: {text: 'good bye'}});
+
+    const container = new Container(cache, new MockSling(cache));
+
+    const item = enzyme.mount(
+      <RootComponent
+        aemContext={{container, registry}}
+        component={MyTest}
+        path="/test"
+      />
+    );
+
+    const html: string = item.html();
+
+    expect(html).to.equal(
+      '<div><div class="dialog"><span class="OOO">good bye</span></div></div>'
     );
   });
 

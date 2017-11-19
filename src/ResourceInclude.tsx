@@ -11,6 +11,7 @@ export interface IncludeProps {
   readonly hidden?: boolean;
   readonly options?: IncludeOptions;
   readonly attrs?: any;
+  readonly extraProps?: any;
 }
 
 export class ResourceInclude extends AemComponent<IncludeProps, any> {
@@ -20,7 +21,12 @@ export class ResourceInclude extends AemComponent<IncludeProps, any> {
     );
 
     if (!!componentClass) {
-      return React.createElement(componentClass, {path: this.props.path});
+      const finalProps = {
+        extraProps: this.props.extraProps,
+        path: this.props.path
+      };
+
+      return React.createElement(componentClass, finalProps);
     } else {
       let innerHTML: string;
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {JavaApi} from './JavaApi';
 import {ReactParsysProps} from './ReactParsys';
-import {ResourceComponent} from './ResourceComponent';
+import {ResourceComponent, ResourceProps} from './ResourceComponent';
 
 export type Transform<R, C = object> = (content: C, api: JavaApi) => R;
 
@@ -19,7 +19,15 @@ export interface ComponentConfig<R, C = object> {
   readonly loadingComponent?: React.ComponentClass<any>;
 }
 
-export class Wrapper<R, C = object> extends ResourceComponent<any, any, any> {
+export interface WrapperProps<E extends object> extends ResourceProps {
+  readonly extraProps: E;
+}
+
+export class Wrapper<E extends object, R, C = object> extends ResourceComponent<
+  any,
+  WrapperProps<E>,
+  any
+> {
   protected readonly config: ComponentConfig<R, C>;
 
   public constructor(
@@ -56,7 +64,9 @@ export class Wrapper<R, C = object> extends ResourceComponent<any, any, any> {
       );
     }
 
-    return React.createElement(this.config.component, newProps, children);
+    const finalProps: any = {...newProps, ...this.props.extraProps as any};
+
+    return React.createElement(this.config.component, finalProps, children);
   }
 
   public renderBody(): React.ReactElement<any> {
@@ -101,11 +111,11 @@ export class WrapperFactory {
    * @param resourceType
    * @return {TheWrapper}
    */
-  public static createWrapper<C, R>(
+  public static createWrapper<E extends object, C, R>(
     config: ComponentConfig<C, R>,
     resourceType: string
   ): React.ComponentClass<any> {
-    return class TheWrapper extends Wrapper<C, R> {
+    return class TheWrapper extends Wrapper<E, C, R> {
       public constructor(props?: any, context?: any) {
         super(config, props, context);
       }
