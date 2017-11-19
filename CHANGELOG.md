@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.19.0"></a>
+# [0.19.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.18.2...v0.19.0) (2017-11-19)
+
+
+### Features
+
+* pass props to included components ([28fa023](http://www.github.com/sinnerschrader/aem-react-js/commit/28fa023))
+
+
+
 <a name="0.18.2"></a>
 ## [0.18.2](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.18.1...v0.18.2) (2017-11-13)
 
