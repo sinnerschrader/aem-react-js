@@ -42,11 +42,17 @@ export class ResourceInclude extends AemComponent<IncludeProps, any> {
         this.props.options || {}
       );
 
+      const id: string = this.getContainer().textPool.put(
+        innerHTML,
+        this.context.root
+      );
+
       return React.createElement(this.props.element || 'div', {
-        ...this.props.attrs || {},
+        ...this.props.attrs,
         className: this.props.className,
         dangerouslySetInnerHTML: {__html: innerHTML},
-        hidden: !!this.props.hidden
+        hidden: !!this.props.hidden,
+        id
       });
     }
   }

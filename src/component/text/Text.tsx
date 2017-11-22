@@ -20,7 +20,7 @@ export class Text extends AemComponent<TextProps> {
       text,
       this.props.context
     );
-    const id = pool.put(text);
+    const id = pool.put(text, this.context.root);
 
     return (
       <Component

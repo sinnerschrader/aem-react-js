@@ -10,6 +10,7 @@ import {ApiOptions, JavaApi} from './JavaApi';
 export interface AemComponentContext {
   readonly aemContext: AemContext;
   readonly path: string;
+  readonly root: string;
   readonly wcmmode?: string;
 }
 
@@ -18,6 +19,7 @@ export class AemComponent<P = {}, S = {}> extends React.Component<P, S>
   public static readonly contextTypes: object = {
     aemContext: PropTypes.object.isRequired,
     path: PropTypes.string.isRequired,
+    root: PropTypes.string,
     wcmmode: PropTypes.string
   };
 

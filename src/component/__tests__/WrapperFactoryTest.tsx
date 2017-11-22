@@ -15,9 +15,6 @@ import {WrapperFactory} from '../WrapperFactory';
 
 /*tslint:disable-next-line*/
 import '../../test/setup';
-import * as Enzyme from 'enzyme';
-import ReactSixteenAdapter = require('enzyme-adapter-react-16');
-Enzyme.configure({adapter: new ReactSixteenAdapter()});
 
 describe('WrapperFactory', () => {
   class Test extends React.Component<any, any> {

@@ -7,7 +7,7 @@ describe('TextUtils', () => {
   it('should revive text', () => {
     const textPool = new TextPool();
     const text = 'Hi';
-    const id = textPool.put('Hi');
+    const id = textPool.put('Hi', '1');
     const doc = new JSDOM(
       `<body><div><span id=${id}>${text}</span></div></body>`
     ).window.document;
@@ -34,7 +34,7 @@ describe('TextUtils', () => {
   it('should create innerHTML prop', () => {
     const textPool = new TextPool();
     const text = 'Hi';
-    const id = textPool.put('Hi');
+    const id = textPool.put('Hi', '1');
     const json = JSON.stringify({mytext: text}, replaceFactory(textPool));
 
     expect(JSON.parse(json).mytext.$innerHTML).to.eq(id);

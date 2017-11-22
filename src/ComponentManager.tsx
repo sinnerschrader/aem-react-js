@@ -44,7 +44,11 @@ export class ComponentManager {
    * Initialize react component in dom.
    * @param item
    */
-  public initReactComponent(item: Element, options: ReactOptions = {}): void {
+  public initReactComponent(
+    item: Element,
+    options: ReactOptions = {},
+    id: string
+  ): void {
     const textarea = this.document.getElementById(
       item.getAttribute('data-react-id')
     ) as HTMLTextAreaElement;
@@ -78,11 +82,12 @@ export class ComponentManager {
             <RootComponent
               aemContext={ctx}
               component={component}
+              id={id}
               path={props.path}
               wcmmode={props.wcmmode}
             />
           );
-          ReactDom.render(root, item);
+          ReactDom.hydrate(root, item);
         }
       }
     } else {
@@ -109,9 +114,9 @@ export class ComponentManager {
       this.document.querySelectorAll('[data-react]')
     );
 
-    for (const item of items) {
-      this.initReactComponent(item, options);
-    }
+    items.forEach((item: Element, index: number) => {
+      this.initReactComponent(item, options, String(index));
+    });
 
     return items.length;
   }

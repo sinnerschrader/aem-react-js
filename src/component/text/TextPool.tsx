@@ -1,16 +1,16 @@
 export class TextPool {
   private map: {[key: string]: string} = Object.create(null);
 
-  private id: number = 0;
+  private ids: {[root: string]: number} = {};
 
   private readonly prefix: string = 'text_';
 
-  public put(text: string): string {
+  public put(text: string, root: string): string {
     const existingId = this.getId(text);
     if (existingId) {
       return existingId;
     }
-    const id = this.nextId();
+    const id = this.nextId(root);
     this.map[text] = id;
 
     return id;
@@ -22,9 +22,15 @@ export class TextPool {
     return id;
   }
 
-  private nextId(): string {
-    this.id++;
+  private nextId(root: string): string {
+    let id: number | undefined = this.ids[root];
+    if (typeof id === 'undefined') {
+      id = 0;
+    } else {
+      id++;
+    }
+    this.ids[root] = id;
 
-    return this.prefix + String(this.id);
+    return `${this.prefix}${root}_${String(id)}`;
   }
 }

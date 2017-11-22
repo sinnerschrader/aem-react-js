@@ -31,7 +31,7 @@ describe('ComponentManager', () => {
     const cm: ComponentManager = new ComponentManager(null, container, doc);
     const element: Element = doc.querySelector('div');
 
-    cm.initReactComponent(element);
+    cm.initReactComponent(element, {}, 'a');
   });
 
   it('should instantiate react components', () => {
@@ -76,7 +76,7 @@ describe('ComponentManager', () => {
     const cm: ComponentManager = new ComponentManager(registry, container, doc);
     const element: Element = doc.querySelector('div');
 
-    cm.initReactComponent(element);
+    cm.initReactComponent(element, {}, 'a');
 
     const count: number = cm.initReactComponents();
 

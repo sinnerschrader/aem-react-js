@@ -12,6 +12,9 @@ import {MockSling} from '../../test/MockSling';
 import {ResourceComponent} from '../ResourceComponent';
 import {RootComponent} from '../RootComponent';
 
+/*tslint:disable-next-line*/
+import '../../test/setup';
+
 describe('ResourceComponent', () => {
   class Test extends ResourceComponent<any, any, any> {
     public renderBody(): React.ReactElement<any> {
@@ -258,6 +261,7 @@ describe('ResourceComponent', () => {
           wcmmode="disabled"
           aemContext={{container, registry}}
           component={createContainer('childClass', 'el')}
+          id="root"
           path="/content"
         />
       );
@@ -266,7 +270,8 @@ describe('ResourceComponent', () => {
 
       expect(dialog.props().className).to.equal('childClass');
       expect(dialog.html()).to.equal(
-        '<el class="childClass"><div><include resourcetype="htl/test" ' +
+        '<el class="childClass"><div id="text_undefined_0">' +
+          '<include resourcetype="htl/test" ' +
           'path="/content/child1"></include></div></el>'
       );
     });
