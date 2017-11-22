@@ -35,10 +35,12 @@ export class ServerSling extends AbstractSling {
   public subscribe(
     listener: ResourceComponent<any, any, any>,
     path: string,
-    options?: SlingResourceOptions
+    options: SlingResourceOptions = {}
   ): void {
     const depth: number =
-      !options || typeof options.depth !== 'number' ? -1 : options.depth;
+      typeof options.depth !== 'number' ? -1 : options.depth;
+
+    const skipData = !!options.skipData;
 
     let resource: any = this.cache.get(path, depth);
 
@@ -49,7 +51,9 @@ export class ServerSling extends AbstractSling {
         resource = {};
       }
 
-      this.cache.put(path, resource, depth);
+      if (!skipData) {
+        this.cache.put(path, resource, depth);
+      }
     }
 
     listener.changedResource(path, resource);

@@ -41,7 +41,7 @@ export class ComponentRegistry {
     this.mappings.push(new Mapping(resourceType, componentClass, null));
   }
 
-  public registerVanilla<C, R>(config: ComponentConfig<C, R>): void {
+  public registerVanilla<R>(config: ComponentConfig<R>): void {
     /* tslint:disable:no-string-literal */
     const componentClassName: string =
       config.shortName || config.component.name;

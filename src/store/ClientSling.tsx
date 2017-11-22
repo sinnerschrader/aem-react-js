@@ -41,8 +41,11 @@ export class ClientSling extends AbstractSling {
   public subscribe(
     listener: ResourceComponent<any, any, any>,
     path: string,
-    options?: SlingResourceOptions
+    options: SlingResourceOptions = {}
   ): void {
+    if (options.skipData) {
+      listener.changedResource(path, {});
+    }
     const depth =
       !options || typeof options.depth === 'undefined' || options.depth === null
         ? 0

@@ -3,19 +3,18 @@ import {JavaApi} from './JavaApi';
 import {ReactParsysProps} from './ReactParsys';
 import {ResourceComponent, ResourceProps} from './ResourceComponent';
 
-export type Transform<R, C = object> = (content: C, api: JavaApi) => R;
+export type Transform<R> = (api: JavaApi) => R;
 
 export type parsysFactory<P> = (api: JavaApi, props: P) => JSX.Element[];
 
-export interface ComponentConfig<R, C = object> {
-  readonly depth?: number;
+export interface ComponentConfig<R> {
   readonly shortName?: string;
   readonly name?: string;
   readonly parsys?: ReactParsysProps;
   readonly parsysFactory?: parsysFactory<R>;
   readonly component: React.ComponentClass<any>;
   readonly props?: {[name: string]: any};
-  readonly transform?: Transform<C, R>;
+  readonly transform?: Transform<R>;
   readonly loadingComponent?: React.ComponentClass<any>;
 }
 
@@ -23,18 +22,14 @@ export interface WrapperProps<E extends object> extends ResourceProps {
   readonly extraProps: E;
 }
 
-export class Wrapper<E extends object, R, C = object> extends ResourceComponent<
+export class Wrapper<E extends object, R> extends ResourceComponent<
   any,
   WrapperProps<E>,
   any
 > {
-  protected readonly config: ComponentConfig<R, C>;
+  protected readonly config: ComponentConfig<R>;
 
-  public constructor(
-    config: ComponentConfig<R, C>,
-    props?: any,
-    context?: any
-  ) {
+  public constructor(config: ComponentConfig<R>, props?: any, context?: any) {
     super(props, context);
 
     this.config = config;
@@ -73,8 +68,8 @@ export class Wrapper<E extends object, R, C = object> extends ResourceComponent<
     return this.create();
   }
 
-  protected getDepth(): number {
-    return this.config.depth || 0;
+  protected isSkipData(): boolean {
+    return true;
   }
 
   protected renderLoading(): React.ReactElement<any> {
@@ -96,7 +91,7 @@ export class Wrapper<E extends object, R, C = object> extends ResourceComponent<
     }
     const javaApi = this.getContainer().createJavaApi(this.getPath());
     const newProps = this.config.transform
-      ? this.config.transform(props, javaApi)
+      ? this.config.transform(javaApi)
       : props;
     this.getContainer().cache.putTransform(this.getPath(), newProps);
 
@@ -111,11 +106,11 @@ export class WrapperFactory {
    * @param resourceType
    * @return {TheWrapper}
    */
-  public static createWrapper<E extends object, C, R>(
-    config: ComponentConfig<C, R>,
+  public static createWrapper<E extends object, R>(
+    config: ComponentConfig<R>,
     resourceType: string
   ): React.ComponentClass<any> {
-    return class TheWrapper extends Wrapper<E, C, R> {
+    return class TheWrapper extends Wrapper<E, R> {
       public constructor(props?: any, context?: any) {
         super(config, props, context);
       }

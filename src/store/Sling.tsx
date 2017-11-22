@@ -3,6 +3,7 @@ import {ResourceComponent} from '../component/ResourceComponent';
 
 export interface SlingResourceOptions {
   readonly depth?: number;
+  readonly skipData?: boolean;
 }
 
 export interface EditDialogData {

@@ -76,7 +76,8 @@ export abstract class ResourceComponent<
       this.setState({absolutePath, state: STATE.LOADING});
 
       this.getAemContext().container.sling.subscribe(this, absolutePath, {
-        depth: this.getDepth()
+        depth: this.getDepth(),
+        skipData: this.isSkipData() || false
       });
     }
   }
@@ -139,6 +140,10 @@ export abstract class ResourceComponent<
 
   protected getDepth(): number {
     return 0;
+  }
+
+  protected isSkipData(): boolean {
+    return false;
   }
 
   protected renderChildren(
