@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.20.0"></a>
+# [0.20.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.19.0...v0.20.0) (2017-11-23)
+
+
+### Features
+
+* don't load resource by default for vanilla components ([f227865](http://www.github.com/sinnerschrader/aem-react-js/commit/f227865))
+* improve markup size for resource include ([36c5e7c](http://www.github.com/sinnerschrader/aem-react-js/commit/36c5e7c))
+
+
+
 <a name="0.19.0"></a>
 # [0.19.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.18.2...v0.19.0) (2017-11-19)
 
