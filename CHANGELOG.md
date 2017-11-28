@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.20.1"></a>
+## [0.20.1](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.20.0...v0.20.1) (2017-11-28)
+
+
+### Bug Fixes
+
+* if skipData is set to true then don't call server ([cb2bad5](http://www.github.com/sinnerschrader/aem-react-js/commit/cb2bad5))
+
+
+
 <a name="0.20.0"></a>
 # [0.20.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.19.0...v0.20.0) (2017-11-23)
 
