@@ -45,6 +45,8 @@ export class ClientSling extends AbstractSling {
   ): void {
     if (options.skipData) {
       listener.changedResource(path, {});
+
+      return;
     }
     const depth =
       !options || typeof options.depth === 'undefined' || options.depth === null
