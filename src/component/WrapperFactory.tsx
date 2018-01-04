@@ -16,6 +16,7 @@ export interface ComponentConfig<R> {
   readonly props?: {[name: string]: any};
   readonly transform?: Transform<R>;
   readonly loadingComponent?: React.ComponentClass<any>;
+  readonly selector?: string;
 }
 
 export interface WrapperProps<E extends object> extends ResourceProps {
@@ -83,17 +84,28 @@ export class Wrapper<E extends object, R> extends ResourceComponent<
   }
 
   private transform(props: any): any {
+    console.log(`transform ${this.getSelectors()}`);
     const existingProps: any = this.getContainer().cache.getTransform(
-      this.getPath()
+      this.getPath(),
+      this.getSelectors()
     );
     if (existingProps) {
       return existingProps;
     }
-    const javaApi = this.getContainer().createJavaApi(this.getPath());
+    console.log(`transform ${this.getSelectors()} no cache`);
+    const javaApi = this.getContainer().createJavaApi(
+      this.getPath(),
+      this.getSelectors()
+    );
     const newProps = this.config.transform
       ? this.config.transform(javaApi)
       : props;
-    this.getContainer().cache.putTransform(this.getPath(), newProps);
+    this.getContainer().cache.putTransform(
+      this.getPath(),
+      this.getSelectors(),
+      newProps
+    );
+    console.log(`transform ${this.getSelectors()} added cache`);
 
     return newProps;
   }

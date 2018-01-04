@@ -32,6 +32,14 @@ function getProperty(data: any, path: string[]): any {
   }
 }
 
+function createKey(path: string, selectors: string[]): string {
+  if (selectors && selectors.length > 0) {
+    return `${path}:${selectors.join('-')}`;
+  }
+
+  return path;
+}
+
 /**
  * This cache is used to store server side data and pass it to the client.
  */
@@ -104,7 +112,6 @@ export class Cache {
   public get(path: string, depth?: number): any {
     const normalizedDepth: number = normalizeDepth(depth);
     const subPath: string[] = [];
-
     let resource: ResourceEntry = this.resources[path];
 
     while (!resource && path != null) {
@@ -136,12 +143,12 @@ export class Cache {
     this.serviceCalls[key] = serviceCall;
   }
 
-  public getTransform(key: string): any {
-    return this.transforms[key];
+  public getTransform(path: string, selectors: string[]): any {
+    return this.transforms[createKey(path, selectors)];
   }
 
-  public putTransform(key: string, value: any): void {
-    this.transforms[key] = value;
+  public putTransform(path: string, selectors: string[], value: any): void {
+    this.transforms[createKey(path, selectors)] = value;
   }
 
   public getServiceCall(key: string): any {
@@ -158,14 +165,19 @@ export class Cache {
 
   public putIncluded(
     path: string,
+    selectors: string[],
     included: string,
     options: IncludeOptions = {}
   ): void {
-    this.included[this.createIncludedKey(path, options)] = included;
+    this.included[this.createIncludedKey(path, selectors, options)] = included;
   }
 
-  public getIncluded(path: string, options: IncludeOptions = {}): string {
-    return this.included[this.createIncludedKey(path, options)];
+  public getIncluded(
+    path: string,
+    selectors: string[],
+    options: IncludeOptions = {}
+  ): string {
+    return this.included[this.createIncludedKey(path, selectors, options)];
   }
 
   public putComponent(id: string, data: any): void {
@@ -196,9 +208,13 @@ export class Cache {
     this.transforms = {};
   }
 
-  private createIncludedKey(path: string, options: IncludeOptions): string {
+  private createIncludedKey(
+    path: string,
+    selectors: string[],
+    options: IncludeOptions
+  ): string {
     return (
-      path +
+      createKey(path, selectors) +
       (options && Object.keys(options).length > 0
         ? '::' + JSON.stringify(options)
         : '')

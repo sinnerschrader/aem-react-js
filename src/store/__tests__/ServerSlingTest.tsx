@@ -24,10 +24,15 @@ describe('ServerSling', () => {
     };
 
     const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
-    const actualHtml = sling.includeResource('/test', '/component/test', {});
+    const actualHtml = sling.includeResource(
+      '/test',
+      null,
+      '/component/test',
+      {}
+    );
 
     expect(actualHtml).to.equal(html);
-    expect(cache.getIncluded('/test')).to.equal(html);
+    expect(cache.getIncluded('/test', null)).to.equal(html);
   });
 
   it('should subscribe to resource', () => {
@@ -58,7 +63,7 @@ describe('ServerSling', () => {
       }
     } as any) as ResourceComponent<any, any, any>;
 
-    sling.subscribe(component, path, {depth: 3});
+    sling.subscribe(component, path, {depth: 3, selectors: []});
 
     expect(actualPath).to.equal(path);
     expect(actualResource).to.deep.equal(resource);

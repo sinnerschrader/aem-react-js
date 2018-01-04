@@ -71,7 +71,11 @@ export class Container {
    * @param name fully qualified java class name
    * @returns {ServiceProxy}
    */
-  public getRequestModel(path: string, name: string): ServiceProxy {
+  public getRequestModel(
+    path: string,
+    selectors: string[],
+    name: string
+  ): ServiceProxy {
     return this.getServiceProxy(arguments, () => {
       if (!this.cqx) {
         throw new Error('Cannot find request model: ' + name);
@@ -86,7 +90,11 @@ export class Container {
    * @param name fully qualified java class name
    * @returns {ServiceProxy}
    */
-  public getResourceModel(path: string, name: string): ServiceProxy {
+  public getResourceModel(
+    path: string,
+    selectors: string[],
+    name: string
+  ): ServiceProxy {
     return this.getServiceProxy(arguments, () => {
       if (!this.cqx) {
         throw new Error('Cannot find resource model: ' + name);
@@ -96,8 +104,8 @@ export class Container {
     });
   }
 
-  public createJavaApi(path: string): JavaApi {
-    return this.javaApiFactory(path);
+  public createJavaApi(path: string, selectors: string[]): JavaApi {
+    return this.javaApiFactory(path, selectors);
   }
 
   private getServiceProxy(args: IArguments, locator: Locator): ServiceProxy {

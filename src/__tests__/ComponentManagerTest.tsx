@@ -19,6 +19,7 @@ describe('ComponentManager', () => {
       cache,
       path: '/test',
       resourceType: '/components/test',
+      selectors: [],
       wcmmode: 'edit'
     };
 
@@ -47,6 +48,7 @@ describe('ComponentManager', () => {
       cache,
       path: '/test',
       resourceType: '/components/test',
+      selectors: [],
       wcmmode: 'disabled'
     };
 

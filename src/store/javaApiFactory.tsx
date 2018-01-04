@@ -8,10 +8,12 @@ import {XssApi} from '../xss/XssApi';
 export class JavaApiImpl implements JavaApi {
   private readonly container: Container;
   private readonly path: string;
+  private readonly selectors: string[];
 
-  public constructor(path: string, container: Container) {
+  public constructor(path: string, selectors: string[], container: Container) {
     this.path = path;
     this.container = container;
+    this.selectors = selectors;
   }
 
   public getOsgiService(name: string): ServiceProxy {
@@ -46,9 +48,11 @@ export class JavaApiImpl implements JavaApi {
   }
 }
 
-type JavaApiFactory = (path: string) => JavaApi;
+type JavaApiFactory = (path: string, selectors: string[]) => JavaApi;
 
-const javaApiFactoryFactory = (container: Container) => (path: string) =>
-  new JavaApiImpl(path, container);
+const javaApiFactoryFactory = (container: Container) => (
+  path: string,
+  selectors: string[]
+) => new JavaApiImpl(path, selectors, container);
 
 export {javaApiFactoryFactory, JavaApiFactory};

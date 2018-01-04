@@ -41,7 +41,7 @@ export class ClientSling extends AbstractSling {
   public subscribe(
     listener: ResourceComponent<any, any, any>,
     path: string,
-    options: SlingResourceOptions = {}
+    options: SlingResourceOptions = {selectors: []}
   ): void {
     if (options.skipData) {
       listener.changedResource(path, {});
@@ -119,11 +119,12 @@ export class ClientSling extends AbstractSling {
 
   public includeResource(
     path: string,
+    selectors: string[],
     resourceType: string,
     options: IncludeOptions
   ): string {
     // Currently cannot be loaded from server alone.
-    return this.cache.getIncluded(path, options);
+    return this.cache.getIncluded(path, selectors, options);
   }
 
   public getRequestPath(): string {

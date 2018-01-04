@@ -124,13 +124,13 @@ describe('Cache', () => {
   it('should merge caches', () => {
     const cache = new Cache();
 
-    cache.putIncluded('new', 'oldValue');
-    cache.putIncluded('existing', 'existingValue');
+    cache.putIncluded('new:', [], 'oldValue');
+    cache.putIncluded('existing', [], 'existingValue');
 
     cache.mergeCache({included: {new: 'newValue'}});
 
-    expect(cache.getIncluded('new')).to.equals('newValue');
-    expect(cache.getIncluded('existing')).to.equals('existingValue');
+    expect(cache.getIncluded('new', [])).to.equals('newValue');
+    expect(cache.getIncluded('existing', [])).to.equals('existingValue');
   });
 
   it('should merge null caches', () => {
@@ -147,9 +147,9 @@ describe('Cache', () => {
 
     expect(cache.get('incl').x).to.equals(1);
 
-    cache.putIncluded('incl', 'value');
+    cache.putIncluded('incl', [], 'value');
 
-    expect(cache.getIncluded('incl')).to.equals('value');
+    expect(cache.getIncluded('incl', [])).to.equals('value');
 
     cache.putScript('script', {element: 'test'});
 
@@ -162,7 +162,7 @@ describe('Cache', () => {
     cache.clear();
 
     expect(cache.get('incl')).to.be.null;
-    expect(cache.getIncluded('incl')).to.be.undefined;
+    expect(cache.getIncluded('incl', [])).to.be.undefined;
     expect(cache.getScript('script')).to.be.undefined;
     expect(cache.getServiceCall('call')).to.be.undefined;
   });
@@ -170,9 +170,9 @@ describe('Cache', () => {
   it('should write and read entries', () => {
     const cache = new Cache();
 
-    cache.putIncluded('incl', 'value');
+    cache.putIncluded('incl', [], 'value');
 
-    expect(cache.getIncluded('incl')).to.equals('value');
+    expect(cache.getIncluded('incl', [])).to.equals('value');
 
     cache.putScript('script', {element: 'test'});
 

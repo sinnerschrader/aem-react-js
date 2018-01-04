@@ -4,6 +4,7 @@ import {ResourceComponent} from '../component/ResourceComponent';
 export interface SlingResourceOptions {
   readonly depth?: number;
   readonly skipData?: boolean;
+  readonly selectors: string[];
 }
 
 export interface EditDialogData {
@@ -18,6 +19,24 @@ export interface IncludeOptions {
   readonly selectors?: string[];
   readonly decorationTagName?: string;
 }
+
+const calculateSelectors = (
+  selectors: string[],
+  options?: IncludeOptions
+): string[] => {
+  if (options !== undefined) {
+    if (options.addSelectors !== undefined) {
+      return selectors.concat(options.addSelectors);
+    }
+    if (options.selectors !== undefined) {
+      return options.selectors;
+    }
+  }
+
+  return selectors || [];
+};
+
+export {calculateSelectors};
 
 /**
  * interface that provides standard aem featres for the resource components.
@@ -50,6 +69,7 @@ export interface Sling {
    */
   includeResource(
     path: string,
+    selectors: string[],
     resourceType: string,
     options: IncludeOptions
   ): string;
@@ -70,6 +90,7 @@ export abstract class AbstractSling implements Sling {
   ): EditDialogData;
   public abstract includeResource(
     path: string,
+    selectors: string[],
     resourceType: string,
     options: IncludeOptions
   ): string;

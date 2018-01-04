@@ -138,6 +138,7 @@ describe('ResourceComponent', () => {
         aemContext={{container, registry}}
         component={Test}
         path="/content/notfound"
+        selectors={[]}
       />
     );
 
@@ -160,6 +161,7 @@ describe('ResourceComponent', () => {
         aemContext={{container, registry}}
         component={Embedded}
         path="/content/embed"
+        selectors={[]}
       />
     ) as any;
 
@@ -182,6 +184,7 @@ describe('ResourceComponent', () => {
         aemContext={{container, registry}}
         component={Test}
         path="/content/test"
+        selectors={[]}
       />
     ) as any;
 
@@ -211,6 +214,7 @@ describe('ResourceComponent', () => {
         aemContext={{container, registry}}
         component={AemContainer}
         path="/content"
+        selectors={[]}
       />
     );
 
@@ -244,6 +248,7 @@ describe('ResourceComponent', () => {
           aemContext={{container, registry}}
           component={AemContainer}
           path="/content"
+          selectors={[]}
         />
       );
 
@@ -263,6 +268,7 @@ describe('ResourceComponent', () => {
           component={createContainer('childClass', 'el')}
           id="root"
           path="/content"
+          selectors={[]}
         />
       );
 
@@ -272,7 +278,7 @@ describe('ResourceComponent', () => {
       expect(dialog.html()).to.equal(
         '<el class="childClass"><div id="text_undefined_0">' +
           '<include resourcetype="htl/test" ' +
-          'path="/content/child1"></include></div></el>'
+          'selectors="" path="/content/child1"></include></div></el>'
       );
     });
   });
@@ -301,6 +307,7 @@ describe('ResourceComponent', () => {
           aemContext={{container, registry}}
           component={AemContainer}
           path="/content"
+          selectors={[]}
         />
       );
 
@@ -316,6 +323,7 @@ describe('ResourceComponent', () => {
           aemContext={{container, registry}}
           component={createContainer('childClass', 'el')}
           path="/content"
+          selectors={[]}
         />
       );
 
@@ -332,6 +340,7 @@ describe('ResourceComponent', () => {
           aemContext={{container, registry}}
           component={createContainer('childClass')}
           path="/content"
+          selectors={[]}
         />
       );
 
@@ -367,6 +376,7 @@ describe('ResourceComponent', () => {
           aemContext={{container, registry}}
           component={createContainer('childClass', null, 'children')}
           path="/content"
+          selectors={[]}
         />
       );
 

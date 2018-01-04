@@ -35,7 +35,7 @@ export class ServerSling extends AbstractSling {
   public subscribe(
     listener: ResourceComponent<any, any, any>,
     path: string,
-    options: SlingResourceOptions = {}
+    options: SlingResourceOptions = {selectors: []}
   ): void {
     const depth: number =
       typeof options.depth !== 'number' ? -1 : options.depth;
@@ -78,9 +78,11 @@ export class ServerSling extends AbstractSling {
 
   public includeResource(
     path: string,
+    selectors: string[],
     resourceType: string,
     options: IncludeOptions
   ): string {
+    // TODO we are not passing selectors modified within react tree
     const included: string = this.sling.includeResource(
       path,
       resourceType,
@@ -91,7 +93,7 @@ export class ServerSling extends AbstractSling {
         : null
     );
 
-    this.cache.putIncluded(path, included, options || {});
+    this.cache.putIncluded(path, selectors, included, options || {});
 
     return included;
   }

@@ -61,6 +61,7 @@ describe('WrapperFactory', () => {
         aemContext={{container, registry}}
         component={reactClass}
         path="/test"
+        selectors={[]}
       />
     );
     const html = item.html();
@@ -87,6 +88,7 @@ describe('WrapperFactory', () => {
         aemContext={{container, registry}}
         component={reactClass}
         path="/test"
+        selectors={[]}
       />
     );
 
@@ -109,6 +111,7 @@ describe('WrapperFactory', () => {
         aemContext={{container, registry}}
         component={reactClass}
         path="/test"
+        selectors={[]}
       />
     );
 
@@ -139,6 +142,7 @@ describe('WrapperFactory', () => {
         aemContext={{container, registry}}
         component={MyTest}
         path="/test"
+        selectors={[]}
       />
     );
 
@@ -175,6 +179,7 @@ describe('WrapperFactory', () => {
         aemContext={{container, registry}}
         component={MyTest}
         path="/test"
+        selectors={[]}
       />
     );
 
@@ -230,7 +235,11 @@ describe('WrapperFactory', () => {
     const container = new Container(cache, new MockSling(cache));
 
     const reactClass = WrapperFactory.createWrapper(
-      {component: Test, parsys: {path: 'children'}},
+      {
+        component: Test,
+        parsys: {path: 'children', selectors: []},
+        selector: ''
+      },
       'components/test'
     );
 
@@ -240,6 +249,7 @@ describe('WrapperFactory', () => {
         aemContext={{container, registry}}
         component={reactClass}
         path="/test"
+        selectors={[]}
       />
     );
 

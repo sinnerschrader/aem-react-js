@@ -37,8 +37,14 @@ export class MockSling extends AbstractSling {
     return {element: 'div', attributes: {className: 'dialog'}};
   }
 
-  public includeResource(path: string, resourceType: string): string {
-    return `<include resourcetype='${resourceType}' path='${path}'></include>`;
+  public includeResource(
+    path: string,
+    selectors: string[],
+    resourceType: string
+  ): string {
+    return `<include resourcetype='${resourceType}' selectors='${selectors.join(
+      '.'
+    )}'path='${path}'></include>`;
   }
 
   public getRequestPath(): string {

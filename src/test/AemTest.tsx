@@ -38,10 +38,17 @@ export class AemTest {
     cache.put(path, resource, depth);
   }
 
-  public render(resource: any, path?: string): any {
-    this.addResource(path || '/', resource);
+  public render(
+    resource: any,
+    path: string = '/',
+    selectors: string[] = []
+  ): any {
+    this.addResource(path, resource);
 
-    const component: any = this.registry.getComponent(resource.resourceType);
+    const component: any = this.registry.getComponent(
+      resource.resourceType,
+      selectors
+    );
 
     if (!component) {
       throw new Error(
@@ -56,6 +63,7 @@ export class AemTest {
         path={path || '/'}
         wcmmode="disabled"
         aemContext={this.currentAemContext}
+        selectors={selectors}
       />
     );
   }

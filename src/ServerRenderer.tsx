@@ -32,9 +32,10 @@ export class ServerRenderer {
     resourceType: string,
     wcmmode: string,
     renderAsJson: boolean = false,
-    reactContext: ReactContext = {rootNo: 1, textPool: new TextPool()}
+    reactContext: ReactContext = {rootNo: 1, textPool: new TextPool()},
+    selectors: string[] = []
   ): ServerResponse {
-    const component = this.registry.getComponent(resourceType);
+    const component = this.registry.getComponent(resourceType, selectors);
 
     if (!component) {
       throw new Error(
@@ -57,6 +58,7 @@ export class ServerRenderer {
         id={id}
         path={path}
         wcmmode={wcmmode}
+        selectors={selectors}
         renderRootDialog={!!renderAsJson}
       />
     );

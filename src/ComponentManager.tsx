@@ -12,6 +12,7 @@ export interface ComponentTreeConfig {
   readonly path: string;
   readonly resourceType: string;
   readonly cache: Cache;
+  readonly selectors: string[];
 }
 
 export type ShouldStartReact = (props: ComponentTreeConfig) => boolean;
@@ -65,7 +66,10 @@ export class ComponentManager {
         (options.shouldStartReact && options.shouldStartReact(props)) ||
         props.wcmmode === 'disabled'
       ) {
-        const component = this.registry.getComponent(props.resourceType);
+        const component = this.registry.getComponent(
+          props.resourceType,
+          props.selectors
+        );
 
         if (!component) {
           console.error(
@@ -82,6 +86,7 @@ export class ComponentManager {
             <RootComponent
               aemContext={ctx}
               component={component}
+              selectors={props.selectors}
               id={id}
               path={props.path}
               wcmmode={props.wcmmode}
@@ -102,8 +107,11 @@ export class ComponentManager {
     return this.registry.getResourceType(component);
   }
 
-  public getComponent(resourceType: string): React.ComponentClass<any> {
-    return this.registry.getComponent(resourceType);
+  public getComponent(
+    resourceType: string,
+    selectors?: string[]
+  ): React.ComponentClass<any> {
+    return this.registry.getComponent(resourceType, selectors || []);
   }
 
   /**

@@ -11,6 +11,7 @@ export interface AemComponentContext {
   readonly aemContext: AemContext;
   readonly path: string;
   readonly root: string;
+  readonly selectors: string[];
   readonly wcmmode?: string;
 }
 
@@ -20,6 +21,7 @@ export class AemComponent<P = {}, S = {}> extends React.Component<P, S>
     aemContext: PropTypes.object.isRequired,
     path: PropTypes.string.isRequired,
     root: PropTypes.string,
+    selectors: PropTypes.array,
     wcmmode: PropTypes.string
   };
 
@@ -32,6 +34,10 @@ export class AemComponent<P = {}, S = {}> extends React.Component<P, S>
 
   public getPath(): string {
     return this.context.path;
+  }
+
+  public getSelectors(): string[] {
+    return this.context.selectors;
   }
 
   public isWcmEnabled(): boolean {
@@ -55,6 +61,7 @@ export class AemComponent<P = {}, S = {}> extends React.Component<P, S>
   ): ServiceProxy {
     return this.getContainer().getResourceModel(
       this.getExtendedPath(options),
+      this.getSelectors(),
       name
     );
   }
@@ -63,6 +70,7 @@ export class AemComponent<P = {}, S = {}> extends React.Component<P, S>
   public getRequestModel(name: string, options: ApiOptions = {}): ServiceProxy {
     return this.getContainer().getRequestModel(
       this.getExtendedPath(options),
+      this.getSelectors(),
       name
     );
   }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ResourceUtils} from './ResourceUtils';
 import {AemComponent} from './component/AemComponent';
-import {IncludeOptions} from './store/Sling';
+import {IncludeOptions, calculateSelectors} from './store/Sling';
 
 export interface IncludeProps {
   readonly path: string;
@@ -16,14 +16,20 @@ export interface IncludeProps {
 
 export class ResourceInclude extends AemComponent<IncludeProps, any> {
   public render(): React.ReactElement<any> {
+    const selectors = calculateSelectors(
+      this.getSelectors(),
+      this.props.options
+    );
     const componentClass = this.getRegistry().getComponent(
-      this.props.resourceType
+      this.props.resourceType,
+      selectors
     );
 
     if (!!componentClass) {
       const finalProps = {
         extraProps: this.props.extraProps,
-        path: this.props.path
+        path: this.props.path,
+        selectors
       };
 
       return React.createElement(componentClass, finalProps);
@@ -38,6 +44,7 @@ export class ResourceInclude extends AemComponent<IncludeProps, any> {
 
       innerHTML = sling.includeResource(
         path,
+        selectors,
         this.props.resourceType,
         this.props.options || {}
       );

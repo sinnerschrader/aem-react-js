@@ -29,7 +29,7 @@ describe('RootComponentRegistry', () => {
     rootRegistry.add(registry);
     rootRegistry.init();
 
-    let component = rootRegistry.getComponent(actualResourceType);
+    let component = rootRegistry.getComponent(actualResourceType, []);
 
     expect(component).to.equal(TestView);
 
@@ -59,9 +59,33 @@ describe('RootComponentRegistry', () => {
     rootRegistry.add(registry);
     rootRegistry.init();
 
-    const component = rootRegistry.getComponent(actualResourceType);
+    const component = rootRegistry.getComponent(actualResourceType, []);
 
     expect(component).to.not.be.null;
+
+    const resourceType = rootRegistry.getResourceType(TestView);
+
+    expect(resourceType).to.be.undefined;
+  });
+
+  it('should register vanilla component with selector', () => {
+    const rootRegistry: RootComponentRegistry = new RootComponentRegistry();
+    const registry: ComponentRegistry = new ComponentRegistry('/components');
+
+    registry.registerVanilla({component: TestView, selector: 'special'});
+
+    rootRegistry.add(registry);
+    rootRegistry.init();
+
+    const component = rootRegistry.getComponent(actualResourceType, ['x']);
+
+    expect(component).to.be.undefined;
+
+    const specialComponent = rootRegistry.getComponent(actualResourceType, [
+      'special'
+    ]);
+
+    expect(specialComponent).to.not.be.undefined;
 
     const resourceType = rootRegistry.getResourceType(TestView);
 

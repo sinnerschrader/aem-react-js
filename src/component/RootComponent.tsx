@@ -6,6 +6,7 @@ export interface ChildContext {
   readonly aemContext: AemContext;
   readonly path: string;
   readonly root: string;
+  readonly selectors: string[];
   readonly wcmmode?: string;
 }
 
@@ -21,6 +22,7 @@ export interface RootComponentProps {
   readonly aemContext: AemContext;
   readonly path: string;
   readonly renderRootDialog?: boolean;
+  readonly selectors: string[];
   readonly wcmmode?: string;
   readonly id?: string;
 }
@@ -30,6 +32,7 @@ export class RootComponent extends React.Component<RootComponentProps> {
     aemContext: PropTypes.object.isRequired,
     path: PropTypes.string.isRequired,
     root: PropTypes.string,
+    selectors: PropTypes.arrayOf(PropTypes.string),
     wcmmode: PropTypes.string
   };
 
@@ -38,6 +41,7 @@ export class RootComponent extends React.Component<RootComponentProps> {
       aemContext: this.props.aemContext,
       path: this.props.path,
       root: this.props.id,
+      selectors: this.props.selectors,
       wcmmode: this.props.wcmmode
     };
   }

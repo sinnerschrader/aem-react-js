@@ -8,8 +8,8 @@ import {ServiceProxy} from './ServiceProxy';
  * The proxy put all calls into the cache.
  */
 export class CachedServiceProxy implements ServiceProxy {
+  public readonly name: string;
   private readonly cache: Cache;
-  private readonly name: string;
   private readonly locator: Locator;
 
   public constructor(cache: Cache, locator: Locator, name: string) {

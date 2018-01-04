@@ -3,7 +3,7 @@ import * as React from 'react';
 import {ResourceInclude} from '../ResourceInclude';
 import {ResourceUtils} from '../ResourceUtils';
 import {RootComponentRegistry} from '../RootComponentRegistry';
-import {IncludeOptions} from '../store/Sling';
+import {IncludeOptions, calculateSelectors} from '../store/Sling';
 import {shallowEqual} from '../utils/compare';
 import {AemComponent} from './AemComponent';
 import {EditDialog} from './EditDialog';
@@ -30,6 +30,7 @@ export interface ResourceProps {
   readonly root?: boolean;
   readonly wcmmode?: string;
   readonly className?: string;
+  readonly selectors: string[];
 }
 
 /**
@@ -42,12 +43,14 @@ export abstract class ResourceComponent<
 > extends AemComponent<P, S> {
   public static readonly childContextTypes: any = {
     path: PropTypes.string.isRequired,
+    selectors: PropTypes.arrayOf(PropTypes.string),
     wcmmode: PropTypes.string
   };
 
   public getChildContext(): any {
     return {
       path: this.getPath(),
+      selectors: this.getSelectors(),
       wcmmode: this.getWcmmode()
     };
   }
@@ -77,9 +80,14 @@ export abstract class ResourceComponent<
 
       this.getAemContext().container.sling.subscribe(this, absolutePath, {
         depth: this.getDepth(),
+        selectors: this.getSelectors(),
         skipData: this.isSkipData() || false
       });
     }
+  }
+
+  public getSelectors(): string[] {
+    return this.props.selectors || this.context.selectors || [];
   }
 
   public getWcmmode(): string | undefined {
@@ -174,7 +182,10 @@ export abstract class ResourceComponent<
 
       const componentType: React.ComponentClass<
         any
-      > = this.getRegistry().getComponent(resourceType);
+      > = this.getRegistry().getComponent(
+        resourceType,
+        calculateSelectors(this.getSelectors(), includeOptions)
+      );
 
       if (childElementName) {
         if (componentType) {

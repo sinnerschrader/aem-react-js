@@ -12,10 +12,11 @@ describe('ClientSling', () => {
     const cache = new Cache();
     const sling = new ClientSling(cache, null);
 
-    cache.putIncluded('/test', html);
+    cache.putIncluded('/test', null, html);
 
     const actualHtml: string = sling.includeResource(
       '/test',
+      null,
       '/component/test',
       {}
     );
@@ -68,7 +69,7 @@ describe('ClientSling', () => {
       }
     }();
 
-    sling.subscribe(listener, path, {depth: 1});
+    sling.subscribe(listener, path, {depth: 1, selectors: []});
 
     expect(actualPath).to.equal(path);
     expect(actualResource).to.equal(resource);
@@ -113,7 +114,8 @@ describe('ClientSling', () => {
     };
 
     sling.subscribe(listener as ResourceComponent<any, any, any>, path, {
-      depth: 1
+      depth: 1,
+      selectors: []
     });
 
     expect(actualPath).to.equal(path);

@@ -6,15 +6,18 @@ export class Mapping {
   public readonly resourceType: string;
   public readonly vanillaClass: React.ComponentClass<any>;
   public readonly componentClass: React.ComponentClass<any>;
+  public readonly selector: string;
 
   public constructor(
     resourceType: string,
     componentClass: React.ComponentClass<any>,
-    vanillaClass: React.ComponentClass<any>
+    vanillaClass: React.ComponentClass<any>,
+    selector: string
   ) {
     this.resourceType = resourceType;
     this.componentClass = componentClass;
     this.vanillaClass = vanillaClass;
+    this.selector = selector || '';
   }
 }
 
@@ -24,7 +27,7 @@ export class RootComponentRegistry {
   private readonly registries: ComponentRegistry[];
 
   private readonly resourceTypeToComponent: {
-    [name: string]: React.ComponentClass<any>;
+    [name: string]: {[selector: string]: React.ComponentClass<any>};
   } = {};
 
   private readonly componentToResourceType: {
@@ -58,7 +61,10 @@ export class RootComponentRegistry {
     }
   }
 
-  public getComponent(resourceType: string): React.ComponentClass<any> {
+  public getComponent(
+    resourceType: string,
+    selectors: string[]
+  ): React.ComponentClass<any> {
     if (resourceType && resourceType.match(/^\/apps\//)) {
       resourceType = resourceType.substring('/apps/'.length);
     }
@@ -66,7 +72,19 @@ export class RootComponentRegistry {
       resourceType = resourceType.substring(0, resourceType.length - 1);
     }
 
-    return this.resourceTypeToComponent[resourceType];
+    const componentsBySelector = this.resourceTypeToComponent[resourceType];
+
+    if (componentsBySelector !== undefined) {
+      const matchingSelectors = selectors.filter(
+        selector => componentsBySelector[selector] !== undefined
+      );
+
+      return componentsBySelector[
+        matchingSelectors.length === 1 ? matchingSelectors[0] : ''
+      ];
+    }
+
+    return undefined;
   }
 
   public register(mapping: Mapping): void {
@@ -81,7 +99,11 @@ export class RootComponentRegistry {
       this.vanillaToWrapper[vanillaClassName] = mapping.componentClass;
     }
 
-    this.resourceTypeToComponent[mapping.resourceType] = mapping.componentClass;
+    if (this.resourceTypeToComponent[mapping.resourceType] === undefined) {
+      this.resourceTypeToComponent[mapping.resourceType] = {};
+    }
+    this.resourceTypeToComponent[mapping.resourceType][mapping.selector || ''] =
+      mapping.componentClass;
   }
 
   public init(): void {

@@ -5,6 +5,7 @@ import {Container} from '../../di/Container';
 import {ServiceProxy} from '../../di/ServiceProxy';
 import {Cache} from '../../store/Cache';
 import {MockSling} from '../../test/MockSling';
+import {CachedServiceProxy} from '../CachedServiceProxy';
 
 describe('Container', () => {
   const methodResult = 'methodResult';
@@ -27,9 +28,14 @@ describe('Container', () => {
       cache,
       new MockSling(cache),
       {
-        getResourceModel: (path: string, resourceType: string) => {
+        getResourceModel: (
+          path: string,
+          selectors: string[],
+          resourceType: string
+        ) => {
           expect(path).to.equal('/test');
           expect(resourceType).to.equal('/components/test');
+          expect(selectors[0]).to.equal('s1');
 
           return proxy;
         }
@@ -38,10 +44,13 @@ describe('Container', () => {
 
     const service: ServiceProxy = container.getResourceModel(
       '/test',
+      ['s1'],
       '/components/test'
     );
 
-    expect((service as any).name).to.equal('/test_/components/test');
+    expect((service as CachedServiceProxy).name).to.equal(
+      '/test_s1_/components/test'
+    );
 
     const result = service.invoke<string>(methodName, paramValue);
 
@@ -55,7 +64,11 @@ describe('Container', () => {
       cache,
       new MockSling(cache),
       {
-        getRequestModel: (path: string, resourceType: string) => {
+        getRequestModel: (
+          path: string,
+          selectors: string[],
+          resourceType: string
+        ) => {
           expect(path).to.equal('/test');
           expect(resourceType).to.equal('/components/test');
 
@@ -66,10 +79,13 @@ describe('Container', () => {
 
     const service: ServiceProxy = container.getRequestModel(
       '/test',
+      [],
       '/components/test'
     );
 
-    expect((service as any).name).to.equal('/test_/components/test');
+    expect((service as CachedServiceProxy).name).to.equal(
+      '/test__/components/test'
+    );
 
     const result = service.invoke<string>(methodName, paramValue);
 
@@ -93,7 +109,7 @@ describe('Container', () => {
 
     const service: ServiceProxy = container.getOsgiService('java.pack.Service');
 
-    expect((service as any).name).to.equal('java.pack.Service');
+    expect((service as CachedServiceProxy).name).to.equal('java.pack.Service');
 
     const result = service.invoke<string>(methodName, paramValue);
 
