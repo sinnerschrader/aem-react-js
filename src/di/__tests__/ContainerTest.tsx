@@ -28,14 +28,9 @@ describe('Container', () => {
       cache,
       new MockSling(cache),
       {
-        getResourceModel: (
-          path: string,
-          selectors: string[],
-          resourceType: string
-        ) => {
+        getResourceModel: (path: string, resourceType: string) => {
           expect(path).to.equal('/test');
           expect(resourceType).to.equal('/components/test');
-          expect(selectors[0]).to.equal('s1');
 
           return proxy;
         }
@@ -64,11 +59,7 @@ describe('Container', () => {
       cache,
       new MockSling(cache),
       {
-        getRequestModel: (
-          path: string,
-          selectors: string[],
-          resourceType: string
-        ) => {
+        getRequestModel: (path: string, resourceType: string) => {
           expect(path).to.equal('/test');
           expect(resourceType).to.equal('/components/test');
 

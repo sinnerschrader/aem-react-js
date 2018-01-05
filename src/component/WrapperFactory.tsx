@@ -84,7 +84,6 @@ export class Wrapper<E extends object, R> extends ResourceComponent<
   }
 
   private transform(props: any): any {
-    console.log(`transform ${this.getSelectors()}`);
     const existingProps: any = this.getContainer().cache.getTransform(
       this.getPath(),
       this.getSelectors()
@@ -92,7 +91,6 @@ export class Wrapper<E extends object, R> extends ResourceComponent<
     if (existingProps) {
       return existingProps;
     }
-    console.log(`transform ${this.getSelectors()} no cache`);
     const javaApi = this.getContainer().createJavaApi(
       this.getPath(),
       this.getSelectors()
@@ -105,7 +103,6 @@ export class Wrapper<E extends object, R> extends ResourceComponent<
       this.getSelectors(),
       newProps
     );
-    console.log(`transform ${this.getSelectors()} added cache`);
 
     return newProps;
   }
