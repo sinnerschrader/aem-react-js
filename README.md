@@ -1,8 +1,4 @@
-# React 16 Modification
-This is a fork of the upstream aem-react-js project which upgrades React to version 16. Additionally, it adds a toggle to force hydration in author mode and moves npm react dependencies to peerDependencies. It is likely that the react-router will be ripped out in the future.
-
 # AEM React integration module
-
 
 This npm module  is required by the [AEM React Integration project](http://www.github.com/sinnerschrader/aem-react).
 This library is written in TypeScript.
