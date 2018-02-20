@@ -1,5 +1,5 @@
 {
-  "name": "vwa-aem-react-js",
+  "name": "aem-react-js",
   "version": "0.21.0",
   "description": "AEM components written in React.",
   "author": {
@@ -18,9 +18,6 @@
   "repository": {
     "type": "git",
     "url": "http://www.github.com/sinnerschrader/aem-react-js"
-  },
-  "publishConfig": {
-    "registry": "https://repo.sinnerschrader.com/repository/vwa-npm-hosted-1/"
   },
   "files": [
     "lib"
