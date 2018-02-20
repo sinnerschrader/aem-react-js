@@ -106,10 +106,10 @@ exports.release = () => {
     'git', 'rev-parse', '--abbrev-ref', 'HEAD'
   ).stdout.trim();
 
-  if (branchName !== 'master') {
-    sh.echo('Error: Please checkout the master branch');
-    sh.exit(1);
-  }
+//  if (branchName !== 'master') {
+//    sh.echo('Error: Please checkout the master branch');
+//    sh.exit(1);
+//  }
 
   const gitStatus = exec('git', 'status', '--porcelain').stdout.trim();
 
