@@ -1,0 +1,28 @@
+@startuml
+
+React -> RC : willMount()
+
+RC -> RC: load()
+RC -> Sling: loadComponent()
+Sling -> AEM
+RC -> RC: setState({state:  LOADING})
+RC --> React
+
+React -> RC: render
+RC -> RC: renderLoading()
+RC --> React
+
+AEM -> AEM: registry.getTransform(resourcetype, selectors)
+AEM -> AEM: transform(path, resourcetype, selectos): returns props and children
+AEM -> AEM: getDialog(resourcetype)
+AEM -> AEM: getChildrenTransform(children)
+AEM --> Sling: cache (dialog, props) of tree
+
+Sling --> RC: dialog
+RC -> RC: setState({state:LOADED})
+React -> RC: render
+RC -> RC: renderBody
+
+
+
+@enduml

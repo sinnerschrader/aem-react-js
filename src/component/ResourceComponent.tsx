@@ -20,8 +20,18 @@ export enum STATE {
 
 export interface ResourceState {
   readonly absolutePath: string;
-  readonly resource?: any;
   readonly state: STATE;
+}
+
+export interface ResourceRef {
+  readonly path: string;
+  readonly selectors: string[];
+  readonly type: string;
+}
+export interface ComponentData {
+  readonly dialog: EditDialog;
+  readonly props: object;
+  readonly children: ResourceRef;
 }
 
 export interface ResourceProps {
@@ -78,10 +88,13 @@ export abstract class ResourceComponent<
     if (absolutePath !== this.getPath()) {
       this.setState({absolutePath, state: STATE.LOADING});
 
-      this.getAemContext().container.sling.subscribe(this, absolutePath, {
+      this.getAemContext().container.sling.loadComponent(this, absolutePath, {
         depth: this.getDepth(),
         selectors: this.getSelectors(),
         skipData: this.isSkipData() || false
+      }).then((data: ComponentData) -> {
+        this.setState({state: STATE.LOADED});
+        this.data = data;
       });
     }
   }
