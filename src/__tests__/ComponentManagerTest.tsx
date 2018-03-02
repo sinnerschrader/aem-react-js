@@ -55,12 +55,12 @@ describe('ComponentManager', () => {
     const container = new Container(
       cache,
       {
-        subscribe: (
-          listener: ResourceComponent<any, any, any>,
+        load: (
+          listener: (resource: any) => void,
           path: string,
           options?: SlingResourceOptions
         ) => {
-          listener.changedResource(path, {});
+          listener({});
         }
       } as any
     );

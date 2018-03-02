@@ -9,7 +9,7 @@ import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
 import {Cache} from '../../store/Cache';
 import {MockSling} from '../../test/MockSling';
-import {ResourceComponent} from '../ResourceComponent';
+import {ResourceComponent, STATE} from '../ResourceComponent';
 import {RootComponent} from '../RootComponent';
 
 /*tslint:disable-next-line*/
@@ -81,13 +81,15 @@ describe('ResourceComponent', () => {
 
   it('shouldComponentUpdate return false', () => {
     const props = {
-      path: '/content/notfound'
+      path: 'notfound'
     };
+    const context = {path: '/content'};
     const state = {};
     const shouldUpdate = Embedded.prototype.shouldComponentUpdate.call(
-      {props, state},
+      {props, state, context},
       props,
-      state
+      state,
+      context
     );
 
     expect(shouldUpdate).to.equal(false);
@@ -170,6 +172,53 @@ describe('ResourceComponent', () => {
     expect(test.getPath()).to.equal('/content/embed/test');
     expect(test.props.path).to.equal('test');
     expect(test.getResource().text).to.equal('Hallo');
+  });
+
+  it('should load resource ', () => {
+    const cache = new Cache();
+
+    cache.put('/content/embed', {}, 0);
+    cache.put(
+      '/content/embed/test',
+      {
+        text: 'Hallo'
+      },
+      0
+    );
+
+    const container = new Container(cache, new MockSling(cache));
+
+    const item = ReactTestUtils.renderIntoDocument(
+      <RootComponent
+        aemContext={{container, registry}}
+        component={Embedded}
+        path="/content/embed"
+        selectors={[]}
+      />
+    ) as any;
+
+    const test: Test = ReactTestUtils.findRenderedComponentWithType(item, Test);
+
+    expect(test.getPath()).to.equal('/content/embed/test');
+    expect(test.props.path).to.equal('test');
+    expect(test.getResource().text).to.equal('Hallo');
+
+    const update = test.shouldComponentUpdate(
+      {path: 'notloaded'},
+      {},
+      test.context
+    );
+    expect(update).to.be.equal(true);
+
+    test.componentWillUpdate({path: 'notloaded'}, {}, test.context);
+
+    expect(test['loadingState']).to.equal(STATE.LOADING);
+
+    test.changedResource({
+      text: 'Bye Bye'
+    });
+
+    expect(test['loadingState']).to.equal(STATE.LOADED);
   });
 
   it('should get resource from absolute Path', () => {

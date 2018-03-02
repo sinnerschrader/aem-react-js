@@ -87,10 +87,10 @@ describe('Cache', () => {
     expect(result).to.not.exist;
   });
 
-  it('should return match of depth 1', () => {
+  it('should return match of depth 2', () => {
     const cache = new Cache();
 
-    cache.put('/content', {level1: {level2: 'Hallo'}}, 1);
+    cache.put('/content', {level1: {level2: 'Hallo'}}, 2);
 
     const result = cache.get('/content/level1/level2', 0);
 

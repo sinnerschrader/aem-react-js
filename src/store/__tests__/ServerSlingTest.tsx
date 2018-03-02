@@ -1,7 +1,6 @@
 /* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
-import {ResourceComponent} from '../../component/ResourceComponent';
 import {Cache} from '../Cache';
 import {JavaSling, ServerSling} from '../ServerSling';
 import {EditDialogData} from '../Sling';
@@ -40,7 +39,6 @@ describe('ServerSling', () => {
     const path = '/test';
 
     let actualResource: any;
-    let actualPath: string;
 
     const cache = new Cache();
 
@@ -56,16 +54,15 @@ describe('ServerSling', () => {
 
     const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
 
-    const component: ResourceComponent<any, any, any> = ({
-      changedResource(_path: string, _resource: any): void {
-        actualResource = _resource;
-        actualPath = _path;
-      }
-    } as any) as ResourceComponent<any, any, any>;
+    const listener = (_resource: any) => {
+      actualResource = _resource;
+    };
 
-    sling.subscribe(component, path, {depth: 3, selectors: []});
+    sling.load(listener, path, {
+      depth: 3,
+      selectors: []
+    });
 
-    expect(actualPath).to.equal(path);
     expect(actualResource).to.deep.equal(resource);
   });
 

@@ -1,4 +1,3 @@
-import {ResourceComponent} from '../component/ResourceComponent';
 import {Cache} from './Cache';
 import {
   AbstractSling,
@@ -32,8 +31,8 @@ export class ServerSling extends AbstractSling {
     this.sling = sling;
   }
 
-  public subscribe(
-    listener: ResourceComponent<any, any, any>,
+  public load(
+    listener: (resource: any) => void,
     path: string,
     options: SlingResourceOptions = {selectors: []}
   ): void {
@@ -56,7 +55,7 @@ export class ServerSling extends AbstractSling {
       }
     }
 
-    listener.changedResource(path, resource);
+    listener(resource);
   }
 
   public renderDialogScript(

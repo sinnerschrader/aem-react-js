@@ -11,7 +11,7 @@ import {Cache} from '../store/Cache';
 
 describe('ServerRenderer', () => {
   it('should render component', () => {
-    class Test extends ResourceComponent<any, any, any> {
+    class Test extends ResourceComponent<any, any> {
       public renderBody(): React.ReactElement<any> {
         return (
           <span>
@@ -26,11 +26,8 @@ describe('ServerRenderer', () => {
     const container = new Container(
       cache,
       {
-        subscribe(
-          component: ResourceComponent<any, any, any>,
-          path: string
-        ): void {
-          component.changedResource(path, {text: 'hi'});
+        load(listener: (resource: any) => void, path: string): void {
+          listener({text: 'hi'});
         }
       } as any
     );
