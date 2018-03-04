@@ -121,7 +121,7 @@ describe('WrapperFactory', () => {
   });
 
   it('should render simple vanilla include', () => {
-    class MyTest extends ResourceComponent<any, any, any> {
+    class MyTest extends ResourceComponent<any, any> {
       public renderBody(): any {
         return (
           <div>
@@ -154,7 +154,7 @@ describe('WrapperFactory', () => {
   });
 
   it('should render simple vanilla include with extraProps', () => {
-    class MyTest extends ResourceComponent<any, any, any> {
+    class MyTest extends ResourceComponent<any, any> {
       public renderBody(): any {
         return (
           <div>

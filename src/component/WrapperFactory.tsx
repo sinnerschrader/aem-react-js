@@ -1,20 +1,24 @@
 import * as React from 'react';
 import {JavaApi} from './JavaApi';
 import {ReactParsysProps} from './ReactParsys';
-import {ResourceComponent, ResourceProps} from './ResourceComponent';
+import {
+  ResourceComponent,
+  ResourceProps,
+  TransformData
+} from './ResourceComponent';
 
-export type Transform<R> = (api: JavaApi) => R;
+export type TransformFunc = (api: JavaApi) => any;
 
-export type parsysFactory<P> = (api: JavaApi, props: P) => JSX.Element[];
+export type parsysFactory = (api: JavaApi, props: any) => JSX.Element[];
 
-export interface ComponentConfig<R> {
+export interface ComponentConfig {
   readonly shortName?: string;
   readonly name?: string;
   readonly parsys?: ReactParsysProps;
-  readonly parsysFactory?: parsysFactory<R>;
+  readonly parsysFactory?: parsysFactory;
   readonly component: React.ComponentClass<any>;
   readonly props?: {[name: string]: any};
-  readonly transform?: Transform<R>;
+  readonly transform?: TransformFunc;
   readonly loadingComponent?: React.ComponentClass<any>;
   readonly selector?: string;
 }
@@ -23,14 +27,13 @@ export interface WrapperProps<E extends object> extends ResourceProps {
   readonly extraProps: E;
 }
 
-export class Wrapper<E extends object, R> extends ResourceComponent<
-  any,
+export class Wrapper<E extends object> extends ResourceComponent<
   WrapperProps<E>,
   any
 > {
-  protected readonly config: ComponentConfig<R>;
+  protected readonly config: ComponentConfig;
 
-  public constructor(config: ComponentConfig<R>, props?: any, context?: any) {
+  public constructor(config: ComponentConfig, props?: any, context?: any) {
     super(props, context);
 
     this.config = config;
@@ -47,10 +50,11 @@ export class Wrapper<E extends object, R> extends ResourceComponent<
       );
     }
 
-    const newProps: any = this.transform(props);
+    // todo should be transformed already ?
+    const transformResult: any = this.transform(props);
 
     if (this.config.parsysFactory) {
-      children = this.config.parsysFactory(this, newProps);
+      children = this.config.parsysFactory(this, transformResult.props);
     } else if (!!this.config.parsys) {
       children = this.renderChildren(
         this.config.parsys.path,
@@ -60,7 +64,10 @@ export class Wrapper<E extends object, R> extends ResourceComponent<
       );
     }
 
-    const finalProps: any = {...newProps, ...this.props.extraProps as any};
+    const finalProps: any = {
+      ...transformResult.props,
+      ...this.props.extraProps as any
+    };
 
     return React.createElement(this.config.component, finalProps, children);
   }
@@ -83,7 +90,7 @@ export class Wrapper<E extends object, R> extends ResourceComponent<
     return <span>Loading</span>;
   }
 
-  private transform(props: any): any {
+  private transform(props: any): TransformData {
     const existingProps: any = this.getContainer().cache.getTransform(
       this.getPath(),
       this.getSelectors()
@@ -104,7 +111,12 @@ export class Wrapper<E extends object, R> extends ResourceComponent<
       newProps
     );
 
-    return newProps;
+    // todo: what to do with children here?
+
+    return {
+      children: null,
+      props: newProps
+    };
   }
 }
 
@@ -115,11 +127,11 @@ export class WrapperFactory {
    * @param resourceType
    * @return {TheWrapper}
    */
-  public static createWrapper<E extends object, R>(
-    config: ComponentConfig<R>,
+  public static createWrapper<E extends object>(
+    config: ComponentConfig,
     resourceType: string
   ): React.ComponentClass<any> {
-    return class TheWrapper extends Wrapper<E, R> {
+    return class TheWrapper extends Wrapper<E> {
       public constructor(props?: any, context?: any) {
         super(config, props, context);
       }

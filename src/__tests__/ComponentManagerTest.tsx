@@ -4,7 +4,7 @@ import {expect} from 'chai';
 import {JSDOM} from 'jsdom';
 import * as React from 'react';
 import {ComponentManager, ComponentTreeConfig} from '../ComponentManager';
-import {ResourceComponent} from '../component/ResourceComponent';
+import {ComponentData, ResourceComponent} from '../component/ResourceComponent';
 import {Container} from '../di/Container';
 import {identity} from '../rootDecorator';
 import {Cache} from '../store/Cache';
@@ -36,7 +36,7 @@ describe('ComponentManager', () => {
   });
 
   it('should instantiate react components', () => {
-    class Test extends ResourceComponent<any, any, any> {
+    class Test extends ResourceComponent<any, any> {
       public renderBody(): React.ReactElement<any> {
         return <span>test</span>;
       }
@@ -55,13 +55,15 @@ describe('ComponentManager', () => {
     const container = new Container(
       cache,
       {
-        subscribe: (
-          listener: ResourceComponent<any, any, any>,
+        loadComponent: async (
+          listener: ResourceComponent<any, any>,
           path: string,
           options?: SlingResourceOptions
-        ) => {
-          listener.changedResource(path, {});
-        }
+        ) =>
+          new Promise<ComponentData>(resolve => {
+            listener.changedResource(path, {});
+            resolve();
+          })
       } as any
     );
 

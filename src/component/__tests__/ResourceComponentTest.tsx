@@ -16,7 +16,7 @@ import {RootComponent} from '../RootComponent';
 import '../../test/setup';
 
 describe('ResourceComponent', () => {
-  class Test extends ResourceComponent<any, any, any> {
+  class Test extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
       return (
         <span className="test">
@@ -26,13 +26,13 @@ describe('ResourceComponent', () => {
     }
   }
 
-  class Embedded extends ResourceComponent<any, any, any> {
+  class Embedded extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
       return <Test path="test" />;
     }
   }
 
-  class AemContainer extends ResourceComponent<any, any, any> {
+  class AemContainer extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
       const children: React.ReactElement<any>[] = this.renderChildren(
         this.props.childPath,
@@ -53,7 +53,7 @@ describe('ResourceComponent', () => {
     elementName?: string,
     childPath?: string
   ): typeof AemContainer {
-    return class AnonComponent extends ResourceComponent<any, any, any> {
+    return class AnonComponent extends ResourceComponent<any, any> {
       public renderBody(): React.ReactElement<any> {
         const children: React.ReactElement<any>[] = this.renderChildren(
           childPath,

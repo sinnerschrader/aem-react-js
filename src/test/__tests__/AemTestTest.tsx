@@ -8,7 +8,7 @@ import {ResourceComponent} from '../../component/ResourceComponent';
 import {AemTest} from '../AemTest';
 
 describe('AemTest', () => {
-  class Text extends ResourceComponent<any, any, any> {
+  class Text extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
       const text: string = this.getResource()
         ? this.getResource().text

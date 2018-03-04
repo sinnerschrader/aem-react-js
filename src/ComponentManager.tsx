@@ -44,6 +44,8 @@ export class ComponentManager {
   /**
    * Initialize react component in dom.
    * @param item
+   * @param options
+   * @param id
    */
   public initReactComponent(
     item: Element,

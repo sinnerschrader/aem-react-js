@@ -3,14 +3,18 @@ import * as React from 'react';
 import {ResourceInclude} from '../ResourceInclude';
 import {ResourceUtils} from '../ResourceUtils';
 import {RootComponentRegistry} from '../RootComponentRegistry';
-import {IncludeOptions, calculateSelectors} from '../store/Sling';
+import {
+  EditDialogData,
+  IncludeOptions,
+  calculateSelectors
+} from '../store/Sling';
 import {shallowEqual} from '../utils/compare';
 import {AemComponent} from './AemComponent';
 import {EditDialog} from './EditDialog';
 
-export interface Resource {
-  readonly 'sling:resourceType': string;
-}
+// export interface Resource {
+//   readonly 'sling:resourceType': string;
+// }
 
 export enum STATE {
   LOADING,
@@ -21,6 +25,12 @@ export enum STATE {
 export interface ResourceState {
   readonly absolutePath: string;
   readonly state: STATE;
+  readonly resource: any;
+}
+
+export interface TransformData {
+  readonly props: any;
+  readonly children: ResourceRef[];
 }
 
 export interface ResourceRef {
@@ -28,10 +38,10 @@ export interface ResourceRef {
   readonly selectors: string[];
   readonly type: string;
 }
+
 export interface ComponentData {
-  readonly dialog: EditDialog;
-  readonly props: object;
-  readonly children: ResourceRef;
+  readonly dialog: EditDialogData | null;
+  readonly transform: TransformData;
 }
 
 export interface ResourceProps {
@@ -47,7 +57,6 @@ export interface ResourceProps {
  * Provides base functionality for components that are
  */
 export abstract class ResourceComponent<
-  C extends Resource,
   P extends ResourceProps,
   S extends ResourceState
 > extends AemComponent<P, S> {
@@ -56,6 +65,8 @@ export abstract class ResourceComponent<
     selectors: PropTypes.arrayOf(PropTypes.string),
     wcmmode: PropTypes.string
   };
+
+  private data?: ComponentData;
 
   public getChildContext(): any {
     return {
@@ -88,14 +99,23 @@ export abstract class ResourceComponent<
     if (absolutePath !== this.getPath()) {
       this.setState({absolutePath, state: STATE.LOADING});
 
-      this.getAemContext().container.sling.loadComponent(this, absolutePath, {
-        depth: this.getDepth(),
-        selectors: this.getSelectors(),
-        skipData: this.isSkipData() || false
-      }).then((data: ComponentData) -> {
-        this.setState({state: STATE.LOADED});
-        this.data = data;
-      });
+      this.getAemContext()
+        .container.sling.loadComponent(this, absolutePath, {
+          depth: this.getDepth(),
+          selectors: this.getSelectors(),
+          skipData: this.isSkipData() || false
+        })
+        .then(data => {
+          this.setState({
+            resource: data.transform.props,
+            state: STATE.LOADED
+          });
+          // todo something with retrieved data
+          this.data = data;
+        })
+        .catch(() => {
+          this.setState({state: STATE.FAILED});
+        });
     }
   }
 
@@ -143,15 +163,15 @@ export abstract class ResourceComponent<
 
   public abstract renderBody(): React.ReactElement<any>;
 
-  public getResource(): C {
-    return this.state.resource as C;
+  public getResource(): any {
+    return this.state.resource;
   }
 
   public getResourceType(): string {
     return this.context.aemContext.registry.getResourceType(this);
   }
 
-  public changedResource(path: string, resource: C): void {
+  public changedResource(path: string, resource: object): void {
     this.setState({state: STATE.LOADED, resource, absolutePath: path} as any);
   }
 
@@ -178,7 +198,7 @@ export abstract class ResourceComponent<
     }
 
     const childrenResource: any = !!path
-      ? (this.getResource() as any)[path]
+      ? this.getResource()[path]
       : this.getResource();
 
     const children: any = ResourceUtils.getChildren(childrenResource);
@@ -189,7 +209,7 @@ export abstract class ResourceComponent<
     // and set className/elementName there
 
     Object.keys(children).forEach((nodeName: string, childIdx: number) => {
-      const resource: Resource = children[nodeName];
+      const resource: any = children[nodeName];
       const resourceType: string = resource['sling:resourceType'];
       const actualPath: string = basePath + nodeName;
 

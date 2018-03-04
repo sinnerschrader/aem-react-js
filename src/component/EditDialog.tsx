@@ -30,7 +30,7 @@ function createAuthorElement(dialog: EditDialogData): React.ReactElement<any> {
 
 export class EditDialog extends AemComponent<EditDialogProps, any> {
   public render(): React.ReactElement<any> {
-    const dialog: EditDialogData = this.getContainer().sling.renderDialogScript(
+    const dialog: EditDialogData = this.getContainer().sling.getDialog(
       this.props.path,
       this.props.resourceType
     );

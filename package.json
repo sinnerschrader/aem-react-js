@@ -33,7 +33,8 @@
   "scripts": {
     "commitmsg": "conventional-changelog-lint -e",
     "cz": "git-cz",
-    "test": "node run test"
+    "test": "node run test",
+    "format": "node run format"
   },
   "devDependencies": {
     "@types/chai": "4.0.1",

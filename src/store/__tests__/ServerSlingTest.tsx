@@ -35,7 +35,7 @@ describe('ServerSling', () => {
     expect(cache.getIncluded('/test', null)).to.equal(html);
   });
 
-  it('should subscribe to resource', () => {
+  it('should subscribe to resource', async () => {
     const resource = {text: 'hi'};
     const path = '/test';
 
@@ -56,14 +56,14 @@ describe('ServerSling', () => {
 
     const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
 
-    const component: ResourceComponent<any, any, any> = ({
+    const component: ResourceComponent<any, any> = ({
       changedResource(_path: string, _resource: any): void {
         actualResource = _resource;
         actualPath = _path;
       }
-    } as any) as ResourceComponent<any, any, any>;
+    } as any) as ResourceComponent<any, any>;
 
-    sling.subscribe(component, path, {depth: 3, selectors: []});
+    await sling.loadComponent(component, path, {depth: 3, selectors: []});
 
     expect(actualPath).to.equal(path);
     expect(actualResource).to.deep.equal(resource);
@@ -81,7 +81,7 @@ describe('ServerSling', () => {
 
     const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
 
-    const actualDialog: EditDialogData = sling.renderDialogScript(
+    const actualDialog: EditDialogData = sling.getDialog(
       '/test',
       '/component/test'
     );
@@ -101,7 +101,7 @@ describe('ServerSling', () => {
 
     const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
 
-    const actualDialog: EditDialogData = sling.renderDialogScript(
+    const actualDialog: EditDialogData = sling.getDialog(
       '/test',
       '/component/test'
     );

@@ -8,7 +8,7 @@ import {ReactParsys} from '../ReactParsys';
 import {ResourceComponent} from '../ResourceComponent';
 
 describe('ReactParsys', () => {
-  class Text extends ResourceComponent<any, any, any> {
+  class Text extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
       const text: string = this.getResource()
         ? this.getResource().text

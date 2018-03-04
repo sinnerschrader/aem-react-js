@@ -31,7 +31,7 @@ describe('ClientSling', () => {
 
     cache.putScript('/test', dialog);
 
-    const actualDialog: EditDialogData = sling.renderDialogScript(
+    const actualDialog: EditDialogData = sling.getDialog(
       '/test',
       '/component/test'
     );
@@ -39,7 +39,7 @@ describe('ClientSling', () => {
     expect(actualDialog).to.deep.equal(dialog);
   });
 
-  it('should subscribe to cached resource', () => {
+  it('should subscribe to cached resource', async () => {
     const resource = {};
     const cache = new Cache();
     const sling = new ClientSling(cache, null);
@@ -52,13 +52,8 @@ describe('ClientSling', () => {
 
     const listener: ResourceComponent<
       any,
-      any,
       any
-    > = new class MockResourceComponent extends ResourceComponent<
-      any,
-      any,
-      any
-    > {
+    > = new class MockResourceComponent extends ResourceComponent<any, any> {
       public changedResource(_path: string, _resource: any): void {
         actualResource = _resource;
         actualPath = _path;
@@ -68,14 +63,12 @@ describe('ClientSling', () => {
         /* */
       }
     }();
-
-    sling.subscribe(listener, path, {depth: 1, selectors: []});
-
+    await sling.loadComponent(listener, path, {depth: 1, selectors: []});
     expect(actualPath).to.equal(path);
     expect(actualResource).to.equal(resource);
   });
 
-  it('should subscribe to resource', () => {
+  it('should subscribe to resource', async () => {
     let actualUrl: string;
     const resource = {data: {text: 'hi'}, depth: 1};
     const resources = {resources: {'/test': resource}};
@@ -113,7 +106,7 @@ describe('ClientSling', () => {
       }
     };
 
-    sling.subscribe(listener as ResourceComponent<any, any, any>, path, {
+    await sling.loadComponent(listener as ResourceComponent<any, any>, path, {
       depth: 1,
       selectors: []
     });

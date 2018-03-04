@@ -1,4 +1,4 @@
-import {ResourceComponent} from '../component/ResourceComponent';
+import {ComponentData, ResourceComponent} from '../component/ResourceComponent';
 import {Cache} from './Cache';
 import {
   AbstractSling,
@@ -32,11 +32,11 @@ export class ServerSling extends AbstractSling {
     this.sling = sling;
   }
 
-  public subscribe(
-    listener: ResourceComponent<any, any, any>,
+  public async loadComponent(
+    listener: ResourceComponent<any, any>,
     path: string,
     options: SlingResourceOptions = {selectors: []}
-  ): void {
+  ): Promise<ComponentData> {
     const depth: number =
       typeof options.depth !== 'number' ? -1 : options.depth;
 
@@ -55,14 +55,18 @@ export class ServerSling extends AbstractSling {
         this.cache.put(path, resource, depth);
       }
     }
-
     listener.changedResource(path, resource);
+
+    return {
+      dialog: null,
+      transform: {
+        children: [],
+        props: {}
+      }
+    };
   }
 
-  public renderDialogScript(
-    path: string,
-    resourceType: string
-  ): EditDialogData {
+  public getDialog(path: string, resourceType: string): EditDialogData {
     const script: string = this.sling.renderDialogScript(path, resourceType);
 
     let dialog: EditDialogData = null;

@@ -1,5 +1,5 @@
 import {ResourceUtils} from '../ResourceUtils';
-import {ResourceComponent} from '../component/ResourceComponent';
+import {ComponentData, ResourceComponent} from '../component/ResourceComponent';
 
 export interface SlingResourceOptions {
   readonly depth?: number;
@@ -39,7 +39,7 @@ const calculateSelectors = (
 export {calculateSelectors};
 
 /**
- * interface that provides standard aem featres for the resource components.
+ * interface that provides standard aem features for the resource components.
  */
 export interface Sling {
   /**
@@ -48,24 +48,26 @@ export interface Sling {
    * @param path resource path
    * @param options options like level depth of resource tree
    */
-  subscribe(
-    listener: ResourceComponent<any, any, any>,
+  loadComponent(
+    listener: ResourceComponent<any, any>,
     path: string,
     options?: SlingResourceOptions
-  ): void;
+  ): Promise<ComponentData>;
 
   /**
-   * get the aem wrapper element for the component
+   * get data to render aem component dialog
    * of the given resourceType at the given resource path.
    * @param path
    * @param resourceType
    */
-  renderDialogScript(path: string, resourceType: string): EditDialogData;
+  getDialog(path: string, resourceType: string): EditDialogData;
 
   /**
    * Include a component's html.
    * @param path
    * @param resourceType
+   * @param selectors
+   * @param options
    */
   includeResource(
     path: string,
@@ -79,21 +81,21 @@ export interface Sling {
 }
 
 export abstract class AbstractSling implements Sling {
-  public abstract subscribe(
-    listener: ResourceComponent<any, any, any>,
+  public abstract loadComponent(
+    listener: ResourceComponent<any, any>,
     path: string,
     options?: SlingResourceOptions
-  ): void;
-  public abstract renderDialogScript(
-    path: string,
-    resourceType: string
-  ): EditDialogData;
+  ): Promise<ComponentData>;
+
+  public abstract getDialog(path: string, resourceType: string): EditDialogData;
+
   public abstract includeResource(
     path: string,
     selectors: string[],
     resourceType: string,
     options: IncludeOptions
   ): string;
+
   public abstract getRequestPath(): string;
 
   public getContainingPagePath(): string {

@@ -8,7 +8,7 @@ import {RootComponentRegistry} from '../RootComponentRegistry';
 import {ResourceComponent} from '../component/ResourceComponent';
 
 describe('RootComponentRegistry', () => {
-  class TestView extends ResourceComponent<any, any, any> {
+  class TestView extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
       return (
         <span>

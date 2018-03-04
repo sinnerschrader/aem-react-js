@@ -4,14 +4,14 @@ import {expect} from 'chai';
 import * as React from 'react';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {ServerRenderer, ServerResponse} from '../ServerRenderer';
-import {ResourceComponent} from '../component/ResourceComponent';
+import {ComponentData, ResourceComponent} from '../component/ResourceComponent';
 import {Container} from '../di/Container';
 import {identity} from '../rootDecorator';
 import {Cache} from '../store/Cache';
 
 describe('ServerRenderer', () => {
   it('should render component', () => {
-    class Test extends ResourceComponent<any, any, any> {
+    class Test extends ResourceComponent<any, any> {
       public renderBody(): React.ReactElement<any> {
         return (
           <span>
@@ -23,14 +23,23 @@ describe('ServerRenderer', () => {
 
     const cache = new Cache();
 
+    const props = {text: 'hi'};
     const container = new Container(
       cache,
       {
-        subscribe(
-          component: ResourceComponent<any, any, any>,
+        async loadComponent(
+          component: ResourceComponent<any, any>,
           path: string
-        ): void {
-          component.changedResource(path, {text: 'hi'});
+        ): Promise<ComponentData> {
+          component.changedResource(path, props);
+
+          return {
+            dialog: null,
+            transform: {
+              children: [],
+              props
+            }
+          };
         }
       } as any
     );

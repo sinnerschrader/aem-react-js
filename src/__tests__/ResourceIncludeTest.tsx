@@ -8,7 +8,7 @@ import {ResourceComponent} from '../component/ResourceComponent';
 import {AemTest} from '../test/AemTest';
 
 describe('ResourceInclude', () => {
-  class Test extends ResourceComponent<any, any, any> {
+  class Test extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
       return (
         <span>
@@ -18,7 +18,7 @@ describe('ResourceInclude', () => {
     }
   }
 
-  class Test2 extends ResourceComponent<any, any, any> {
+  class Test2 extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
       return (
         <span>
@@ -32,7 +32,7 @@ describe('ResourceInclude', () => {
     }
   }
 
-  class Test3 extends ResourceComponent<any, any, any> {
+  class Test3 extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
       return (
         <span>
@@ -47,7 +47,7 @@ describe('ResourceInclude', () => {
     }
   }
 
-  class Test4 extends ResourceComponent<any, any, any> {
+  class Test4 extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
       return (
         <span>

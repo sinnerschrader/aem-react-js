@@ -1,4 +1,4 @@
-import {ResourceComponent} from '../component/ResourceComponent';
+import {ComponentData, ResourceComponent} from '../component/ResourceComponent';
 import {Cache} from './Cache';
 import {
   AbstractSling,
@@ -38,12 +38,13 @@ export class ClientSling extends AbstractSling {
       : fetchWindow;
   }
 
-  public subscribe(
-    listener: ResourceComponent<any, any, any>,
+  public async loadComponent(
+    listener: ResourceComponent<any, any>,
     path: string,
     options: SlingResourceOptions = {selectors: []}
-  ): void {
+  ): Promise<ComponentData> {
     if (options.skipData) {
+      // todo throw away handle in wrapper
       listener.changedResource(path, {});
 
       return;
@@ -57,59 +58,53 @@ export class ClientSling extends AbstractSling {
 
     if (resource === null || typeof resource === 'undefined') {
       // const depthAsString = depth < 0 ? 'infinity' : options.depth + '';
-
-      // TODO what about depth as string??
-      let url = `${this.origin}${path}.json.html`;
-      // + depthAsString + ".json";
-
-      const serverRenderingParam = 'serverRendering=disabled';
-
-      const serverRendering: boolean =
-        window.location.search.indexOf(serverRenderingParam) >= 0;
-
-      if (serverRendering) {
-        url += '?' + serverRenderingParam;
-      }
-
       return this.fetchWindow
-        .fetch(url, {credentials: 'same-origin'})
+        .fetch(getUrl(this.origin, path), {credentials: 'same-origin'})
         .then((response: any) => {
           if (response.status === 404) {
             return {};
           } else {
             /* istanbul ignore if  */
             if (this.delayInMillis) {
-              const promise = new Promise(
-                (
-                  resolve: (value?: any | PromiseLike<any>) => void,
-                  reject: (error?: any) => void
-                ) => {
-                  window.setTimeout(() => {
-                    resolve(response.json());
-                  }, this.delayInMillis);
-                }
-              );
-
-              return promise;
+              return new Promise<ComponentData>(resolve => {
+                window.setTimeout(() => {
+                  resolve(response.json());
+                }, this.delayInMillis);
+              });
             }
 
+            // todo validate response?
             return response.json();
           }
         })
-        .then((json: any) => {
+        .then((json: any): ComponentData => {
           this.cache.mergeCache(json);
-
+          // todo throw away
           listener.changedResource(path, this.cache.get(path, depth));
+
+          return {
+            dialog: null,
+            transform: {
+              children: [],
+              props: this.cache.get(path, depth)
+            }
+          };
         });
-    } else {
-      listener.changedResource(path, resource);
     }
+
+    // todo throw away
+    listener.changedResource(path, resource);
+
+    return {
+      dialog: null,
+      transform: {
+        children: [],
+        props: resource
+      }
+    };
   }
 
-  public renderDialogScript(
-    path: string,
-    resourceType: string
-  ): EditDialogData {
+  public getDialog(path: string, resourceType: string): EditDialogData {
     // TODO Can we get the script from the server too?.
     // This will probably not work as the returned script is
     // not executed as in the initial server rendering case.
@@ -130,4 +125,21 @@ export class ClientSling extends AbstractSling {
   public getRequestPath(): string {
     return window.location.pathname;
   }
+}
+
+const serverRenderingParam = 'serverRendering=disabled';
+
+function getUrl(origin: string, path: string): string {
+  // TODO what about depth as string??
+  let url = `${origin}${path}.json.html`;
+  // + depthAsString + ".json";
+  if (isServerRendering()) {
+    url += `?${serverRenderingParam}`;
+  }
+
+  return url;
+}
+
+function isServerRendering(): boolean {
+  return window.location.search.indexOf(serverRenderingParam) >= 0;
 }
