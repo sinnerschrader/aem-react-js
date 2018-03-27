@@ -1,10 +1,10 @@
 /* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
-import {ResourceComponent} from '../../component/ResourceComponent';
+import {ComponentData, ResourceRef} from '../../component/ResourceComponent';
 import {Cache} from '../Cache';
 import {JavaSling, ServerSling} from '../ServerSling';
-import {EditDialogData} from '../Sling';
+import {EditDialogData, LoadComponentCallback} from '../Sling';
 
 describe('ServerSling', () => {
   it('should include resource', () => {
@@ -56,14 +56,18 @@ describe('ServerSling', () => {
 
     const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
 
-    const component: ResourceComponent<any, any> = ({
-      changedResource(_path: string, _resource: any): void {
-        actualResource = _resource;
-        actualPath = _path;
-      }
-    } as any) as ResourceComponent<any, any>;
+    const callback: LoadComponentCallback = (data: ComponentData): void => {
+      actualResource = data.transformData.props;
+      actualPath = path;
+    };
 
-    await sling.loadComponent(component, path, {depth: 3, selectors: []});
+    const ref: ResourceRef = {
+      path,
+      selectors: [],
+      type: 'testType'
+    };
+
+    sling.loadComponent(ref, callback);
 
     expect(actualPath).to.equal(path);
     expect(actualResource).to.deep.equal(resource);
@@ -87,7 +91,7 @@ describe('ServerSling', () => {
     );
 
     expect(actualDialog).to.deep.equal(dialog);
-    expect(cache.getScript('/test')).to.deep.equal(dialog);
+    expect(cache.getDialogData('/test')).to.deep.equal(dialog);
   });
 
   it('should include null dialog', () => {

@@ -8,7 +8,7 @@ import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
 import {Cache} from '../../store/Cache';
 import {MockSling} from '../../test/MockSling';
-import {ResourceComponent} from '../ResourceComponent';
+import {ResourceComponent, ResourceRef} from '../ResourceComponent';
 import {RootComponent} from '../RootComponent';
 import {VanillaInclude} from '../VanillaInclude';
 import {WrapperFactory} from '../WrapperFactory';
@@ -47,8 +47,13 @@ describe('WrapperFactory', () => {
 
   it('should render simple vanilla component', () => {
     const cache = new Cache();
+    const ref: ResourceRef = {
+      path: '/test',
+      selectors: [],
+      type: 'testType'
+    };
 
-    cache.put('/test', {text: 'hallo'});
+    cache.put(ref, {text: 'hallo'});
 
     const container = new Container(cache, new MockSling(cache));
 
@@ -132,8 +137,13 @@ describe('WrapperFactory', () => {
     }
 
     const cache = new Cache();
+    const ref: ResourceRef = {
+      path: '/test',
+      selectors: [],
+      type: 'testType'
+    };
 
-    cache.put('/test', {vanilla: {text: 'good bye'}});
+    cache.put(ref, {vanilla: {text: 'good bye'}});
 
     const container = new Container(cache, new MockSling(cache));
 
@@ -169,8 +179,13 @@ describe('WrapperFactory', () => {
     }
 
     const cache = new Cache();
+    const ref: ResourceRef = {
+      path: '/test',
+      selectors: [],
+      type: 'testType'
+    };
 
-    cache.put('/test', {vanilla: {text: 'good bye'}});
+    cache.put(ref, {vanilla: {text: 'good bye'}});
 
     const container = new Container(cache, new MockSling(cache));
 
@@ -222,8 +237,13 @@ describe('WrapperFactory', () => {
 
   it('should render simple vanilla container', () => {
     const cache = new Cache();
+    const ref: ResourceRef = {
+      path: '/test',
+      selectors: [],
+      type: 'testType'
+    };
 
-    cache.put('/test', {
+    cache.put(ref, {
       children: {
         child: {
           'sling:resourceType': 'components/text',

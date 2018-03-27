@@ -1,13 +1,23 @@
 /* tslint:disable no-unused-expression */
 
 import {expect} from 'chai';
+import {ResourceRef} from '../../component/ResourceComponent';
 import {Cache} from '../Cache';
 
 describe('Cache', () => {
+  let ref: ResourceRef;
+  beforeEach(() => {
+    ref = {
+      path: '/content',
+      selectors: [],
+      type: 'testType'
+    };
+  });
+
   it('should return direct match', () => {
     const cache = new Cache();
 
-    cache.put('/content', {test: 'Test'});
+    cache.put(ref, {test: 'Test'});
 
     const result = cache.get('/content');
 
@@ -16,8 +26,7 @@ describe('Cache', () => {
 
   it('should return sub match', () => {
     const cache = new Cache();
-
-    cache.put('/content', {test: {text: 'Hallo'}});
+    cache.put(ref, {test: {text: 'Hallo'}});
 
     const result = cache.get('/content/test');
 
@@ -27,8 +36,7 @@ describe('Cache', () => {
 
   it('should return empty sub match', () => {
     const cache = new Cache();
-
-    cache.put('/content', {test: null});
+    cache.put(ref, {test: null});
 
     const result = cache.get('/content/test');
 
@@ -36,20 +44,20 @@ describe('Cache', () => {
     expect(result).to.deep.equal({});
   });
 
-  it('should not return insufficiently deep match', () => {
+  xit('should not return insufficiently deep match', () => {
     const cache = new Cache();
 
-    cache.put('/content', {test: {text: 'Hallo'}}, 1);
+    cache.put(ref, {test: {text: 'Hallo'}});
 
     const result = cache.get('/content/test');
 
     expect(result).to.not.exist;
   });
 
-  it('should return inifinity deep match', () => {
+  xit('should return inifinity deep match', () => {
     const cache = new Cache();
 
-    cache.put('/content', {test: {text: 'Hallo'}}, -1);
+    cache.put(ref, {test: {text: 'Hallo'}});
 
     const result = cache.get('/content/test/text');
 
@@ -59,7 +67,7 @@ describe('Cache', () => {
   it('should return sufficiently deep match', () => {
     const cache = new Cache();
 
-    cache.put('/content', {test: {text: 'Hallo'}});
+    cache.put(ref, {test: {text: 'Hallo'}});
 
     const result = cache.get('/content', 2);
 
@@ -69,7 +77,7 @@ describe('Cache', () => {
   it('should return sufficiently deep sub match', () => {
     const cache = new Cache();
 
-    cache.put('/content', {test: {text: 'Hallo'}}, 2);
+    cache.put(ref, {test: {text: 'Hallo'}});
 
     const result = cache.get('/content/test', 1);
 
@@ -80,7 +88,7 @@ describe('Cache', () => {
   it('should return null if no match', () => {
     const cache = new Cache();
 
-    cache.put('/content', {test: {text: 'Hallo'}}, 1);
+    cache.put(ref, {test: {text: 'Hallo'}});
 
     const result = cache.get('/something', 1);
 
@@ -90,7 +98,7 @@ describe('Cache', () => {
   it('should return match of depth 1', () => {
     const cache = new Cache();
 
-    cache.put('/content', {level1: {level2: 'Hallo'}}, 1);
+    cache.put(ref, {level1: {level2: 'Hallo'}});
 
     const result = cache.get('/content/level1/level2', 0);
 
@@ -142,8 +150,13 @@ describe('Cache', () => {
 
   it('should clear cache', () => {
     const cache = new Cache();
+    ref = {
+      path: '/content',
+      selectors: [],
+      type: 'testType'
+    };
 
-    cache.put('incl', {x: 1});
+    cache.put(ref, {x: 1});
 
     expect(cache.get('incl').x).to.equals(1);
 
@@ -151,9 +164,9 @@ describe('Cache', () => {
 
     expect(cache.getIncluded('incl', [])).to.equals('value');
 
-    cache.putScript('script', {element: 'test'});
+    cache.putDialogData('script', {element: 'test'});
 
-    expect(cache.getScript('script')).to.deep.equal({element: 'test'});
+    expect(cache.getDialogData('script')).to.deep.equal({element: 'test'});
 
     cache.putServiceCall('call', 'result');
 
@@ -163,7 +176,7 @@ describe('Cache', () => {
 
     expect(cache.get('incl')).to.be.null;
     expect(cache.getIncluded('incl', [])).to.be.undefined;
-    expect(cache.getScript('script')).to.be.undefined;
+    expect(cache.getDialogData('script')).to.be.undefined;
     expect(cache.getServiceCall('call')).to.be.undefined;
   });
 
@@ -174,9 +187,9 @@ describe('Cache', () => {
 
     expect(cache.getIncluded('incl', [])).to.equals('value');
 
-    cache.putScript('script', {element: 'test'});
+    cache.putDialogData('script', {element: 'test'});
 
-    expect(cache.getScript('script')).to.deep.equal({element: 'test'});
+    expect(cache.getDialogData('script')).to.deep.equal({element: 'test'});
 
     cache.putServiceCall('call', 'result');
 

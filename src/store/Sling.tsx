@@ -1,11 +1,18 @@
 import {ResourceUtils} from '../ResourceUtils';
-import {ComponentData, ResourceComponent} from '../component/ResourceComponent';
+import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 
 export interface SlingResourceOptions {
   readonly depth?: number;
   readonly skipData?: boolean;
   readonly selectors: string[];
 }
+
+export interface LoadComponentOptions {
+  readonly skipData?: boolean;
+  errorCallback?(error: Error): void;
+}
+
+export type LoadComponentCallback = (data: ComponentData | {}) => void;
 
 export interface EditDialogData {
   readonly element: string;
@@ -44,23 +51,15 @@ export {calculateSelectors};
 export interface Sling {
   /**
    * Request a resource.
-   * @param listener the component that needs the resource
-   * @param path resource path
+   * @param resourceRef resource reference
+   * @param callback callback function
    * @param options options like level depth of resource tree
    */
   loadComponent(
-    listener: ResourceComponent<any, any>,
-    path: string,
-    options?: SlingResourceOptions
-  ): Promise<ComponentData>;
-
-  /**
-   * get data to render aem component dialog
-   * of the given resourceType at the given resource path.
-   * @param path
-   * @param resourceType
-   */
-  getDialog(path: string, resourceType: string): EditDialogData;
+    resourceRef: ResourceRef,
+    callback: LoadComponentCallback,
+    options?: LoadComponentOptions
+  ): void;
 
   /**
    * Include a component's html.
@@ -82,12 +81,10 @@ export interface Sling {
 
 export abstract class AbstractSling implements Sling {
   public abstract loadComponent(
-    listener: ResourceComponent<any, any>,
-    path: string,
-    options?: SlingResourceOptions
-  ): Promise<ComponentData>;
-
-  public abstract getDialog(path: string, resourceType: string): EditDialogData;
+    ref: ResourceRef,
+    callback: LoadComponentCallback,
+    options?: LoadComponentOptions
+  ): void;
 
   public abstract includeResource(
     path: string,

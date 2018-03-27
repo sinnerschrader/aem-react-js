@@ -1,11 +1,7 @@
 import * as React from 'react';
 import {JavaApi} from './JavaApi';
 import {ReactParsysProps} from './ReactParsys';
-import {
-  ResourceComponent,
-  ResourceProps,
-  TransformData
-} from './ResourceComponent';
+import {ResourceComponent, ResourceProps} from './ResourceComponent';
 
 export type TransformFunc = (api: JavaApi) => any;
 
@@ -42,7 +38,7 @@ export class Wrapper<E extends object> extends ResourceComponent<
   public create(): React.ReactElement<any> {
     let children: JSX.Element[];
 
-    const props = this.getResource();
+    const props = this.getTransformData();
 
     if (this.config.props) {
       Object.keys(this.config.props).forEach(
@@ -90,13 +86,13 @@ export class Wrapper<E extends object> extends ResourceComponent<
     return <span>Loading</span>;
   }
 
-  private transform(props: any): TransformData {
-    const existingProps: any = this.getContainer().cache.getTransform(
+  private transform(props: any): any {
+    const transformData = this.getContainer().cache.getTransformData(
       this.getPath(),
       this.getSelectors()
     );
-    if (existingProps) {
-      return existingProps;
+    if (transformData) {
+      return transformData;
     }
     const javaApi = this.getContainer().createJavaApi(
       this.getPath(),
@@ -105,7 +101,7 @@ export class Wrapper<E extends object> extends ResourceComponent<
     const newProps = this.config.transform
       ? this.config.transform(javaApi)
       : props;
-    this.getContainer().cache.putTransform(
+    this.getContainer().cache.putTransformData(
       this.getPath(),
       this.getSelectors(),
       newProps

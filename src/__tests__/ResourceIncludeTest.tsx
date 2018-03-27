@@ -4,7 +4,7 @@ import {expect} from 'chai';
 import * as React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {ResourceInclude} from '../ResourceInclude';
-import {ResourceComponent} from '../component/ResourceComponent';
+import {ResourceComponent, ResourceRef} from '../component/ResourceComponent';
 import {AemTest} from '../test/AemTest';
 
 describe('ResourceInclude', () => {
@@ -110,12 +110,18 @@ describe('ResourceInclude', () => {
   });
 
   it('should render included vanilla resource', () => {
+    const resourceType = '/components/test2';
+    const ref: ResourceRef = {
+      path: '/content',
+      selectors: [],
+      type: resourceType
+    };
     const wrapper = aemTest.render(
       {
         embed: {text: 'hallo', className: 'myClass'},
-        resourceType: '/components/test2'
+        resourceType
       },
-      '/content'
+      ref
     );
 
     expect(wrapper.html()).to.equal(
@@ -124,13 +130,18 @@ describe('ResourceInclude', () => {
   });
 
   it('should render included vanilla resource with unknown selectors', () => {
+    const resourceType = '/components/test2';
+    const ref: ResourceRef = {
+      path: '/content',
+      selectors: ['x', 'y'],
+      type: resourceType
+    };
     const wrapper = aemTest.render(
       {
         embed: {text: 'hallo', className: 'myClass'},
-        resourceType: '/components/test2'
+        resourceType
       },
-      '/content',
-      ['x', 'y']
+      ref
     );
 
     expect(wrapper.html()).to.equal(
@@ -142,13 +153,18 @@ describe('ResourceInclude', () => {
     'should render included vanilla resource ' +
       'with selector inherited from root',
     () => {
+      const resourceType = '/components/test2';
+      const ref: ResourceRef = {
+        path: '/content',
+        selectors: ['mobile'],
+        type: resourceType
+      };
       const wrapper = aemTest.render(
         {
           embed: {text: 'hallo', className: 'myClass'},
-          resourceType: '/components/test2'
+          resourceType
         },
-        '/content',
-        ['mobile']
+        ref
       );
 
       expect(wrapper.html()).to.equal(
@@ -161,13 +177,18 @@ describe('ResourceInclude', () => {
     'should render included vanilla resource with selector ' +
       'explicitly passed to ResourceInclude via addSelectors',
     () => {
+      const resourceType = '/components/test3';
+      const ref: ResourceRef = {
+        path: '/content',
+        selectors: ['x'],
+        type: resourceType
+      };
       const wrapper = aemTest.render(
         {
           embed: {text: 'hallo', className: 'myClass'},
-          resourceType: '/components/test3'
+          resourceType
         },
-        '/content',
-        ['x']
+        ref
       );
 
       expect(wrapper.html()).to.equal(
@@ -180,13 +201,18 @@ describe('ResourceInclude', () => {
     'should render included vanilla resource with selector ' +
       'explicitly passed to ResourceInclude',
     () => {
+      const resourceType = '/components/test4';
+      const ref: ResourceRef = {
+        path: '/content',
+        selectors: ['x'],
+        type: resourceType
+      };
       const wrapper = aemTest.render(
         {
           embed: {text: 'hallo', className: 'myClass'},
-          resourceType: '/components/test4'
+          resourceType
         },
-        '/content',
-        ['x']
+        ref
       );
 
       expect(wrapper.html()).to.equal(

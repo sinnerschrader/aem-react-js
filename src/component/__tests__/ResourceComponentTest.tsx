@@ -9,7 +9,7 @@ import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
 import {Cache} from '../../store/Cache';
 import {MockSling} from '../../test/MockSling';
-import {ResourceComponent} from '../ResourceComponent';
+import {ResourceComponent, ResourceRef} from '../ResourceComponent';
 import {RootComponent} from '../RootComponent';
 
 /*tslint:disable-next-line*/
@@ -147,12 +147,17 @@ describe('ResourceComponent', () => {
 
   it('should get resource directly', () => {
     const cache = new Cache();
-
-    cache.put('/content/embed', {
+    const ref: ResourceRef = {
+      path: '/content/embed',
+      selectors: [],
+      type: 'testType'
+    };
+    const data = {
       test: {
         text: 'Hallo'
       }
-    });
+    };
+    cache.put(ref, data);
 
     const container = new Container(cache, new MockSling(cache));
 
@@ -169,13 +174,18 @@ describe('ResourceComponent', () => {
 
     expect(test.getPath()).to.equal('/content/embed/test');
     expect(test.props.path).to.equal('test');
-    expect(test.getResource().text).to.equal('Hallo');
+    expect(test.getTransformData().text).to.equal('Hallo');
   });
 
   it('should get resource from absolute Path', () => {
     const cache = new Cache();
+    const ref: ResourceRef = {
+      path: '/content/test',
+      selectors: [],
+      type: 'testType'
+    };
 
-    cache.put('/content/test', {text: 'Hallo'});
+    cache.put(ref, {text: 'Hallo'});
 
     const container = new Container(cache, new MockSling(cache));
 
@@ -192,13 +202,17 @@ describe('ResourceComponent', () => {
 
     expect(test.getPath()).to.equal('/content/test');
     expect(test.props.path).to.equal('/content/test');
-    expect(test.getResource().text).to.equal('Hallo');
+    expect(test.getTransformData().text).to.equal('Hallo');
   });
 
   it('should render htl children wcmmode disabled', () => {
     const cache = new Cache();
-
-    cache.put('/content', {
+    const ref: ResourceRef = {
+      path: '/content',
+      selectors: [],
+      type: 'testType'
+    };
+    cache.put(ref, {
       child1: {
         'jcr:primaryType': 'nt:unstructured',
         'sling:resourceType': 'htl/test',
@@ -229,8 +243,13 @@ describe('ResourceComponent', () => {
 
     before(() => {
       const cache = new Cache();
+      const ref: ResourceRef = {
+        path: '/content',
+        selectors: [],
+        type: 'testType'
+      };
 
-      cache.put('/content', {
+      cache.put(ref, {
         child1: {
           'jcr:primaryType': 'nt:unstructured',
           'sling:resourceType': 'htl/test',
@@ -288,8 +307,13 @@ describe('ResourceComponent', () => {
 
     before(() => {
       const cache = new Cache();
+      const ref: ResourceRef = {
+        path: '/content',
+        selectors: [],
+        type: 'testType'
+      };
 
-      cache.put('/content', {
+      cache.put(ref, {
         child1: {
           'jcr:primaryType': 'nt:unstructured',
           'sling:resourceType': 'test',
@@ -355,8 +379,13 @@ describe('ResourceComponent', () => {
 
     before(() => {
       const cache = new Cache();
+      const ref: ResourceRef = {
+        path: '/content',
+        selectors: [],
+        type: 'testType'
+      };
 
-      cache.put('/content', {
+      cache.put(ref, {
         children: {
           child1: {
             'jcr:primaryType': 'nt:unstructured',

@@ -4,11 +4,11 @@ import {expect} from 'chai';
 import {JSDOM} from 'jsdom';
 import * as React from 'react';
 import {ComponentManager, ComponentTreeConfig} from '../ComponentManager';
-import {ComponentData, ResourceComponent} from '../component/ResourceComponent';
+import {ResourceComponent, ResourceRef} from '../component/ResourceComponent';
 import {Container} from '../di/Container';
 import {identity} from '../rootDecorator';
 import {Cache} from '../store/Cache';
-import {SlingResourceOptions} from '../store/Sling';
+import {LoadComponentCallback, LoadComponentOptions} from '../store/Sling';
 import {MockSling} from '../test/MockSling';
 
 describe('ComponentManager', () => {
@@ -55,15 +55,11 @@ describe('ComponentManager', () => {
     const container = new Container(
       cache,
       {
-        loadComponent: async (
-          listener: ResourceComponent<any, any>,
-          path: string,
-          options?: SlingResourceOptions
-        ) =>
-          new Promise<ComponentData>(resolve => {
-            listener.changedResource(path, {});
-            resolve();
-          })
+        loadComponent: (
+          ref: ResourceRef,
+          callback: LoadComponentCallback,
+          options?: LoadComponentOptions
+        ) => callback({})
       } as any
     );
 

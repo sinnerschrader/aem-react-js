@@ -1,15 +1,12 @@
-import {ComponentData, ResourceComponent} from '../component/ResourceComponent';
+import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 import {Cache} from './Cache';
+import {ComponentDataFetcher} from './ComponentDataFetcher';
 import {
   AbstractSling,
-  EditDialogData,
   IncludeOptions,
-  SlingResourceOptions
+  LoadComponentCallback,
+  LoadComponentOptions
 } from './Sling';
-
-export interface FetchWindow {
-  fetch(url: string, options: any): any;
-}
 
 /**
  * ClientSling gets all data from the cache.
@@ -18,98 +15,40 @@ export interface FetchWindow {
  */
 export class ClientSling extends AbstractSling {
   private readonly cache: Cache;
-  private readonly origin: string;
-  private readonly fetchWindow: FetchWindow;
-  private readonly delayInMillis: number;
+  private readonly fetcher: ComponentDataFetcher;
 
-  public constructor(
-    cache: Cache,
-    origin: string,
-    fetchWindow?: FetchWindow,
-    delayInMillis?: number
-  ) {
+  public constructor(cache: Cache, fetcher: ComponentDataFetcher) {
     super();
-
     this.cache = cache;
-    this.origin = origin;
-
-    this.fetchWindow = !fetchWindow
-      ? (window as any) as FetchWindow
-      : fetchWindow;
+    this.fetcher = fetcher;
   }
 
-  public async loadComponent(
-    listener: ResourceComponent<any, any>,
-    path: string,
-    options: SlingResourceOptions = {selectors: []}
-  ): Promise<ComponentData> {
-    if (options.skipData) {
-      // todo throw away handle in wrapper
-      listener.changedResource(path, {});
+  public loadComponent(
+    ref: ResourceRef,
+    callback: LoadComponentCallback,
+    options?: LoadComponentOptions
+  ): void {
+    if (options && options.skipData) {
+      callback({});
 
       return;
     }
-    const depth =
-      !options || typeof options.depth === 'undefined' || options.depth === null
-        ? 0
-        : options.depth;
+    const componentData = this.cache.getComponentData(ref.path, ref.selectors);
 
-    const resource: any = this.cache.get(path, depth);
-
-    if (resource === null || typeof resource === 'undefined') {
-      // const depthAsString = depth < 0 ? 'infinity' : options.depth + '';
-      return this.fetchWindow
-        .fetch(getUrl(this.origin, path), {credentials: 'same-origin'})
-        .then((response: any) => {
-          if (response.status === 404) {
-            return {};
-          } else {
-            /* istanbul ignore if  */
-            if (this.delayInMillis) {
-              return new Promise<ComponentData>(resolve => {
-                window.setTimeout(() => {
-                  resolve(response.json());
-                }, this.delayInMillis);
-              });
-            }
-
-            // todo validate response?
-            return response.json();
-          }
+    if (!componentData) {
+      this.fetcher
+        .fetch(ref)
+        .then((json: ComponentData): void => {
+          callback(this.cache.putComponentData(json));
         })
-        .then((json: any): ComponentData => {
-          this.cache.mergeCache(json);
-          // todo throw away
-          listener.changedResource(path, this.cache.get(path, depth));
-
-          return {
-            dialog: null,
-            transform: {
-              children: [],
-              props: this.cache.get(path, depth)
-            }
-          };
+        .catch(e => {
+          console.error(e);
         });
+
+      return;
     }
 
-    // todo throw away
-    listener.changedResource(path, resource);
-
-    return {
-      dialog: null,
-      transform: {
-        children: [],
-        props: resource
-      }
-    };
-  }
-
-  public getDialog(path: string, resourceType: string): EditDialogData {
-    // TODO Can we get the script from the server too?.
-    // This will probably not work as the returned script is
-    // not executed as in the initial server rendering case.
-    // For react router we need to do a reload anyways.
-    return this.cache.getScript(path);
+    callback(componentData);
   }
 
   public includeResource(
@@ -125,21 +64,4 @@ export class ClientSling extends AbstractSling {
   public getRequestPath(): string {
     return window.location.pathname;
   }
-}
-
-const serverRenderingParam = 'serverRendering=disabled';
-
-function getUrl(origin: string, path: string): string {
-  // TODO what about depth as string??
-  let url = `${origin}${path}.json.html`;
-  // + depthAsString + ".json";
-  if (isServerRendering()) {
-    url += `?${serverRenderingParam}`;
-  }
-
-  return url;
-}
-
-function isServerRendering(): boolean {
-  return window.location.search.indexOf(serverRenderingParam) >= 0;
 }

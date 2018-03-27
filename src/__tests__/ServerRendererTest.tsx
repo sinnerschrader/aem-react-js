@@ -4,10 +4,11 @@ import {expect} from 'chai';
 import * as React from 'react';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {ServerRenderer, ServerResponse} from '../ServerRenderer';
-import {ComponentData, ResourceComponent} from '../component/ResourceComponent';
+import {ResourceComponent, ResourceRef} from '../component/ResourceComponent';
 import {Container} from '../di/Container';
 import {identity} from '../rootDecorator';
 import {Cache} from '../store/Cache';
+import {LoadComponentCallback, LoadComponentOptions} from '../store/Sling';
 
 describe('ServerRenderer', () => {
   it('should render component', () => {
@@ -15,7 +16,7 @@ describe('ServerRenderer', () => {
       public renderBody(): React.ReactElement<any> {
         return (
           <span>
-            {this.getResource().text}
+            {this.getTransformData().text}
           </span>
         );
       }
@@ -27,19 +28,18 @@ describe('ServerRenderer', () => {
     const container = new Container(
       cache,
       {
-        async loadComponent(
-          component: ResourceComponent<any, any>,
-          path: string
-        ): Promise<ComponentData> {
-          component.changedResource(path, props);
-
-          return {
+        loadComponent(
+          resourceRef: ResourceRef,
+          callback: LoadComponentCallback,
+          options?: LoadComponentOptions
+        ): void {
+          callback({
             dialog: null,
             transform: {
               children: [],
               props
             }
-          };
+          });
         }
       } as any
     );

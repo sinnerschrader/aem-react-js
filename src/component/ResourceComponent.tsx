@@ -12,10 +12,6 @@ import {shallowEqual} from '../utils/compare';
 import {AemComponent} from './AemComponent';
 import {EditDialog} from './EditDialog';
 
-// export interface Resource {
-//   readonly 'sling:resourceType': string;
-// }
-
 export enum STATE {
   LOADING,
   LOADED,
@@ -25,12 +21,7 @@ export enum STATE {
 export interface ResourceState {
   readonly absolutePath: string;
   readonly state: STATE;
-  readonly resource: any;
-}
-
-export interface TransformData {
-  readonly props: any;
-  readonly children: ResourceRef[];
+  readonly data: ComponentData;
 }
 
 export interface ResourceRef {
@@ -40,8 +31,10 @@ export interface ResourceRef {
 }
 
 export interface ComponentData {
+  readonly id: ResourceRef;
   readonly dialog: EditDialogData | null;
-  readonly transform: TransformData;
+  transformData: any;
+  readonly children: ComponentData[];
 }
 
 export interface ResourceProps {
@@ -66,7 +59,9 @@ export abstract class ResourceComponent<
     wcmmode: PropTypes.string
   };
 
-  private data?: ComponentData;
+  public constructor(props: P, context?: any) {
+    super(props, context);
+  }
 
   public getChildContext(): any {
     return {
@@ -99,23 +94,21 @@ export abstract class ResourceComponent<
     if (absolutePath !== this.getPath()) {
       this.setState({absolutePath, state: STATE.LOADING});
 
-      this.getAemContext()
-        .container.sling.loadComponent(this, absolutePath, {
-          depth: this.getDepth(),
-          selectors: this.getSelectors(),
-          skipData: this.isSkipData() || false
-        })
-        .then(data => {
-          this.setState({
-            resource: data.transform.props,
-            state: STATE.LOADED
-          });
-          // todo something with retrieved data
-          this.data = data;
-        })
-        .catch(() => {
-          this.setState({state: STATE.FAILED});
-        });
+      const ref: ResourceRef = {
+        path: absolutePath,
+        selectors: this.getSelectors(),
+        type: this.getResourceType()
+      };
+
+      const options = {
+        skipData: this.isSkipData() || false
+      };
+
+      this.getAemContext().container.sling.loadComponent(
+        ref,
+        this.handleLoadComponentSuccess.bind(this),
+        options
+      );
     }
   }
 
@@ -141,15 +134,14 @@ export abstract class ResourceComponent<
     if (this.state.state === STATE.LOADING) {
       child = this.renderLoading();
     } else if (!!this.props.skipRenderDialog) {
-      return this.renderBody();
+      return this.renderBody(this.state.data.transformData);
     } else {
-      child = this.renderBody();
+      child = this.renderBody(this.state.data.transformData);
     }
 
     return (
       <EditDialog
-        path={this.getPath()}
-        resourceType={this.getResourceType()}
+        dialog={this.state.data.dialog}
         className={this.props.className}
       >
         {child}
@@ -161,18 +153,14 @@ export abstract class ResourceComponent<
     return this.context.aemContext.registry;
   }
 
-  public abstract renderBody(): React.ReactElement<any>;
+  public abstract renderBody(data: any): React.ReactElement<any>;
 
-  public getResource(): any {
-    return this.state.resource;
+  public getTransformData(): any {
+    return this.state.data.transformData;
   }
 
   public getResourceType(): string {
     return this.context.aemContext.registry.getResourceType(this);
-  }
-
-  public changedResource(path: string, resource: object): void {
-    this.setState({state: STATE.LOADED, resource, absolutePath: path} as any);
   }
 
   protected renderLoading(): React.ReactElement<any> {
@@ -198,8 +186,8 @@ export abstract class ResourceComponent<
     }
 
     const childrenResource: any = !!path
-      ? this.getResource()[path]
-      : this.getResource();
+      ? this.getTransformData()[path]
+      : this.getTransformData();
 
     const children: any = ResourceUtils.getChildren(childrenResource);
     const childComponents: React.ReactElement<any>[] = [];
@@ -301,5 +289,13 @@ export abstract class ResourceComponent<
     }
 
     return childComponents;
+  }
+
+  private handleLoadComponentSuccess(data: ComponentData): void {
+    this.setState({
+      data,
+      state: STATE.LOADED
+    });
+    this.setState({state: STATE.FAILED});
   }
 }

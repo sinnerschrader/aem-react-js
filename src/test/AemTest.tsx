@@ -4,6 +4,7 @@ import * as React from 'react';
 import {AemContext} from '../AemContext';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {RootComponentRegistry} from '../RootComponentRegistry';
+import {ResourceRef} from '../component/ResourceComponent';
 import {RootComponent} from '../component/RootComponent';
 import {Container} from '../di/Container';
 import {Cache} from '../store/Cache';
@@ -32,22 +33,25 @@ export class AemTest {
     this.registry.add(registry);
   }
 
-  public addResource(path: string, resource: any, depth?: number): void {
+  public addResource(ref: ResourceRef, resource: any): void {
     const cache = this.currentAemContext.container.cache;
 
-    cache.put(path, resource, depth);
+    cache.put(ref, resource);
   }
 
   public render(
     resource: any,
-    path: string = '/',
-    selectors: string[] = []
+    ref: ResourceRef = {
+      path: '/',
+      selectors: [],
+      type: ''
+    }
   ): any {
-    this.addResource(path, resource);
+    this.addResource(ref, resource);
 
     const component: any = this.registry.getComponent(
       resource.resourceType,
-      selectors
+      ref.selectors
     );
 
     if (!component) {
@@ -60,10 +64,10 @@ export class AemTest {
       <RootComponent
         component={component}
         id="root"
-        path={path || '/'}
+        path={ref.path || '/'}
         wcmmode="disabled"
         aemContext={this.currentAemContext}
-        selectors={selectors}
+        selectors={ref.selectors}
       />
     );
   }

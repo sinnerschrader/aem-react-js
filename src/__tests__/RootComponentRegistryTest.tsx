@@ -12,7 +12,7 @@ describe('RootComponentRegistry', () => {
     public renderBody(): React.ReactElement<any> {
       return (
         <span>
-          {this.getResource().text}
+          {this.getTransformData().text}
         </span>
       );
     }

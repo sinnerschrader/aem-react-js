@@ -1,11 +1,11 @@
-import {ResourceUtils} from '../ResourceUtils';
-import {EditDialogData, IncludeOptions} from './Sling';
+import {ComponentData} from '../component/ResourceComponent';
+import {IncludeOptions} from './Sling';
 
-interface ResourceEntry {
-  readonly depth: number;
-  readonly data: any;
-}
-
+// interface ResourceEntry {
+//   readonly depth: number;
+//   readonly data: any;
+// }
+//
 function merge(target: any, source: any): void {
   if (source) {
     Object.keys(source).forEach((key: string) => {
@@ -14,23 +14,23 @@ function merge(target: any, source: any): void {
   }
 }
 
-function normalizeDepth(depth?: number): number {
-  if (depth < 0 || depth === null || typeof depth === 'undefined') {
-    return -1;
-  }
-
-  return depth;
-}
-
-function getProperty(data: any, path: string[]): any {
-  const subData = ResourceUtils.getProperty(data, path);
-
-  if (typeof subData === 'undefined' || subData === null) {
-    return {};
-  } else {
-    return subData;
-  }
-}
+// function normalizeDepth(depth?: number): number {
+//   if (depth < 0 || depth === null || typeof depth === 'undefined') {
+//     return -1;
+//   }
+//
+//   return depth;
+// }
+//
+// function getProperty(data: any, path: string[]): any {
+//   const subData = ResourceUtils.getProperty(data, path);
+//
+//   if (typeof subData === 'undefined' || subData === null) {
+//     return {};
+//   } else {
+//     return subData;
+//   }
+// }
 
 function createKey(path: string, selectors: string[]): string {
   if (selectors && selectors.length > 0) {
@@ -40,24 +40,24 @@ function createKey(path: string, selectors: string[]): string {
   return path;
 }
 
+function createKeyForCd(componentData: ComponentData): string {
+  const {id: {path, selectors}} = componentData;
+
+  return createKey(path, selectors);
+}
+
 /**
  * This cache is used to store server side data and pass it to the client.
  */
 export class Cache {
-  private resources: {[path: string]: ResourceEntry};
-  private wrapper: {[path: string]: EditDialogData};
+  // included data in the transform ?
   private included: {[path: string]: string};
-  private serviceCalls: {[path: string]: any};
-  private components: {[id: string]: any};
-  private transforms: {[id: string]: any};
+  private serviceCalls: {[path: string]: any}; // prepare for deprecation
+  private componentData: {[id: string]: ComponentData};
 
   public constructor() {
-    this.resources = {};
-    this.wrapper = {};
     this.included = {};
     this.serviceCalls = {};
-    this.components = {};
-    this.transforms = {};
   }
 
   public generateServiceCacheKey(
@@ -98,69 +98,76 @@ export class Cache {
     }
   }
 
-  public put(path: string, resource: any, depth?: number): void {
-    if (resource === null || typeof resource === 'undefined') {
-      delete this.resources[path];
-    } else {
-      this.resources[path] = {
-        data: resource,
-        depth: normalizeDepth(depth)
-      };
-    }
+  // public put(ref: ResourceRef, props: any): void {
+  //   if (!props === null || typeof props === 'undefined') {
+  //     delete this.transformProps[ref.path];
+  //   } else {
+  //     this.transformProps[createKey(ref.path, ref.selectors)] = props;
+  //   }
+  // }
+
+  // public get(path: string, depth?: number): any {
+  //   const normalizedDepth: number = normalizeDepth(depth);
+  //   const subPath: string[] = [];
+  //   let resource: ResourceEntry = this.resources[path];
+  //
+  //   while (!resource && path != null) {
+  //     const result = ResourceUtils.findAncestor(path, 1);
+  //
+  //     if (result !== null) {
+  //       path = result.path;
+  //       subPath.splice(0, 0, result.subPath[0]);
+  //       resource = this.resources[result.path];
+  //     } else {
+  //       break;
+  //     }
+  //   }
+  //
+  //   if (typeof resource === 'undefined' || resource === null) {
+  //     return null;
+  //   } else if (resource.depth < 0) {
+  //     return getProperty(resource.data, subPath);
+  //   } else if (normalizedDepth < 0) {
+  //     return null;
+  //   } else if (subPath.length + normalizedDepth - 1 <= resource.depth) {
+  //     return getProperty(resource.data, subPath);
+  //   } else {
+  //     return null;
+  //   }
+  // }
+
+  public getTransformData(path: string, selectors: string[]): any {
+    return this.componentData[createKey(path, selectors)].transformData;
   }
 
-  public get(path: string, depth?: number): any {
-    const normalizedDepth: number = normalizeDepth(depth);
-    const subPath: string[] = [];
-    let resource: ResourceEntry = this.resources[path];
-
-    while (!resource && path != null) {
-      const result = ResourceUtils.findAncestor(path, 1);
-
-      if (result !== null) {
-        path = result.path;
-        subPath.splice(0, 0, result.subPath[0]);
-        resource = this.resources[result.path];
-      } else {
-        break;
-      }
-    }
-
-    if (typeof resource === 'undefined' || resource === null) {
-      return null;
-    } else if (resource.depth < 0) {
-      return getProperty(resource.data, subPath);
-    } else if (normalizedDepth < 0) {
-      return null;
-    } else if (subPath.length + normalizedDepth - 1 <= resource.depth) {
-      return getProperty(resource.data, subPath);
-    } else {
-      return null;
-    }
+  public putTransformData(path: string, selectors: string[], value: any): void {
+    this.componentData[createKey(path, selectors)].transformData = value;
   }
 
   public putServiceCall(key: string, serviceCall: any): void {
     this.serviceCalls[key] = serviceCall;
   }
 
-  public getTransform(path: string, selectors: string[]): any {
-    return this.transforms[createKey(path, selectors)];
-  }
-
-  public putTransform(path: string, selectors: string[], value: any): void {
-    this.transforms[createKey(path, selectors)] = value;
-  }
-
   public getServiceCall(key: string): any {
     return this.serviceCalls[key];
   }
 
-  public putScript(path: string, wrapper: EditDialogData): void {
-    this.wrapper[path] = wrapper;
+  // public putDialogData(path: string, wrapper: EditDialogData): void {
+  //   this.dialogData[path] = wrapper;
+  // }
+  //
+  // public getDialogData(path: string): EditDialogData {
+  //   return this.dialogData[path];
+  // }
+
+  public putComponentData(data: ComponentData): ComponentData {
+    this.componentData[createKeyForCd(data)] = data;
+
+    return data;
   }
 
-  public getScript(path: string): EditDialogData {
-    return this.wrapper[path];
+  public getComponentData(path: string, selectors: string[]): ComponentData {
+    return this.componentData[createKey(path, selectors)];
   }
 
   public putIncluded(
@@ -180,32 +187,16 @@ export class Cache {
     return this.included[this.createIncludedKey(path, selectors, options)];
   }
 
-  public putComponent(id: string, data: any): void {
-    this.components[id] = data;
-  }
-
-  public getComponent<C>(id: string): C | undefined {
-    return this.components[id];
-  }
-
   public getFullState(): any {
     return {
-      components: this.components,
       included: this.included,
-      resources: this.resources,
-      serviceCalls: this.serviceCalls,
-      transforms: this.transforms,
-      wrapper: this.wrapper
+      serviceCalls: this.serviceCalls
     };
   }
 
   public clear(): void {
-    this.resources = {};
-    this.wrapper = {};
     this.included = {};
     this.serviceCalls = {};
-    this.components = {};
-    this.transforms = {};
   }
 
   private createIncludedKey(

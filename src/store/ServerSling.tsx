@@ -1,10 +1,11 @@
-import {ComponentData, ResourceComponent} from '../component/ResourceComponent';
+import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 import {Cache} from './Cache';
 import {
   AbstractSling,
   EditDialogData,
   IncludeOptions,
-  SlingResourceOptions
+  LoadComponentCallback,
+  LoadComponentOptions
 } from './Sling';
 
 export interface JavaSling {
@@ -32,38 +33,40 @@ export class ServerSling extends AbstractSling {
     this.sling = sling;
   }
 
-  public async loadComponent(
-    listener: ResourceComponent<any, any>,
-    path: string,
-    options: SlingResourceOptions = {selectors: []}
-  ): Promise<ComponentData> {
-    const depth: number =
-      typeof options.depth !== 'number' ? -1 : options.depth;
+  public loadComponent(
+    ref: ResourceRef,
+    callback: LoadComponentCallback,
+    options?: LoadComponentOptions
+  ): void {
+    const componentData = this.cache.getComponentData(ref.path, ref.selectors);
+
+    if (!componentData) {
+      callback(this.getComponentData(ref, options));
+
+      return;
+    }
+
+    callback(componentData);
+  }
+
+  public getComponentData(
+    ref: ResourceRef,
+    options?: LoadComponentOptions
+  ): ComponentData {
+    const {path, type} = ref;
+    const data: ComponentData = {
+      children: [],
+      dialog: this.getDialog(path, type),
+      id: ref,
+      transformData: this.getTransform(path)
+    };
 
     const skipData = !!options.skipData;
-
-    let resource: any = this.cache.get(path, depth);
-
-    if (!resource) {
-      resource = JSON.parse(this.sling.getResource(path, depth));
-
-      if (!resource) {
-        resource = {};
-      }
-
-      if (!skipData) {
-        this.cache.put(path, resource, depth);
-      }
+    if (!skipData) {
+      this.cache.putComponentData(data);
     }
-    listener.changedResource(path, resource);
 
-    return {
-      dialog: null,
-      transform: {
-        children: [],
-        props: {}
-      }
-    };
+    return data;
   }
 
   public getDialog(path: string, resourceType: string): EditDialogData {
@@ -74,8 +77,6 @@ export class ServerSling extends AbstractSling {
     if (script) {
       dialog = JSON.parse(script);
     }
-
-    this.cache.putScript(path, dialog);
 
     return dialog;
   }
@@ -104,5 +105,14 @@ export class ServerSling extends AbstractSling {
 
   public getRequestPath(): string {
     return this.sling.getPagePath();
+  }
+
+  private getTransform(path: string): any {
+    const transform = JSON.parse(this.sling.getResource(path, 0));
+    if (!transform) {
+      return {};
+    }
+
+    return transform;
   }
 }
