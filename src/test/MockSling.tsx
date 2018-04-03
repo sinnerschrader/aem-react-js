@@ -1,4 +1,3 @@
-import {ResourceComponent} from '../component/ResourceComponent';
 import {Cache} from '../store/Cache';
 import {
   AbstractSling,
@@ -17,15 +16,15 @@ export class MockSling extends AbstractSling {
     this.data = data;
   }
 
-  public subscribe(
-    listener: ResourceComponent<any, any, any>,
+  public load(
+    listener: (resource: any) => void,
     path: string,
     options?: SlingResourceOptions
   ): void {
     const resource: any = this.cache.get(path, options ? options.depth : null);
 
     if (resource) {
-      listener.changedResource(path, resource);
+      listener(resource);
     }
   }
 

@@ -1,5 +1,4 @@
 import {ResourceUtils} from '../ResourceUtils';
-import {ResourceComponent} from '../component/ResourceComponent';
 
 export interface SlingResourceOptions {
   readonly depth?: number;
@@ -48,8 +47,8 @@ export interface Sling {
    * @param path resource path
    * @param options options like level depth of resource tree
    */
-  subscribe(
-    listener: ResourceComponent<any, any, any>,
+  load(
+    listener: (resource: any) => void,
     path: string,
     options?: SlingResourceOptions
   ): void;
@@ -79,8 +78,8 @@ export interface Sling {
 }
 
 export abstract class AbstractSling implements Sling {
-  public abstract subscribe(
-    listener: ResourceComponent<any, any, any>,
+  public abstract load(
+    listener: (resource: any) => void,
     path: string,
     options?: SlingResourceOptions
   ): void;

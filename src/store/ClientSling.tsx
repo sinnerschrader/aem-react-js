@@ -1,4 +1,3 @@
-import {ResourceComponent} from '../component/ResourceComponent';
 import {Cache} from './Cache';
 import {
   AbstractSling,
@@ -38,13 +37,13 @@ export class ClientSling extends AbstractSling {
       : fetchWindow;
   }
 
-  public subscribe(
-    listener: ResourceComponent<any, any, any>,
+  public load(
+    listener: (resource: any) => void,
     path: string,
     options: SlingResourceOptions = {selectors: []}
   ): void {
     if (options.skipData) {
-      listener.changedResource(path, {});
+      listener({});
 
       return;
     }
@@ -99,10 +98,10 @@ export class ClientSling extends AbstractSling {
         .then((json: any) => {
           this.cache.mergeCache(json);
 
-          listener.changedResource(path, this.cache.get(path, depth));
+          listener(this.cache.get(path, depth));
         });
     } else {
-      listener.changedResource(path, resource);
+      listener(resource);
     }
   }
 

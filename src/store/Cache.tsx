@@ -132,7 +132,7 @@ export class Cache {
       return getProperty(resource.data, subPath);
     } else if (normalizedDepth < 0) {
       return null;
-    } else if (subPath.length + normalizedDepth - 1 <= resource.depth) {
+    } else if (subPath.length + normalizedDepth <= resource.depth) {
       return getProperty(resource.data, subPath);
     } else {
       return null;

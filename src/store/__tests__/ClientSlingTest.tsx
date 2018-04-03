@@ -48,7 +48,6 @@ describe('ClientSling', () => {
     cache.put(path, resource);
 
     let actualResource: any;
-    let actualPath: string;
 
     const listener: ResourceComponent<
       any,
@@ -59,9 +58,8 @@ describe('ClientSling', () => {
       any,
       any
     > {
-      public changedResource(_path: string, _resource: any): void {
+      public changedResource(_resource: any): void {
         actualResource = _resource;
-        actualPath = _path;
       }
 
       public renderBody(): any {
@@ -69,9 +67,11 @@ describe('ClientSling', () => {
       }
     }();
 
-    sling.subscribe(listener, path, {depth: 1, selectors: []});
+    sling.load(listener.changedResource.bind(listener), path, {
+      depth: 1,
+      selectors: []
+    });
 
-    expect(actualPath).to.equal(path);
     expect(actualResource).to.equal(resource);
   });
 
@@ -104,21 +104,16 @@ describe('ClientSling', () => {
     const path = '/test';
 
     let actualResource: any;
-    let actualPath: string;
 
-    const listener = {
-      changedResource(_path: string, _resource: any): void {
-        actualResource = _resource;
-        actualPath = _path;
-      }
+    const listener = (_resource: any) => {
+      actualResource = _resource;
     };
 
-    sling.subscribe(listener as ResourceComponent<any, any, any>, path, {
+    sling.load(listener, path, {
       depth: 1,
       selectors: []
     });
 
-    expect(actualPath).to.equal(path);
     expect(actualUrl).to.equal('/url/test.json.html');
     expect(actualResource).to.deep.equal(resource.data);
   });
