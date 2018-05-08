@@ -3,6 +3,10 @@ import {Context, XssUtils} from './XssUtils';
 
 export class JsXssUtils implements XssUtils {
   public processText(text: string, context: Context = 'text'): string {
+    if (!text) {
+      return '';
+    }
+
     return context === 'text'
       ? this.escapeHtml(text)
       : context === 'html' ? this.filterHTML(text) : text;
