@@ -60,4 +60,20 @@ describe('ResourceUtils', () => {
     expect(value.path).to.equal('/a');
     expect(value.subPath).to.deep.equal(['c', 'b']);
   });
+
+  it('should create same path', () => {
+    const value = ResourceUtils.createPath('/content/a', '.');
+
+    expect(value).to.equal('/content/a');
+  });
+  it('should create relative path', () => {
+    const value = ResourceUtils.createPath('/content/a', 'x');
+
+    expect(value).to.equal('/content/a/x');
+  });
+  it('should create absolute path', () => {
+    const value = ResourceUtils.createPath('/content/a', '/content/b/x');
+
+    expect(value).to.equal('/content/b/x');
+  });
 });
