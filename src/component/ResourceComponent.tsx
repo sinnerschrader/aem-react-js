@@ -307,8 +307,6 @@ export abstract class ResourceComponent<
     props: ResourceProps,
     context: AemComponentContext
   ): string {
-    return ResourceUtils.isAbsolutePath(props.path)
-      ? props.path
-      : `${context.path}/` + String(props.path);
+    return ResourceUtils.createPath(context.path, props.path);
   }
 }
