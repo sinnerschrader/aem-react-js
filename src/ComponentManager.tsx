@@ -50,9 +50,14 @@ export class ComponentManager {
     options: ReactOptions = {},
     id: string
   ): void {
-    const textarea = this.document.getElementById(
-      item.getAttribute('data-react-id')
-    ) as HTMLTextAreaElement;
+    let nextItem = item.nextSibling;
+    while (nextItem && nextItem.nodeName.toLocaleLowerCase() !== 'textarea') {
+      nextItem = nextItem.nextSibling;
+    }
+    if (!nextItem) {
+      throw new Error('cannot find textarea for component');
+    }
+    const textarea = nextItem as HTMLTextAreaElement;
 
     if (textarea) {
       const props: ComponentTreeConfig = JSON.parse(
