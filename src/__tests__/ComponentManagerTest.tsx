@@ -24,13 +24,13 @@ describe('ComponentManager', () => {
     };
 
     const doc: Document = new JSDOM(
-      "<html><div data-react-id='1'></div><textarea id='1'>" +
+      '<html><div data-react></div><textarea>' +
         `${JSON.stringify(data)}</textarea></html>`
     ).window.document;
 
     const container = new Container(cache, new MockSling(cache));
     const cm: ComponentManager = new ComponentManager(null, container, doc);
-    const element: Element = doc.querySelector('div');
+    const element: Element = doc.querySelector('[data-react]');
 
     cm.initReactComponent(element, {}, 'a');
   });
@@ -71,12 +71,12 @@ describe('ComponentManager', () => {
     };
 
     const doc: Document = new JSDOM(
-      "<html><div data-react data-react-id='1'></div><textarea id='1'>" +
+      "<html><div data-react></div>Shouldn't be here<textarea>" +
         `${JSON.stringify(data)}</textarea></html>`
     ).window.document;
 
     const cm: ComponentManager = new ComponentManager(registry, container, doc);
-    const element: Element = doc.querySelector('div');
+    const element: Element = doc.querySelector('[data-react]');
 
     cm.initReactComponent(element, {}, 'a');
 
