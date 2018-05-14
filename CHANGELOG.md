@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.24.0"></a>
+# [0.24.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.23.0...v0.24.0) (2018-05-14)
+
+
+### Bug Fixes
+
+* null check in JsXssUtils ([227987c](http://www.github.com/sinnerschrader/aem-react-js/commit/227987c))
+* support '.' path ([#79](http://www.github.com/sinnerschrader/aem-react-js/issues/79)) ([b7b582d](http://www.github.com/sinnerschrader/aem-react-js/commit/b7b582d))
+
+
+### Features
+
+* upgrade to react 16.2 ([230640d](http://www.github.com/sinnerschrader/aem-react-js/commit/230640d))
+
+
+
 <a name="0.23.0"></a>
 # [0.23.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.4.2...v0.23.0) (2018-04-20)
 
