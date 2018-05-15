@@ -58,8 +58,8 @@ export class ResourceInclude extends AemComponent<IncludeProps, any> {
         ...this.props.attrs,
         className: this.props.className,
         dangerouslySetInnerHTML: {__html: innerHTML},
-        hidden: !!this.props.hidden,
-        id
+        'data-react-text': id,
+        hidden: !!this.props.hidden
       });
     }
   }

@@ -104,8 +104,11 @@ describe('ResourceInclude', () => {
     const wrapper = aemTest.render({resourceType: '/components/test'});
 
     expect(wrapper.html()).to.equal(
-      '<div id="text_root_0"><include resourcetype="/components/something" ' +
-        'selectors="" path="//embed"></include></div>'
+      '<div data-react-text="text_root_0">' +
+        '<include resourcetype="/components/something" ' +
+        'selectors="" path="//embed">' +
+        '</include>' +
+        '</div>'
     );
   });
 
