@@ -5,6 +5,7 @@ import {JSDOM} from 'jsdom';
 import * as React from 'react';
 import {ComponentManager, ComponentTreeConfig} from '../ComponentManager';
 import {ResourceComponent, ResourceRef} from '../component/ResourceComponent';
+import {reviveFactory} from '../component/text/TextUtils';
 import {Container} from '../di/Container';
 import {identity} from '../rootDecorator';
 import {Cache} from '../store/Cache';
@@ -29,10 +30,10 @@ describe('ComponentManager', () => {
     ).window.document;
 
     const container = new Container(cache, new MockSling(cache));
-    const cm: ComponentManager = new ComponentManager(null, container, doc);
+    const cm: ComponentManager = new ComponentManager(null, container);
     const element: Element = doc.querySelector('[data-react]');
 
-    cm.initReactComponent(element, {}, 'a');
+    cm.initReactComponent(element, {}, reviveFactory(doc.body), '1');
   });
 
   it('should instantiate react components', () => {
@@ -74,12 +75,12 @@ describe('ComponentManager', () => {
         `${JSON.stringify(data)}</textarea></html>`
     ).window.document;
 
-    const cm: ComponentManager = new ComponentManager(registry, container, doc);
+    const cm: ComponentManager = new ComponentManager(registry, container);
     const element: Element = doc.querySelector('[data-react]');
 
-    cm.initReactComponent(element, {}, 'a');
+    cm.initReactComponent(element, {}, reviveFactory(doc.body), '1');
 
-    const count: number = cm.initReactComponents();
+    const count: number = cm.initReactComponents(doc.body);
 
     expect(count).to.equal(1);
   });

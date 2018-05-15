@@ -316,20 +316,20 @@ describe('ResourceComponent', () => {
         <RootComponent
           wcmmode="disabled"
           aemContext={{container, registry}}
-          component={createContainer('childClass', 'el')}
+          component={createContainer('childClass', 'section')}
           id="root"
           path="/content"
           selectors={[]}
         />
       );
 
-      const dialog = item.find('el');
+      const dialog = item.find('section');
 
       expect(dialog.props().className).to.equal('childClass');
       expect(dialog.html()).to.equal(
-        '<el class="childClass"><div id="text_undefined_0">' +
+        '<section class="childClass"><div data-react-text="text_undefined_0">' +
           '<include resourcetype="htl/test" ' +
-          'selectors="" path="/content/child1"></include></div></el>'
+          'selectors="" path="/content/child1"></include></div></section>'
       );
     });
   });

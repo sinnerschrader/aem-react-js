@@ -1,16 +1,28 @@
 import {TextPool} from './TextPool';
 
-const reviveFactory = (document: Document) => (key: string, value: any) => {
-  if (!!value && !!value.$innerHTML) {
-    const el = document.getElementById(value.$innerHTML);
-    if (!el) {
-      throw new Error(`cannot find text with id ${value}`);
-    }
+type reviver = (key: string, value: any) => any;
 
-    return el.innerHTML;
+const reviveFactory = (container: Element) => {
+  const elements = container.querySelectorAll('[data-react-text]');
+  const pool: {[id: string]: string} = {};
+  for (let i = 0; i < elements.length; i++) {
+    pool[elements.item(i).getAttribute('data-react-text')] = elements.item(
+      i
+    ).innerHTML;
   }
 
-  return value;
+  return (key: string, value: any) => {
+    if (!!value && !!value.$innerHTML) {
+      const el = pool[value.$innerHTML];
+      if (!el) {
+        throw new Error(`cannot find text with id ${value}`);
+      }
+
+      return el;
+    }
+
+    return value;
+  };
 };
 
 const replaceFactory = (textPool: TextPool) => (key: string, value: any) => {
@@ -24,4 +36,4 @@ const replaceFactory = (textPool: TextPool) => (key: string, value: any) => {
   return value;
 };
 
-export {reviveFactory, replaceFactory};
+export {reviveFactory, replaceFactory, reviver};
