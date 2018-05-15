@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.24.1"></a>
+## [0.24.1](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.24.0...v0.24.1) (2018-05-15)
+
+
+### Bug Fixes
+
+* improve text pooling ([#82](http://www.github.com/sinnerschrader/aem-react-js/issues/82)) ([bba2e39](http://www.github.com/sinnerschrader/aem-react-js/commit/bba2e39))
+
+
+
 <a name="0.24.0"></a>
 # [0.24.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.23.0...v0.24.0) (2018-05-14)
 
