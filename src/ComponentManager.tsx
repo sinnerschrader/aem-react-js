@@ -3,7 +3,7 @@ import * as ReactDom from 'react-dom';
 import {AemContext} from './AemContext';
 import {RootComponentRegistry} from './RootComponentRegistry';
 import {RootComponent} from './component/RootComponent';
-import {reviveFactory} from './component/text/TextUtils';
+import {reviveFactory, reviver} from './component/text/TextUtils';
 import {Container} from './di/Container';
 import {Cache} from './store/Cache';
 
@@ -26,19 +26,11 @@ export interface ReactOptions {
  */
 export class ComponentManager {
   private readonly container: Container;
-  private readonly document: Document;
   private readonly registry: RootComponentRegistry;
-  private readonly reviver: (key: string, value: any) => any;
 
-  public constructor(
-    registry: RootComponentRegistry,
-    container: Container,
-    aDocument?: Document
-  ) {
+  public constructor(registry: RootComponentRegistry, container: Container) {
     this.container = container;
     this.registry = registry;
-    this.document = aDocument || document;
-    this.reviver = reviveFactory(this.document);
   }
 
   /**
@@ -48,6 +40,7 @@ export class ComponentManager {
   public initReactComponent(
     item: Element,
     options: ReactOptions = {},
+    reviverFn: reviver,
     id: string
   ): void {
     let nextItem = item.nextSibling;
@@ -60,10 +53,7 @@ export class ComponentManager {
     const textarea = nextItem as HTMLTextAreaElement;
 
     if (textarea) {
-      const props: ComponentTreeConfig = JSON.parse(
-        textarea.value,
-        this.reviver
-      );
+      const props: ComponentTreeConfig = JSON.parse(textarea.value, reviverFn);
 
       this.container.cache.mergeCache(props.cache);
 
@@ -122,13 +112,12 @@ export class ComponentManager {
   /**
    * find all root elements and initialize the react components
    */
-  public initReactComponents(options?: ReactOptions): number {
-    const items: Element[] = [].slice.call(
-      this.document.querySelectorAll('[data-react]')
-    );
+  public initReactComponents(el: Element, options?: ReactOptions): number {
+    const reviverFn = reviveFactory(el);
+    const items: Element[] = [].slice.call(el.querySelectorAll('[data-react]'));
 
     items.forEach((item: Element, index: number) => {
-      this.initReactComponent(item, options, String(index));
+      this.initReactComponent(item, options, reviverFn, String(index));
     });
 
     return items.length;

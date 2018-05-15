@@ -24,7 +24,7 @@ describe('Text', () => {
     );
 
     expect(item.html()).to.equal(
-      '<span class="test" id="text_root_0"><a>text</a></span>'
+      '<span class="test" data-react-text="text_root_0"><a>text</a></span>'
     );
 
     expect(textPool.getId(text)).to.equal('text_root_0');
@@ -37,7 +37,7 @@ describe('Text', () => {
     };
     const item = enzyme.shallow(
       <Text
-        value="<a>text</a>"
+        value="<a>01234567890123456789</a>"
         element="span"
         className="test"
         context="html"
@@ -48,9 +48,34 @@ describe('Text', () => {
     );
 
     expect(item.html()).to.equal(
-      '<span class="test" id="text_root_0"><a>text</a></span>'
+      '<span class="test" data-react-text="text_root_0">' +
+        '<a>01234567890123456789</a>' +
+        '</span>'
     );
 
-    expect(textPool.getId('<a>text</a>')).to.equal('text_root_0');
+    expect(textPool.getId('<a>01234567890123456789</a>')).to.equal(
+      'text_root_0'
+    );
+  });
+
+  it('should render span with context text without pooling', () => {
+    const textPool = new TextPool();
+    const xssUtils = new JsXssUtils();
+    const aemContext = {
+      container: {textPool, xssUtils}
+    };
+    const item = enzyme.shallow(
+      <Text
+        value="<a>short</a>"
+        element="span"
+        className="test"
+        context="html"
+      />,
+      {
+        context: {aemContext, root: 'root'}
+      }
+    );
+
+    expect(item.html()).to.equal('<span class="test"><a>short</a></span>');
   });
 });
