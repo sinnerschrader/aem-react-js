@@ -7,6 +7,9 @@ import {ComponentRegistry} from '../ComponentRegistry';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {ResourceComponent} from '../component/ResourceComponent';
 
+/*tslint:disable-next-line*/
+import '../test/setup';
+
 describe('RootComponentRegistry', () => {
   class TestView extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {

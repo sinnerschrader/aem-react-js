@@ -20,7 +20,10 @@ export class MockSling extends AbstractSling {
     callback: LoadComponentCallback,
     options?: LoadComponentOptions
   ): void {
-    callback(this.cache.getComponentData(ref.path, ref.selectors));
+    const data = this.cache.getComponentData(ref.path, ref.selectors);
+    if (data) {
+      callback(data);
+    }
   }
 
   public includeResource(

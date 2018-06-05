@@ -65,6 +65,7 @@ describe('ComponentManager', () => {
 
     const registry: any = {
       getComponent: (resourceType: string) => Test,
+      getResourceType: (component: any) => '/components/what',
       rootDecorator: identity
     };
 

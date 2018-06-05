@@ -11,6 +11,9 @@ import {EditDialogData} from '../../store/Sling';
 import {MockSling} from '../../test/MockSling';
 import {EditDialog, EditDialogProps} from '../EditDialog';
 
+/*tslint:disable-next-line*/
+import '../../test/setup';
+
 describe('EditDialog', () => {
   class Wrapper extends React.Component<any, any> {
     public static childContextTypes: any = {

@@ -71,6 +71,18 @@ export class ResourceUtils {
       requestPath.substring(dot, requestPath.length)
     );
   }
+
+  public static isSamePath(path: string): boolean {
+    return path === '.';
+  }
+
+  public static createPath(contextPath: string, path: string): string {
+    return ResourceUtils.isAbsolutePath(path)
+      ? path
+      : ResourceUtils.isSamePath(path)
+        ? contextPath
+        : `${contextPath}/` + String(path);
+  }
 }
 
 export interface PathResult {

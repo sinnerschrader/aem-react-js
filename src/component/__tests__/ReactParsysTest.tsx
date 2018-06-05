@@ -5,7 +5,11 @@ import * as React from 'react';
 import {ComponentRegistry} from '../../ComponentRegistry';
 import {AemTest} from '../../test/AemTest';
 import {ReactParsys} from '../ReactParsys';
-import {ResourceComponent} from '../ResourceComponent';
+import {
+  ComponentData,
+  ResourceComponent,
+  ResourceRef
+} from '../ResourceComponent';
 
 describe('ReactParsys', () => {
   class Text extends ResourceComponent<any, any> {
@@ -32,24 +36,57 @@ describe('ReactParsys', () => {
   aemTest.addRegistry(registry);
   aemTest.init();
 
-  it('should render ReactParsys with a single child', () => {
-    const wrapper = aemTest.render({
-      child_1: {
-        'sling:resourceType': '/components/text',
-        text: 'Hallo'
-      },
-      resourceType: '/components/react-parsys'
-    });
+  const childData: ComponentData = {
+    dialog: {element: 'dialog'},
+    id: {
+      path: '/content/child1',
+      selectors: [],
+      type: '/components/text'
+    },
+    transformData: {
+      text: 'hallo'
+    }
+  };
 
-    expect(wrapper.html()).to.equal(
-      '<div class="dialog"><span>Hallo</span></div>'
-    );
+  const ref: ResourceRef = {
+    path: '/content',
+    selectors: [],
+    type: '/components/react-parsys'
+  };
+
+  it('should render ReactParsys with a single child', () => {
+    const parys: ComponentData = {
+      children: {
+        child1: childData
+      },
+      childrenOrder: ['child1'],
+      dialog: {element: 'dialog'},
+      id: {
+        path: '/content',
+        selectors: [],
+        type: '/components/react-parsys'
+      },
+      transformData: {}
+    };
+    aemTest.addComponentData(parys);
+    aemTest.addComponentData(childData);
+    const wrapper = aemTest.render(null, ref);
+
+    expect(wrapper.html()).to.equal('<dialog><span>hallo</span></dialog>');
   });
 
   it('should render ReactParsys with no children', () => {
-    const wrapper = aemTest.render({
-      resourceType: '/components/react-parsys'
-    });
+    const parys: ComponentData = {
+      dialog: {element: 'dialog'},
+      id: {
+        path: '/content',
+        selectors: [],
+        type: '/components/react-parsys'
+      },
+      transformData: {}
+    };
+    aemTest.addComponentData(parys);
+    const wrapper = aemTest.render(null, ref);
 
     expect(wrapper.html()).to.equal('');
   });

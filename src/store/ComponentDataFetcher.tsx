@@ -61,7 +61,6 @@ export class BaseComponentDataFetcher extends AbstractComponentDataFetcher {
     );
     if (!response || response.status === 404) {
       return {
-        children: [],
         dialog: null,
         id: ref,
         transformData: null

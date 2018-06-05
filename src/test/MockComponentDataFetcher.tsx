@@ -11,6 +11,10 @@ export class MockComponentDataFetcher implements ComponentDataFetcher {
   public async fetch(
     ref: ResourceRef = {path: '/', selectors: [], type: 'test'}
   ): Promise<ComponentData> {
-    return this.json;
+    if (ref === this.json.id) {
+      return this.json;
+    }
+
+    return undefined;
   }
 }

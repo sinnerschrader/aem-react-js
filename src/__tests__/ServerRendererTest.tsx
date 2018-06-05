@@ -10,6 +10,9 @@ import {identity} from '../rootDecorator';
 import {Cache} from '../store/Cache';
 import {LoadComponentCallback, LoadComponentOptions} from '../store/Sling';
 
+/*tslint:disable-next-line*/
+import '../test/setup';
+
 describe('ServerRenderer', () => {
   it('should render component', () => {
     class Test extends ResourceComponent<any, any> {
@@ -35,20 +38,18 @@ describe('ServerRenderer', () => {
         ): void {
           callback({
             dialog: null,
-            transform: {
-              children: [],
-              props
-            }
+            transformData: props
           });
         }
       } as any
     );
 
     const registry: RootComponentRegistry = {
-      rootDecorator: identity,
       getComponent(resourceType: string): any {
         return Test;
-      }
+      },
+      getResourceType: () => 'bullshit',
+      rootDecorator: identity
     } as any;
 
     const renderer: ServerRenderer = new ServerRenderer(registry, container);

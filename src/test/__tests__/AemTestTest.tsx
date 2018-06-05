@@ -33,10 +33,14 @@ describe('AemTest', () => {
   aemTest.init();
 
   it('should render Text', () => {
-    const wrapper = aemTest.render({
-      resourceType: '/components/text',
-      text: 'Hallo'
-    });
+    const wrapper = aemTest.render(
+      {text: 'Hallo'},
+      {
+        path: '/content/test',
+        selectors: [],
+        type: '/components/text'
+      }
+    );
 
     expect(wrapper.html()).to.equal('Hallo');
   });

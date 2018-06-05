@@ -23,11 +23,11 @@ export class ClientSling extends AbstractSling {
     this.fetcher = fetcher;
   }
 
-  public loadComponent(
+  public async loadComponent(
     ref: ResourceRef,
     callback: LoadComponentCallback,
     options?: LoadComponentOptions
-  ): void {
+  ): Promise<void> {
     if (options && options.skipData) {
       callback({});
 
@@ -39,7 +39,8 @@ export class ClientSling extends AbstractSling {
       this.fetcher
         .fetch(ref)
         .then((json: ComponentData): void => {
-          callback(this.cache.putComponentData(json));
+          this.cache.putComponentData(json);
+          callback(json);
         })
         .catch(e => {
           console.error(e);

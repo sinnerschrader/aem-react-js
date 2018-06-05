@@ -58,6 +58,7 @@ export class Cache {
   public constructor() {
     this.included = {};
     this.serviceCalls = {};
+    this.componentData = {};
   }
 
   public generateServiceCacheKey(

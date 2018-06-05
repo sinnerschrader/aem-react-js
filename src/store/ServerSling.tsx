@@ -1,3 +1,4 @@
+import {RootComponentRegistry} from '../RootComponentRegistry';
 import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 import {Cache} from './Cache';
 import {
@@ -7,6 +8,13 @@ import {
   LoadComponentCallback,
   LoadComponentOptions
 } from './Sling';
+import {JavaApiFactory} from './javaApiFactory';
+
+export interface ContainerExporter {
+  exportedItems?: {[key: string]: ContainerExporter};
+  exportedItemsOrder?: string[];
+  exportedType: string;
+}
 
 export interface JavaSling {
   includeResource(
@@ -18,6 +26,7 @@ export interface JavaSling {
   ): string;
   currentResource(depth: number): any;
   getResource(path: string, depth: number): any;
+  getModel(resourceType: string, selectors: string): any;
   renderDialogScript(path: string, resourceType: string): string;
   getPagePath(): string;
 }
@@ -25,12 +34,21 @@ export interface JavaSling {
 export class ServerSling extends AbstractSling {
   private readonly sling: JavaSling;
   private readonly cache: Cache;
+  private readonly registry: RootComponentRegistry;
+  private readonly apiFactory: JavaApiFactory;
 
-  public constructor(cache: Cache, sling: JavaSling) {
+  public constructor(options: {
+    cache: Cache;
+    javaSling: JavaSling;
+    registry: RootComponentRegistry;
+    apiFactory: JavaApiFactory;
+  }) {
     super();
 
-    this.cache = cache;
-    this.sling = sling;
+    this.cache = options.cache;
+    this.sling = options.javaSling;
+    this.registry = options.registry;
+    this.apiFactory = options.apiFactory;
   }
 
   public loadComponent(
@@ -51,19 +69,12 @@ export class ServerSling extends AbstractSling {
 
   public getComponentData(
     ref: ResourceRef,
-    options?: LoadComponentOptions
+    options: LoadComponentOptions = {}
   ): ComponentData {
-    const {path, type} = ref;
-    const data: ComponentData = {
-      children: [],
-      dialog: this.getDialog(path, type),
-      id: ref,
-      transformData: this.getTransform(path)
-    };
+    const data = this.getTransform(ref, !!options.skipData);
 
-    const skipData = !!options.skipData;
-    if (!skipData) {
-      this.cache.putComponentData(data);
+    if (!data) {
+      return null;
     }
 
     return data;
@@ -107,12 +118,86 @@ export class ServerSling extends AbstractSling {
     return this.sling.getPagePath();
   }
 
-  private getTransform(path: string): any {
-    const transform = JSON.parse(this.sling.getResource(path, 0));
-    if (!transform) {
-      return {};
+  private getTransform(ref: ResourceRef, cache: boolean): ComponentData {
+    const dialog = this.getDialog(ref.path, ref.type);
+    const transform = this.registry.getTransform(ref.type, ref.selectors);
+    if (transform) {
+      const transformData = transform(this.apiFactory(ref.path, ref.selectors));
+
+      const cdata = {
+        dialog,
+        id: ref,
+        transformData
+      };
+      if (cache) {
+        this.cache.putComponentData(cdata);
+      }
+
+      return cdata;
+    }
+    const data: ContainerExporter = JSON.parse(
+      // todo remove join
+      // may or may not return children
+      this.sling.getModel(ref.path, ref.selectors.join('.'))
+    );
+    if (!data) {
+      return null;
     }
 
-    return transform;
+    const children = this.tranformsModelToComponentData(
+      data,
+      ref.path,
+      ref.selectors,
+      cache
+    );
+    const child = {
+      children,
+      childrenOrder: data.exportedItemsOrder,
+      dialog,
+      id: ref,
+      transformData: data
+    };
+    if (cache) {
+      this.cache.putComponentData(child);
+    }
+
+    return child;
+  }
+
+  private tranformsModelToComponentData(
+    exporter: ContainerExporter,
+    path: string,
+    selectors: string[],
+    cache: boolean
+  ): {[key: string]: ComponentData} {
+    const children: {[key: string]: ComponentData} = {};
+    if (exporter.exportedItems) {
+      exporter.exportedItemsOrder.forEach((key: string) => {
+        const subPath = `${path}/${key}`;
+        const childDialog = this.getDialog(path, selectors.join('.'));
+        const item = exporter.exportedItems[key];
+
+        const child = {
+          children: this.tranformsModelToComponentData(
+            item,
+            subPath,
+            selectors,
+            cache
+          ),
+          dialog: childDialog,
+          id: {
+            path: subPath,
+            selectors: [] as string[],
+            type: item.exportedType
+          },
+          transformData: item
+        };
+        this.cache.putComponentData(child);
+
+        children[key] = child;
+      });
+    }
+
+    return children;
   }
 }

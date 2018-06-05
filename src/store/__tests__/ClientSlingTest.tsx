@@ -6,7 +6,6 @@ import {MockComponentDataFetcher} from '../../test/MockComponentDataFetcher';
 import {Cache} from '../Cache';
 import {ClientSling} from '../ClientSling';
 import {LoadComponentCallback} from '../Sling';
-import {PartialCache} from '../ComponentDataFetcher';
 
 describe('ClientSling', () => {
   it('should include resource', () => {
@@ -26,23 +25,8 @@ describe('ClientSling', () => {
     expect(actualHtml).to.equal(html);
   });
 
-  xit('should include dialog', () => {
-    // const dialog: EditDialogData = {element: 'el'};
-    // const cache = new Cache();
-    // const sling = new ClientSling(cache, null);
-    //
-    // cache.putScript('/test', dialog);
-    //
-    // // const actualDialog: EditDialogData = sling.getDialog(
-    // //   '/test',
-    // //   '/component/test'
-    // // );
-    //
-    // expect(actualDialog).to.deep.equal(dialog);
-  });
-
   it('should load cached component data', async () => {
-    const resource = {};
+    const transformData = {x: 1};
     const cache = new Cache();
     const sling = new ClientSling(cache, null);
     const path = '/test';
@@ -51,42 +35,50 @@ describe('ClientSling', () => {
       selectors: [],
       type: '/test'
     };
-    cache.put(ref, resource);
+    cache.putComponentData({
+      dialog: {element: 'div'},
+      id: ref,
+      transformData
+    });
 
     let actualResource: any;
     let actualPath: string;
 
     const callback: LoadComponentCallback = (_data: ComponentData) => {
-      actualResource = _data.transformData.props;
+      actualResource = _data.transformData;
       actualPath = path;
     };
 
-    sling.loadComponent(ref, callback);
+    await sling.loadComponent(ref, callback);
     expect(actualPath).to.equal(path);
-    expect(actualResource).to.equal(resource);
+    expect(actualResource).to.equal(transformData);
   });
 
   it('should load component data and put them in cache', async () => {
-    const resource: PartialCache = {};
+    const transformData = {x: 2};
     const cache = new Cache();
-    const fetcher = new MockComponentDataFetcher(resource);
-    const sling = new ClientSling(cache, fetcher);
 
     const path = '/test';
-
-    let actualResource: any;
-
-    const callback: LoadComponentCallback = (_data: ComponentData) => {
-      actualResource = _data.transformData.props;
-    };
-
     const ref: ResourceRef = {
       path,
       selectors: [],
       type: 'testType'
     };
 
-    sling.loadComponent(ref, callback);
-    expect(actualResource).to.deep.equal(resource);
+    const fetcher = new MockComponentDataFetcher({
+      dialog: {element: 'div'},
+      id: ref,
+      transformData
+    });
+    const sling = new ClientSling(cache, fetcher);
+
+    let actualResource: any;
+
+    const callback: LoadComponentCallback = (_data: ComponentData) => {
+      actualResource = _data.transformData;
+    };
+
+    await sling.loadComponent(ref, callback);
+    expect(actualResource).to.deep.equal(transformData);
   });
 });
