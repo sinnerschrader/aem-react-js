@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom/server';
+import { ServerStyleSheet, StyleSheetManager } from 'styled-components';
 import {AemContext} from './AemContext';
 import {RootComponentRegistry} from './RootComponentRegistry';
 import {RootComponent} from './component/RootComponent';
@@ -11,6 +12,7 @@ export interface ServerResponse {
   readonly html: string;
   readonly state: string;
   readonly reactContext: any;
+  readonly styles: string;
 }
 
 export interface ReactContext {
@@ -50,27 +52,32 @@ export class ServerRenderer {
 
     // TODO we must safe this value in reactContext and increment it everytime
     const id = String(reactContext.rootNo);
+    const sheet = new ServerStyleSheet();
 
     const root: JSX.Element = this.registry.rootDecorator(
-      <RootComponent
-        aemContext={ctx}
-        component={component}
-        id={id}
-        path={path}
-        wcmmode={wcmmode}
-        selectors={selectors}
-        renderRootDialog={!!renderAsJson}
-      />
+      <StyleSheetManager sheet={sheet.instance}>
+        <RootComponent
+          aemContext={ctx}
+          component={component}
+          id={id}
+          path={path}
+          wcmmode={wcmmode}
+          selectors={selectors}
+          renderRootDialog={!!renderAsJson}
+        />
+      </StyleSheetManager>
     );
 
     const html: string = ReactDom.renderToString(root);
+    const styles: string = sheet.getStyleTags();
+
     const state = renderAsJson
       ? JSON.stringify(this.container.cache.getFullState())
       : JSON.stringify(
-          this.container.cache.getFullState(),
-          replaceFactory(this.container.textPool)
-        );
+        this.container.cache.getFullState(),
+        replaceFactory(this.container.textPool)
+      );
 
-    return {html, state, reactContext};
+    return {html, state, reactContext, styles};
   }
 }
