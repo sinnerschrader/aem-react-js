@@ -11,6 +11,7 @@ export interface ServerResponse {
   readonly html: string;
   readonly state: string;
   readonly reactContext: any;
+  readonly styles: string;
 }
 
 export interface ReactContext {
@@ -64,6 +65,7 @@ export class ServerRenderer {
     );
 
     const html: string = ReactDom.renderToString(root);
+
     const state = renderAsJson
       ? JSON.stringify(this.container.cache.getFullState())
       : JSON.stringify(
@@ -71,6 +73,6 @@ export class ServerRenderer {
           replaceFactory(this.container.textPool)
         );
 
-    return {html, state, reactContext};
+    return {html, state, reactContext, styles: ''};
   }
 }
