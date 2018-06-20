@@ -6,9 +6,9 @@ import {ServiceProxyImpl} from '../di/ServiceProxyImpl';
 import {XssApi} from '../xss/XssApi';
 
 export class JavaApiImpl implements JavaApi {
+  protected readonly selectors: string[];
   private readonly container: Container;
   private readonly path: string;
-  private readonly selectors: string[];
 
   public constructor(path: string, selectors: string[], container: Container) {
     this.path = path;

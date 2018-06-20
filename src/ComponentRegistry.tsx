@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Mapping} from './RootComponentRegistry';
-import {WrapperFactory} from './component/WrapperFactory';
-import {ComponentConfig} from './component/WrapperFactory';
+import {ComponentConfig, WrapperFactory} from './component/WrapperFactory';
 
 function mapClassToResourceType(componentClassName: string): string {
   const parts: string[] = componentClassName.match(/([A-Z][a-z0-9]*)/);

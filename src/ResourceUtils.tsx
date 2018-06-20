@@ -5,7 +5,7 @@ export class ResourceUtils {
    * returns only the properties of the given object
    * whoe have a property named sling:resourceType
    * @param resource the resource
-   * @returns {any} the sub object
+   * @returns the sub object
    */
   public static getChildren(resource: any): any {
     const children: any = {};

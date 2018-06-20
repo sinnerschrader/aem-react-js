@@ -15,7 +15,7 @@ enzyme.configure({adapter: new Adapter()});
 export class AemTest {
   public currentAemContext: AemContext;
 
-  private registry: RootComponentRegistry = new RootComponentRegistry();
+  private readonly registry: RootComponentRegistry = new RootComponentRegistry();
 
   public init(): void {
     this.registry.init();

@@ -23,7 +23,6 @@ export class CachedServiceProxy implements ServiceProxy {
    *
    * @param name of java method to call
    * @param args to java method
-   * @returns {T}
    */
   public invoke<T>(method: string, ...args: any[]): T {
     const cacheKey: string = this.cache.generateServiceCacheKey(

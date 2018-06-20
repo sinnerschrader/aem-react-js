@@ -78,12 +78,6 @@ export class Wrapper<E extends object> extends ResourceComponent<
 }
 
 export class WrapperFactory {
-  /**
-   *
-   * @param config
-   * @param resourceType
-   * @return {TheWrapper}
-   */
   public static createWrapper<E extends object>(
     config: ComponentConfig,
     resourceType: string

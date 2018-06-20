@@ -2,7 +2,7 @@ import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 import {ComponentDataFetcher} from '../store/ComponentDataFetcher';
 
 export class MockComponentDataFetcher implements ComponentDataFetcher {
-  private json: ComponentData;
+  private readonly json: ComponentData;
 
   public constructor(componentData: ComponentData) {
     this.json = componentData;

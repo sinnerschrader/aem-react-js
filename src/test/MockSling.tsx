@@ -7,7 +7,7 @@ import {
 } from '../store/Sling';
 
 export class MockSling extends AbstractSling {
-  private cache: Cache;
+  private readonly cache: Cache;
 
   public constructor(cache: Cache) {
     super();

@@ -1,7 +1,7 @@
 export class TextPool {
-  private map: {[key: string]: string} = Object.create(null);
+  private readonly map: {[key: string]: string} = Object.create(null);
 
-  private ids: {[root: string]: number} = {};
+  private readonly ids: {[root: string]: number} = {};
 
   private readonly prefix: string = 'text_';
 

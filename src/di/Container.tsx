@@ -54,7 +54,6 @@ export class Container {
 
   /**
    * @param name Fully qualified java class name
-   * @returns {ServiceProxy}
    */
   public getOsgiService(name: string): ServiceProxy {
     return this.getServiceProxy(arguments, () => {
@@ -69,7 +68,6 @@ export class Container {
   /**
    * Get a sling model adapted from request
    * @param name fully qualified java class name
-   * @returns {ServiceProxy}
    */
   public getRequestModel(
     path: string,
@@ -88,7 +86,6 @@ export class Container {
   /**
    * Get a sling model adapted from current resource
    * @param name fully qualified java class name
-   * @returns {ServiceProxy}
    */
   public getResourceModel(
     path: string,

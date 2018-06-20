@@ -1,19 +1,9 @@
 /* tslint:disable no-unused-expression */
 
 import {expect} from 'chai';
-import {ResourceRef} from '../../component/ResourceComponent';
 import {Cache} from '../Cache';
 
 describe('Cache', () => {
-  let ref: ResourceRef;
-  beforeEach(() => {
-    ref = {
-      path: '/content',
-      selectors: [],
-      type: 'testType'
-    };
-  });
-
   it('should create a cache key that resembles the method invocation', () => {
     const cache = new Cache();
 
@@ -59,11 +49,6 @@ describe('Cache', () => {
 
   it('should clear cache', () => {
     const cache = new Cache();
-    ref = {
-      path: '/content',
-      selectors: [],
-      type: 'testType'
-    };
 
     cache.putIncluded('incl', [], 'value');
 

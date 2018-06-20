@@ -198,6 +198,7 @@ export class Cache {
   public clear(): void {
     this.included = {};
     this.serviceCalls = {};
+    this.componentData = {};
   }
 
   private createIncludedKey(

@@ -1,4 +1,5 @@
 import * as React from 'react';
+/*tslint:disable-next-line */
 import {HTMLAttributes} from 'react';
 import {Context} from '../../xss/XssUtils';
 import {AemComponent} from '../AemComponent';

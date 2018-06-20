@@ -141,7 +141,7 @@ describe('ResourceComponent', () => {
     const itemx = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        component={Test}
+        component={Test as any}
         path="/content/notfound"
         selectors={[]}
       />
@@ -179,7 +179,7 @@ describe('ResourceComponent', () => {
     const itemx = ReactTestUtils.renderIntoDocument(
       <RootComponent
         aemContext={{container, registry}}
-        component={Embedded}
+        component={Embedded as any}
         path="/content/embed"
         selectors={[]}
       />
@@ -257,7 +257,7 @@ describe('ResourceComponent', () => {
       <RootComponent
         wcmmode="disabled"
         aemContext={{container, registry}}
-        component={createContainer('child', 'div')}
+        component={createContainer('child', 'div') as any}
         path="/content"
         selectors={[]}
       />

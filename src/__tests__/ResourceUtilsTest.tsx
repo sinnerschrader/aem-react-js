@@ -1,8 +1,7 @@
 /* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
-import {ResourceUtils} from '../ResourceUtils';
-import {PathResult} from '../ResourceUtils';
+import {PathResult, ResourceUtils} from '../ResourceUtils';
 
 describe('ResourceUtils', () => {
   it('should return the containing page path', () => {

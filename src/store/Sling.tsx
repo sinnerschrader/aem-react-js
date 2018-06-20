@@ -63,10 +63,6 @@ export interface Sling {
 
   /**
    * Include a component's html.
-   * @param path
-   * @param resourceType
-   * @param selectors
-   * @param options
    */
   includeResource(
     path: string,

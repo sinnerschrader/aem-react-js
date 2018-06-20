@@ -7,6 +7,7 @@ import {ComponentRegistry} from '../../ComponentRegistry';
 import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
 import {Cache} from '../../store/Cache';
+import {EditDialogData} from '../../store/Sling';
 import {MockSling} from '../../test/MockSling';
 import {
   ComponentData,
@@ -19,7 +20,6 @@ import {WrapperFactory} from '../WrapperFactory';
 
 /*tslint:disable-next-line*/
 import '../../test/setup';
-import {EditDialogData} from '../../store/Sling';
 
 const DIALOG: EditDialogData = {
   attributes: {className: 'dialog'},
@@ -180,7 +180,7 @@ describe('WrapperFactory', () => {
     const item = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        component={MyTest}
+        component={MyTest as any}
         path="/test"
         selectors={[]}
       />
@@ -238,7 +238,7 @@ describe('WrapperFactory', () => {
     const item = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        component={MyTest}
+        component={MyTest as any}
         path="/test"
         selectors={[]}
       />
