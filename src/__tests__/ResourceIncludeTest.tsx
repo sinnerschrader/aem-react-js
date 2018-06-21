@@ -4,6 +4,7 @@ import {expect} from 'chai';
 import * as React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {ResourceInclude} from '../ResourceInclude';
+import {Props} from '../compatibility/Props';
 import {ResourceComponent, ResourceRef} from '../component/ResourceComponent';
 import {AemTest} from '../test/AemTest';
 
@@ -65,21 +66,23 @@ describe('ResourceInclude', () => {
     }
   }
 
-  class Text extends React.Component<any, any> {
+  class Text extends React.Component<Props<{text: string; className: string}>> {
     public render(): React.ReactElement<any> {
       return (
-        <span className={this.props.className}>
-          {this.props.text}
+        <span className={this.props.model.className}>
+          {this.props.model.text}
         </span>
       );
     }
   }
 
-  class Text2 extends React.Component<any, any> {
+  class Text2 extends React.Component<
+    Props<{text: string; className: string}>
+  > {
     public render(): React.ReactElement<any> {
       return (
-        <div className={this.props.className}>
-          {this.props.text}
+        <div className={this.props.model.className}>
+          {this.props.model.text}
         </div>
       );
     }

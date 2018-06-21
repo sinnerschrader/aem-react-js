@@ -1,7 +1,12 @@
 import * as React from 'react';
+import {Props} from '../compatibility/Props';
 import {JavaApi} from './JavaApi';
 import {ReactParsysProps} from './ReactParsys';
-import {ResourceComponent, ResourceProps} from './ResourceComponent';
+import {
+  ComponentData,
+  ResourceComponent,
+  ResourceProps
+} from './ResourceComponent';
 
 export type TransformFunc = (api: JavaApi) => any;
 
@@ -23,6 +28,25 @@ export interface WrapperProps<E extends object> extends ResourceProps {
   readonly extraProps: E;
 }
 
+const transformChildren = (children: {[key: string]: ComponentData}) => {
+  if (!children) {
+    return undefined;
+  }
+
+  const items: {[key: string]: Props<{}>} = {};
+
+  Object.keys(children).forEach((key: string) => {
+    const data = children[key];
+    items[key] = {
+      resourceType: data.id.type,
+      model: data,
+      dataPath: data.id.path
+    };
+  });
+
+  return items;
+};
+
 export class Wrapper<E extends object> extends ResourceComponent<
   WrapperProps<E>,
   any
@@ -35,30 +59,25 @@ export class Wrapper<E extends object> extends ResourceComponent<
     this.config = config;
   }
 
-  public create(data: object): React.ReactElement<any> {
-    let children: JSX.Element[];
-
-    if (this.config.parsysFactory) {
-      children = this.config.parsysFactory(this, data);
-    } else if (!!this.config.parsys) {
-      children = this.renderChildren(
-        this.config.parsys.path,
-        this.config.parsys.childClassName,
-        this.config.parsys.childElementName,
-        this.config.parsys.includeOptions
-      );
-    }
-
-    const finalProps: any = {
+  public create(data: ComponentData): React.ReactElement<any> {
+    const model: any = {
       ...this.config.props,
-      ...data,
+      ...data.transformData,
       ...this.props.extraProps as any
     };
 
-    return React.createElement(this.config.component, finalProps, children);
+    const finalProps: Props<{}> = {
+      itemsOrder: data.childrenOrder,
+      items: transformChildren(data.children),
+      resourceType: data.id.type,
+      dataPath: data.id.path,
+      model
+    };
+
+    return React.createElement(this.config.component, finalProps);
   }
 
-  public renderBody(data: object): React.ReactElement<any> {
+  public renderBody(data: ComponentData): React.ReactElement<any> {
     return this.create(data);
   }
 

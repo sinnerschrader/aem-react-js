@@ -42,9 +42,13 @@
     "@types/enzyme-adapter-react-16": "1.0.0",
     "@types/jsdom": "11.0.0",
     "@types/mocha": "2.2.41",
-    "@types/prop-types": "15.5.2",
-    "@types/react": "16.0.18",
-    "@types/react-dom": "16.0.2",
+    "@types/prop-types": "15.5.3",
+    "@types/react": "16.4.1",
+    "@types/react-dom": "16.0.6",
+    "react": "16.4.1",
+    "react-dom": "16.4.1",
+    "@adobe/cq-react-editable-components": "0.0.28",
+    "prop-types": "15.6.2",
     "chai": "4.0.2",
     "codecov": "2.2.0",
     "commitizen": "2.9.6",
@@ -70,14 +74,15 @@
     "typescript": "2.8.1"
   },
   "dependencies": {
-    "prop-types": "15.6.2",
-    "react": "16.4.1",
-    "react-dom": "16.4.1",
     "xss": "0.3.4"
   },
   "peerDependencies": {
-    "@types/react": "16.0.18",
-    "@types/react-dom": "16.0.2"
-  },
-  "false": {}
+    "@adobe/cq-react-editable-components": "0.0.28",
+    "@types/prop-types": "15.5.3",
+    "prop-types": "15.6.2",
+    "react": "16.4.1",
+    "react-dom": "16.4.1",
+    "@types/react": "16.4.1",
+    "@types/react-dom": "16.0.6"
+  }
 }

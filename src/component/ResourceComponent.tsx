@@ -149,9 +149,9 @@ export abstract class ResourceComponent<
     if (this.loadingState === STATE.LOADING) {
       return this.renderLoading();
     } else if (!!this.props.skipRenderDialog) {
-      return this.renderBody(this.componentData.transformData);
+      return this.renderBody(this.componentData);
     } else {
-      child = this.renderBody(this.componentData.transformData);
+      child = this.renderBody(this.componentData);
     }
 
     return (
@@ -168,7 +168,7 @@ export abstract class ResourceComponent<
     return this.context.aemContext.registry;
   }
 
-  public abstract renderBody(data: any): React.ReactElement<any>;
+  public abstract renderBody(data: ComponentData): React.ReactElement<any>;
 
   public getTransformData(): any {
     return this.componentData.transformData;
