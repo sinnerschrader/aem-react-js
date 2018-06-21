@@ -4,7 +4,8 @@ import {expect} from 'chai';
 import * as React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {ResourceInclude} from '../ResourceInclude';
-import {ResourceComponent} from '../component/ResourceComponent';
+import {Props} from '../compatibility/Props';
+import {ResourceComponent, ResourceRef} from '../component/ResourceComponent';
 import {AemTest} from '../test/AemTest';
 
 describe('ResourceInclude', () => {
@@ -117,13 +118,7 @@ describe('ResourceInclude', () => {
     aemTest.addResource(childRef, {text: 'hallo'});
     const wrapper = aemTest.render({x: 1}, ref);
 
-    expect(wrapper.html()).to.equal(
-      '<div data-react-text="text_root_0">' +
-        '<include resourcetype="/components/something" ' +
-        'selectors="" path="//embed">' +
-        '</include>' +
-        '</div>'
-    );
+    expect(wrapper.html()).to.equal('<dialog><span>hallo</span></dialog>');
   });
 
   it('should render included vanilla resource', () => {
@@ -147,15 +142,18 @@ describe('ResourceInclude', () => {
       '<dialog><span class="myClass">hallo</span></dialog>'
     );
   });
-
+  /*
   it('should render included vanilla resource with unknown selectors', () => {
     const wrapper = aemTest.render(
       {
         embed: {text: 'hallo', className: 'myClass'},
         resourceType: '/components/test2'
       },
-      '/content',
-      ['x', 'y']
+      {
+        path: '/content',
+        selectors: ['x', 'y'],
+        type: '/components/test2'
+      }
     );
 
     expect(wrapper.html()).to.equal(
@@ -172,8 +170,11 @@ describe('ResourceInclude', () => {
           embed: {text: 'hallo', className: 'myClass'},
           resourceType: '/components/test2'
         },
-        '/content',
-        ['mobile']
+        {
+          path: '/content',
+          type: '/components/test2',
+          selectors: ['mobile']
+        }
       );
 
       expect(wrapper.html()).to.equal(
@@ -191,8 +192,11 @@ describe('ResourceInclude', () => {
           embed: {text: 'hallo', className: 'myClass'},
           resourceType: '/components/test3'
         },
-        '/content',
-        ['x']
+        {
+          path: '/content',
+          type: '/components/test3',
+          selectors: ['x']
+        }
       );
 
       expect(wrapper.html()).to.equal(
@@ -210,8 +214,11 @@ describe('ResourceInclude', () => {
           embed: {text: 'hallo', className: 'myClass'},
           resourceType: '/components/test4'
         },
-        '/content',
-        ['x']
+        {
+          path: '/content',
+          type: '/components/test4',
+          selectors: ['x']
+        }
       );
 
       expect(wrapper.html()).to.equal(
@@ -219,4 +226,5 @@ describe('ResourceInclude', () => {
       );
     }
   );
+  */
 });
