@@ -1,13 +1,10 @@
 /* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
-import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {ComponentData, ResourceRef} from '../../component/ResourceComponent';
-import {TransformFunc} from '../../component/WrapperFactory';
 import {Cache} from '../Cache';
 import {JavaSling, ServerSling} from '../ServerSling';
 import {EditDialogData, LoadComponentCallback} from '../Sling';
-import {JavaApiFactory} from '../javaApiFactory';
 
 describe('ServerSling', () => {
   it('should include resource', () => {
@@ -25,14 +22,10 @@ describe('ServerSling', () => {
         return html;
       }
     };
-    const apiFactory = {};
-    const registry = {};
 
     const sling: ServerSling = new ServerSling({
-      apiFactory: apiFactory as JavaApiFactory,
       cache,
-      javaSling: javaSling as JavaSling,
-      registry: registry as RootComponentRegistry
+      javaSling: javaSling as JavaSling
     });
     const actualHtml = sling.includeResource(
       '/test',
@@ -66,18 +59,9 @@ describe('ServerSling', () => {
       }
     };
 
-    const apiFactory = {};
-    const registry: Partial<RootComponentRegistry> = {
-      getTransform(): TransformFunc {
-        return null;
-      }
-    };
-
     const sling: ServerSling = new ServerSling({
-      apiFactory: apiFactory as JavaApiFactory,
       cache,
-      javaSling: javaSling as JavaSling,
-      registry: registry as RootComponentRegistry
+      javaSling: javaSling as JavaSling
     });
 
     const callback: LoadComponentCallback = (data: ComponentData): void => {
@@ -121,18 +105,9 @@ describe('ServerSling', () => {
       }
     };
 
-    const apiFactory = {};
-    const registry: Partial<RootComponentRegistry> = {
-      getTransform(): TransformFunc {
-        return null;
-      }
-    };
-
     const sling: ServerSling = new ServerSling({
-      apiFactory: apiFactory as JavaApiFactory,
       cache,
-      javaSling: javaSling as JavaSling,
-      registry: registry as RootComponentRegistry
+      javaSling: javaSling as JavaSling
     });
 
     const callback: LoadComponentCallback = (data: ComponentData): void => {
@@ -199,14 +174,9 @@ describe('ServerSling', () => {
       }
     };
 
-    const apiFactory = {};
-    const registry = {};
-
     const sling: ServerSling = new ServerSling({
-      apiFactory: apiFactory as JavaApiFactory,
       cache,
-      javaSling: javaSling as JavaSling,
-      registry: registry as RootComponentRegistry
+      javaSling: javaSling as JavaSling
     });
 
     const actualDialog: EditDialogData = sling.getDialog(
@@ -226,15 +196,11 @@ describe('ServerSling', () => {
       }
     };
 
-    const apiFactory = {};
     const cache = {};
-    const registry = {};
 
     const sling: ServerSling = new ServerSling({
-      apiFactory: apiFactory as JavaApiFactory,
       cache: cache as Cache,
-      javaSling: javaSling as JavaSling,
-      registry: registry as RootComponentRegistry
+      javaSling: javaSling as JavaSling
     });
     const actualPath: string = sling.getRequestPath();
 

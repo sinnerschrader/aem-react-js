@@ -1,22 +1,39 @@
 import * as React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
-import {ResourceInclude} from '../ResourceInclude';
+import {IncludeProps, ResourceInclude} from '../ResourceInclude';
 import {RootComponentRegistry} from '../RootComponentRegistry';
-import {Props} from '../compatibility/Props';
-import {Config} from './Registry';
+import {Config, Registry} from './Registry';
 
-export const rootRegistry = new RootComponentRegistry();
+export const initAemReact = (rootRegistry: RootComponentRegistry) => {
+  const registerFn = (type: string, options: Config<{}>) => {
+    const registry = new ComponentRegistry((name: string) => name);
+    registry.registerVanilla({
+      component: options.componentClass,
+      shortName: type
+    });
+    rootRegistry.add(registry);
+  };
 
-export const registerFn = (resourceType: string, config: Config<{}>) => {
-  const registry = new ComponentRegistry((name: string) => resourceType);
-  rootRegistry.add(registry);
-};
+  // const renderChildrenFn = (nodeName: string, model: {}) => JSX.Element[];
 
-export const defaultChildTransform = (
-  nodeName: string,
-  childModel: Props<{}>
-) => {
-  const type = childModel.resourceType;
+  class DndContainer extends React.Component<IncludeProps> {
+    public render(): JSX.Element {
+      return (
+        <ResourceInclude
+          path={this.props.path}
+          resourceType={this.props.resourceType}
+        />
+      );
+    }
+  }
 
-  return <ResourceInclude key={nodeName} resourceType={type} path={nodeName} />;
+  const r = new Registry();
+  r.init({
+    include: ResourceInclude,
+    register: registerFn,
+    dndContainer: DndContainer,
+    isInEditor: null
+  });
+
+  return r;
 };

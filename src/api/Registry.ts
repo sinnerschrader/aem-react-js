@@ -14,30 +14,43 @@ export interface Include extends React.Component<IncludeProps> {}
 
 export type RegisterFn = (resourceType: string, config: Config<{}>) => void;
 
+export type includeFn = (path: string, resourceType: string) => JSX.Element;
+
 export type RenderChildrenFn = (
   nodeName: string,
   props: CqModel
 ) => JSX.Element[];
 
 export interface RegistryConfig {
-  renderChildren: RenderChildrenFn;
-  include: React.ComponentClass<Include>;
+  // renderChildren: RenderChildrenFn;
+  include: React.ComponentClass<IncludeProps>;
   register: RegisterFn;
+  dndContainer: React.ComponentClass<IncludeProps>;
+  isInEditor(): boolean;
 }
 
 export class Registry {
-  public static Include: Include;
-  public static init(config: RegistryConfig): void {
-    Registry.config = config;
+  private config: RegistryConfig;
+  private inEditor: boolean = false;
+  public get include(): React.ComponentClass<IncludeProps> {
+    return this.config.include;
   }
-  public static register(resourceType: string, config: Config<{}>): void {
-    Registry.config.register(resourceType, config);
+  public get dndContainer(): React.ComponentClass<IncludeProps> {
+    return this.config.dndContainer;
   }
-  public static renderChildren(
-    nodeName: string,
-    model: CqModel
-  ): JSX.Element[] {
-    return Registry.config.renderChildren(nodeName, model);
+  public init(config: RegistryConfig): void {
+    this.config = config;
   }
-  private static config: RegistryConfig;
+  public isInEditor(): boolean {
+    return this.config.isInEditor ? this.config.isInEditor() : this.inEditor;
+  }
+  public register(resourceType: string, config: Config<{}>): void {
+    this.config.register(resourceType, config);
+  }
+  public setIsInEditor(isInEditor: boolean): void {
+    this.inEditor = isInEditor;
+  }
+  // public renderChildren(nodeName: string, model: CqModel): JSX.Element[] {
+  //   return this.config.renderChildren(nodeName, model);
+  // }
 }

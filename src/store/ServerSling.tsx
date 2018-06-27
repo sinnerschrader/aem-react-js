@@ -1,4 +1,3 @@
-import {RootComponentRegistry} from '../RootComponentRegistry';
 import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 import {Cache} from './Cache';
 import {
@@ -8,7 +7,6 @@ import {
   LoadComponentCallback,
   LoadComponentOptions
 } from './Sling';
-import {JavaApiFactory} from './javaApiFactory';
 
 export interface ContainerExporter {
   exportedItems?: {[key: string]: ContainerExporter};
@@ -26,7 +24,7 @@ export interface JavaSling {
   ): string;
   currentResource(depth: number): any;
   getResource(path: string, depth: number): any;
-  getModel(resourceType: string, selectors: string): any;
+  getModel(path: string): any;
   renderDialogScript(path: string, resourceType: string): string;
   getPagePath(): string;
 }
@@ -34,21 +32,12 @@ export interface JavaSling {
 export class ServerSling extends AbstractSling {
   private readonly sling: JavaSling;
   private readonly cache: Cache;
-  private readonly registry: RootComponentRegistry;
-  private readonly apiFactory: JavaApiFactory;
 
-  public constructor(options: {
-    cache: Cache;
-    javaSling: JavaSling;
-    registry: RootComponentRegistry;
-    apiFactory: JavaApiFactory;
-  }) {
+  public constructor(options: {cache: Cache; javaSling: JavaSling}) {
     super();
 
     this.cache = options.cache;
     this.sling = options.javaSling;
-    this.registry = options.registry;
-    this.apiFactory = options.apiFactory;
   }
 
   public loadComponent(
@@ -71,7 +60,7 @@ export class ServerSling extends AbstractSling {
     ref: ResourceRef,
     options: LoadComponentOptions = {}
   ): ComponentData {
-    const data = this.getTransform(ref, !!options.skipData);
+    const data = this.getTransform(ref, true);
 
     if (!data) {
       return null;
@@ -120,25 +109,11 @@ export class ServerSling extends AbstractSling {
 
   private getTransform(ref: ResourceRef, cache: boolean): ComponentData {
     const dialog = this.getDialog(ref.path, ref.type);
-    const transform = this.registry.getTransform(ref.type, ref.selectors);
-    if (transform) {
-      const transformData = transform(this.apiFactory(ref.path, ref.selectors));
 
-      const cdata = {
-        dialog,
-        id: ref,
-        transformData
-      };
-      if (cache) {
-        this.cache.putComponentData(cdata);
-      }
-
-      return cdata;
-    }
     const data: ContainerExporter = JSON.parse(
       // todo remove join
       // may or may not return children
-      this.sling.getModel(ref.path, ref.selectors.join('.'))
+      this.sling.getModel(ref.path)
     );
     if (!data) {
       return null;

@@ -191,7 +191,8 @@ export class Cache {
   public getFullState(): any {
     return {
       included: this.included,
-      serviceCalls: this.serviceCalls
+      serviceCalls: this.serviceCalls,
+      componentData: this.componentData
     };
   }
 

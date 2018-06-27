@@ -111,7 +111,7 @@ export abstract class ResourceComponent<
     this.getAemContext().container.sling.loadComponent(
       {path, selectors, type: this.getResourceType()},
       this.handleLoadComponentSuccess.bind(this),
-      {}
+      {skipData: false}
     );
     if (this.loadingState !== STATE.LOADED) {
       this.loadingState = STATE.LOADING;

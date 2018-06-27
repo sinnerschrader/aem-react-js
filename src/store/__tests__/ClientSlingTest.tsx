@@ -2,7 +2,7 @@
 
 import {expect} from 'chai';
 import {ComponentData, ResourceRef} from '../../component/ResourceComponent';
-import {MockComponentDataFetcher} from '../../test/MockComponentDataFetcher';
+// import {MockComponentDataFetcher} from '../../test/MockComponentDataFetcher';
 import {Cache} from '../Cache';
 import {ClientSling} from '../ClientSling';
 import {LoadComponentCallback} from '../Sling';
@@ -49,11 +49,12 @@ describe('ClientSling', () => {
       actualPath = path;
     };
 
-    await sling.loadComponent(ref, callback);
+    sling.loadComponent(ref, callback);
     expect(actualPath).to.equal(path);
     expect(actualResource).to.equal(transformData);
   });
 
+  /*
   it('should load component data and put them in cache', async () => {
     const transformData = {x: 2};
     const cache = new Cache();
@@ -78,7 +79,8 @@ describe('ClientSling', () => {
       actualResource = _data.transformData;
     };
 
-    await sling.loadComponent(ref, callback);
+    sling.loadComponent(ref, callback);
     expect(actualResource).to.deep.equal(transformData);
   });
+  */
 });
