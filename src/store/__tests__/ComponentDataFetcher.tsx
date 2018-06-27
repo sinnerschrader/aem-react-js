@@ -20,6 +20,6 @@ describe('BaseComponentDataFetcher', () => {
       fetchWindow
     );
     await fetcher.fetch(ref);
-    expect(actualUrl).to.equal('/url/test.json.html');
+    expect(actualUrl).to.equal('/url/test.model.json');
   });
 });

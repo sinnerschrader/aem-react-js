@@ -1,3 +1,4 @@
+import {CqModel} from '@adobe/cq-react-editable-components';
 import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 import {Cache} from './Cache';
 import {ComponentDataFetcher} from './ComponentDataFetcher';
@@ -7,6 +8,54 @@ import {
   LoadComponentCallback,
   LoadComponentOptions
 } from './Sling';
+
+const transformChildren = (
+  dataPath: string,
+  items: {[key: string]: CqModel}
+): {[key: string]: ComponentData} => {
+  const datas: {[key: string]: ComponentData} = {};
+
+  if (items) {
+    Object.keys(items).forEach((key: string) => {
+      const childModel = items[key];
+      const data: ComponentData = {
+        children: transformChildren(dataPath, childModel[':items']),
+        childrenOrder: childModel[':itemsOrder'],
+        dialog: {element: 'div'},
+        id: {
+          path: `${dataPath}/${key}`,
+          type: childModel[':type'],
+          selectors: []
+        },
+        transformData: childModel
+      };
+
+      datas[key] = data;
+    });
+  }
+
+  return datas;
+};
+
+const transformModel = (dataPath: string, model: CqModel): ComponentData => {
+  let items: {[key: string]: ComponentData} = {};
+
+  if (model[':items']) {
+    items = transformChildren(dataPath, model[':items']);
+  }
+
+  return {
+    children: items,
+    childrenOrder: model[':itemsOrder'],
+    dialog: {element: 'div'},
+    id: {
+      path: dataPath,
+      type: model[':type'],
+      selectors: []
+    },
+    transformData: model
+  };
+};
 
 /**
  * ClientSling gets all data from the cache.
@@ -38,9 +87,10 @@ export class ClientSling extends AbstractSling {
     if (!componentData) {
       this.fetcher
         .fetch(ref)
-        .then((json: ComponentData): void => {
-          this.cache.putComponentData(json);
-          callback(json);
+        .then((json: CqModel): void => {
+          const data = transformModel(ref.path, json);
+          this.cache.putComponentData(data);
+          callback(data);
         })
         .catch(e => {
           console.error(e);

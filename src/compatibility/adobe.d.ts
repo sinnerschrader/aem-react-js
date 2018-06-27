@@ -19,7 +19,7 @@ declare module '@adobe/cq-react-editable-components' {
 
   export interface CqModel {
     ':type': string;
-    ':dataPath': string;
+    ':dataPath'?: string;
     ':items': {[nodeName: string]: CqModel};
     ':itemsOrder': string[];
   }

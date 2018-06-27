@@ -1,17 +1,18 @@
-import {ComponentData, ResourceRef} from '../component/ResourceComponent';
+import {CqModel} from '@adobe/cq-react-editable-components';
+import {ResourceRef} from '../component/ResourceComponent';
 import {ComponentDataFetcher} from '../store/ComponentDataFetcher';
 
 export class MockComponentDataFetcher implements ComponentDataFetcher {
-  private readonly json: ComponentData;
+  private readonly json: CqModel;
 
-  public constructor(componentData: ComponentData) {
-    this.json = componentData;
+  public constructor(model: CqModel) {
+    this.json = model;
   }
 
   public async fetch(
     ref: ResourceRef = {path: '/', selectors: [], type: 'test'}
-  ): Promise<ComponentData> {
-    if (ref === this.json.id) {
+  ): Promise<CqModel> {
+    if (ref.type === this.json[':type']) {
       return this.json;
     }
 
