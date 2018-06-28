@@ -9,9 +9,9 @@ import {
 } from './Sling';
 
 export interface ContainerExporter {
-  exportedItems?: {[key: string]: ContainerExporter};
-  exportedItemsOrder?: string[];
-  exportedType: string;
+  ':items'?: {[key: string]: ContainerExporter};
+  ':itemsOrder'?: string[];
+  ':type': string;
 }
 
 export interface JavaSling {
@@ -127,7 +127,7 @@ export class ServerSling extends AbstractSling {
     );
     const child = {
       children,
-      childrenOrder: data.exportedItemsOrder,
+      childrenOrder: data[':itemsOrder'],
       dialog,
       id: ref,
       transformData: data
@@ -146,11 +146,12 @@ export class ServerSling extends AbstractSling {
     cache: boolean
   ): {[key: string]: ComponentData} {
     const children: {[key: string]: ComponentData} = {};
-    if (exporter.exportedItems) {
-      exporter.exportedItemsOrder.forEach((key: string) => {
+    if (exporter[':items']) {
+      exporter[':itemsOrder'].forEach((key: string) => {
         const subPath = `${path}/${key}`;
-        const childDialog = this.getDialog(path, selectors.join('.'));
-        const item = exporter.exportedItems[key];
+        const item = exporter[':items'][key];
+        const type = item[':type'];
+        const childDialog = this.getDialog(subPath, type);
 
         const child = {
           children: this.tranformsModelToComponentData(
@@ -159,11 +160,12 @@ export class ServerSling extends AbstractSling {
             selectors,
             cache
           ),
+          childrenOrder: item[':itemsOrder'],
           dialog: childDialog,
           id: {
             path: subPath,
             selectors: [] as string[],
-            type: item.exportedType
+            type
           },
           transformData: item
         };

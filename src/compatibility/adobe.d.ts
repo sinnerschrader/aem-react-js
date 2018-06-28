@@ -36,11 +36,11 @@ declare module '@adobe/cq-react-editable-components' {
     public static NEW_SECTION_CLASS_NAMES: string;
   }
 
-  export interface EditConfig<Props> {
+  export interface EditConfig {
     dragDropName: string;
 
     emptyLabel: string;
 
-    isEmpty(props: Props): boolean;
+    isEmpty(cmp: {}): boolean;
   }
 }

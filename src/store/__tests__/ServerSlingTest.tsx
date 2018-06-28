@@ -83,8 +83,8 @@ describe('ServerSling', () => {
 
   it('should load model with children', async () => {
     const model = {
-      exportedItems: {x: {text: 'ho'}},
-      exportedItemsOrder: ['x'],
+      ':items': {x: {text: 'ho'}},
+      ':itemsOrder': ['x'],
       text: 'hi'
     };
     const path = '/test';

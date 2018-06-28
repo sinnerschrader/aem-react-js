@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {EditConfig} from '../compatibility/EditConfig';
 import {Props} from '../compatibility/Props';
 import {JavaApi} from './JavaApi';
 import {ReactParsysProps} from './ReactParsys';
@@ -22,6 +23,7 @@ export interface ComponentConfig {
   readonly transform?: TransformFunc;
   readonly loadingComponent?: React.ComponentClass<any>;
   readonly selector?: string;
+  readonly editConfig?: EditConfig<{}>;
 }
 
 export interface WrapperProps<E extends object> extends ResourceProps {
@@ -73,6 +75,14 @@ export class Wrapper<E extends object> extends ResourceComponent<
       dataPath: data.id.path,
       model
     };
+
+    if (this.config.editConfig && this.config.editConfig.isEmpty(finalProps)) {
+      return (
+        <span>
+          {this.config.editConfig.emptyLabel}
+        </span>
+      );
+    }
 
     return React.createElement(this.config.component, finalProps);
   }
