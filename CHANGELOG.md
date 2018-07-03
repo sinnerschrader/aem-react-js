@@ -2,6 +2,64 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.25.0"></a>
+# [0.25.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.4.2...v0.25.0) (2018-07-03)
+
+
+### Bug Fixes
+
+* allow protocol in url ([503e2ca](http://www.github.com/sinnerschrader/aem-react-js/commit/503e2ca))
+* change package name ([c62007a](http://www.github.com/sinnerschrader/aem-react-js/commit/c62007a))
+* child context of the root component, improve typings ([eb3c3cc](http://www.github.com/sinnerschrader/aem-react-js/commit/eb3c3cc))
+* compatibility ([d48985a](http://www.github.com/sinnerschrader/aem-react-js/commit/d48985a))
+* components were not instantiated in client ([005e991](http://www.github.com/sinnerschrader/aem-react-js/commit/005e991))
+* if skipData is set to true then don't call server ([cb2bad5](http://www.github.com/sinnerschrader/aem-react-js/commit/cb2bad5))
+* ignore tests with selectors ([29f8abe](http://www.github.com/sinnerschrader/aem-react-js/commit/29f8abe))
+* improve text pooling ([#82](http://www.github.com/sinnerschrader/aem-react-js/issues/82)) ([ea7e286](http://www.github.com/sinnerschrader/aem-react-js/commit/ea7e286))
+* invoke method param conversion ([87eefc0](http://www.github.com/sinnerschrader/aem-react-js/commit/87eefc0))
+* js xss ([ef49b5e](http://www.github.com/sinnerschrader/aem-react-js/commit/ef49b5e))
+* loading in the client ([8643e01](http://www.github.com/sinnerschrader/aem-react-js/commit/8643e01))
+* null check in JsXssUtils ([1bfc901](http://www.github.com/sinnerschrader/aem-react-js/commit/1bfc901))
+* remove trailing slash from resourceType ([018b009](http://www.github.com/sinnerschrader/aem-react-js/commit/018b009))
+* removed \`context\` from spread opperator, to prevent react warnings ([b768489](http://www.github.com/sinnerschrader/aem-react-js/commit/b768489))
+* starting spa ([aca9670](http://www.github.com/sinnerschrader/aem-react-js/commit/aca9670))
+* support '.' path ([c4239bf](http://www.github.com/sinnerschrader/aem-react-js/commit/c4239bf))
+* tests and remove console.log ([ba202dd](http://www.github.com/sinnerschrader/aem-react-js/commit/ba202dd))
+* TextPool must use original text as key ([af1bc2a](http://www.github.com/sinnerschrader/aem-react-js/commit/af1bc2a))
+
+
+### Features
+
+* add a service registry to the container ([43d987c](http://www.github.com/sinnerschrader/aem-react-js/commit/43d987c))
+* add decoration of root component ([2c7c3d7](http://www.github.com/sinnerschrader/aem-react-js/commit/2c7c3d7))
+* added css encoding ([4c769a3](http://www.github.com/sinnerschrader/aem-react-js/commit/4c769a3))
+* AemComponent extends React.PureComponent ([605ee91](http://www.github.com/sinnerschrader/aem-react-js/commit/605ee91))
+* allow any html attributes on Text ([1475905](http://www.github.com/sinnerschrader/aem-react-js/commit/1475905))
+* allow external context to be passed to server rendering ([def5225](http://www.github.com/sinnerschrader/aem-react-js/commit/def5225))
+* also initialize cache in wcmmode ([20d2ee6](http://www.github.com/sinnerschrader/aem-react-js/commit/20d2ee6))
+* component state stored in cache ([c898667](http://www.github.com/sinnerschrader/aem-react-js/commit/c898667))
+* don't load resource by default for vanilla components ([f227865](http://www.github.com/sinnerschrader/aem-react-js/commit/f227865))
+* execute transform on server only ([a55ca87](http://www.github.com/sinnerschrader/aem-react-js/commit/a55ca87))
+* features for resource inclusion ([7536b17](http://www.github.com/sinnerschrader/aem-react-js/commit/7536b17))
+* implement compatibility layer ([a69647b](http://www.github.com/sinnerschrader/aem-react-js/commit/a69647b))
+* improve container api, improve typings, update ts-config and tslint ([f45d42a](http://www.github.com/sinnerschrader/aem-react-js/commit/f45d42a))
+* improve markup size for resource include ([36c5e7c](http://www.github.com/sinnerschrader/aem-react-js/commit/36c5e7c))
+* improvement in registry and java api ([c405a8f](http://www.github.com/sinnerschrader/aem-react-js/commit/c405a8f))
+* instantiate react components in preview mode ([a9d1626](http://www.github.com/sinnerschrader/aem-react-js/commit/a9d1626))
+* migrate to AEM SPA API ([c557f2c](http://www.github.com/sinnerschrader/aem-react-js/commit/c557f2c))
+* one id for identical text ([30db113](http://www.github.com/sinnerschrader/aem-react-js/commit/30db113))
+* parsysFactory can get children from transformed props ([c9dca12](http://www.github.com/sinnerschrader/aem-react-js/commit/c9dca12))
+* pass props to included components ([28fa023](http://www.github.com/sinnerschrader/aem-react-js/commit/28fa023))
+* remove router from core and update dependencies to the latest versions ([35cf7cd](http://www.github.com/sinnerschrader/aem-react-js/commit/35cf7cd))
+* reorder props merging ([70651ac](http://www.github.com/sinnerschrader/aem-react-js/commit/70651ac))
+* selectors ([559ffcb](http://www.github.com/sinnerschrader/aem-react-js/commit/559ffcb))
+* text pool ([55f1d7a](http://www.github.com/sinnerschrader/aem-react-js/commit/55f1d7a))
+* transform api ([740c8db](http://www.github.com/sinnerschrader/aem-react-js/commit/740c8db))
+* update to react 16 ([1a5e269](http://www.github.com/sinnerschrader/aem-react-js/commit/1a5e269))
+* wor on initialisation ([d0bb6e3](http://www.github.com/sinnerschrader/aem-react-js/commit/d0bb6e3))
+
+
+
 <a name="0.21.0"></a>
 # [0.21.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.20.1...v0.21.0) (2018-01-05)
 
