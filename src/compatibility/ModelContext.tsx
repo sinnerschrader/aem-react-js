@@ -37,17 +37,26 @@ const transformMap = (map: {[key: string]: CqModel}) => {
   return newMap;
 };
 
-const transform = (props: SpaComponentProps) => {
-  const items = transformMap(props.cq_model[':items']);
+export const transform = (props: SpaComponentProps) => {
+  if (props.cq_model) {
+    const items = transformMap(props.cq_model[':items']);
 
-  return {
-    model: props.cq_model,
-    items,
-    itemsOrder: props.cq_model[':itemsOrder'],
-    resourceType: props.cq_model[':type'],
-    dataPath: props.cq_model_data_path,
-    pagePath: props.cq_model_page_path
-  };
+    return {
+      model: props.cq_model,
+      items,
+      itemsOrder: props.cq_model[':itemsOrder'],
+      resourceType: props.cq_model[':type'],
+      dataPath: props.cq_model_data_path,
+      pagePath: props.cq_model_page_path
+    };
+  } else {
+    return {
+      model: {},
+      resourceType: 'unknown',
+      dataPath: props.cq_model_data_path,
+      pagePath: props.cq_model_page_path
+    };
+  }
 };
 
 export const MapVanillaTo = (

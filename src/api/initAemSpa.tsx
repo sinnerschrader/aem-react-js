@@ -1,6 +1,6 @@
 import {
-  ComponentMapping,
   Constants,
+  EditConfig as AdobeEditConfig,
   MapTo,
   SpaComponentProps,
   Utils
@@ -9,10 +9,12 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import {IncludeProps} from '../ResourceInclude';
 import {RootComponentRegistry} from '../RootComponentRegistry';
+import {EditConfig} from '../compatibility/EditConfig';
 import {Include} from '../compatibility/Include';
-import {MapVanillaTo} from '../compatibility/ModelContext';
+import {MapVanillaTo, transform} from '../compatibility/ModelContext';
 import {Compatibility, Config} from './Compatibility';
 import {mapping} from './Mapping';
+import {SpaPage} from './SpaPage';
 
 export const rootRegistry = new RootComponentRegistry();
 
@@ -31,13 +33,22 @@ export class AemSpaCompatibility implements Compatibility {
     type: string,
     el: HTMLElement
   ): void {
-    const Com = ComponentMapping.get(type);
     const props: SpaComponentProps = {
       cq_model_data_path: dataPath,
       cq_model_page_path: pagePath,
-      cq_model: null
+      cq_model: undefined
     };
-    ReactDom.render(<Com {...props} />, el);
+
+    ReactDom.render(<SpaPage {...props} />, el);
+  }
+
+  public startComponent(
+    Component: React.ComponentClass,
+    el: HTMLElement
+  ): void {
+    const C = MapTo('anonymuous root')(SpaPage, null);
+
+    ReactDom.render(<C />, el);
   }
 
   public map(c: React.ComponentClass): React.ComponentClass {
@@ -59,10 +70,23 @@ export class AemSpaCompatibility implements Compatibility {
   }
 }
 
+const fixEditConfig = (editConfig: EditConfig<{}>): AdobeEditConfig => {
+  const adobeEditConfig: AdobeEditConfig = {...editConfig};
+  /*tslint:disable-next-line*/
+  adobeEditConfig.isEmpty = function(): boolean {
+    /*tslint:disable-next-line*/
+    const that = this;
+
+    return editConfig.isEmpty(transform(that.props));
+  };
+
+  return adobeEditConfig;
+};
+
 export const initAemSpa = (): AemSpaCompatibility => {
   Object.keys(mapping).forEach((type: string) => {
     const config = mapping[type];
-    MapVanillaTo(type, config.componentClass, config.editConfig);
+    MapVanillaTo(type, config.componentClass, fixEditConfig(config.editConfig));
   });
 
   return new AemSpaCompatibility();

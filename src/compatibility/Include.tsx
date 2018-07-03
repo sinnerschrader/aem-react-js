@@ -15,12 +15,18 @@ export interface IncludeProps {
 export class Include extends React.Component<IncludeProps> {
   public render(): any {
     const IncludedComponent = ComponentMapping.get(this.props.resourceType);
+    if (!IncludedComponent) {
+      return null;
+    }
 
     return (
       <ModelContext.Consumer>
         {(model: SpaComponentProps) => {
           const page_path = model.cq_model_page_path;
-          const data_path = `${model.cq_model_data_path}/${this.props.path}`;
+          const root = !model.cq_model_data_path;
+          const data_path = root
+            ? this.props.path
+            : `${model.cq_model_data_path}/${this.props.path}`;
           const cq_model: CqModel =
             (model.cq_model &&
               model.cq_model[':items'] &&
