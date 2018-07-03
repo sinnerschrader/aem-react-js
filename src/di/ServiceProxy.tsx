@@ -8,7 +8,6 @@ export interface ServiceProxy {
    *
    * @param name of java method to call
    * @param args to java method
-   * @returns {T}
    */
   invoke<T>(method: string, ...args: any[]): T;
 

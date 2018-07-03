@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {Mapping} from './RootComponentRegistry';
-import {WrapperFactory} from './component/WrapperFactory';
-import {ComponentConfig} from './component/WrapperFactory';
+import {ComponentConfig, WrapperFactory} from './component/WrapperFactory';
 
 function mapClassToResourceType(componentClassName: string): string {
   const parts: string[] = componentClassName.match(/([A-Z][a-z0-9]*)/);
@@ -46,7 +45,7 @@ export class ComponentRegistry {
     );
   }
 
-  public registerVanilla<R>(config: ComponentConfig<R>): void {
+  public registerVanilla(config: ComponentConfig): void {
     const componentClassName: string =
       config.shortName || config.component.name;
     const resourceType: string =
@@ -54,7 +53,13 @@ export class ComponentRegistry {
     const wrapperClass = WrapperFactory.createWrapper(config, resourceType);
 
     this.mappings.push(
-      new Mapping(resourceType, wrapperClass, config.component, config.selector)
+      new Mapping(
+        resourceType,
+        wrapperClass,
+        config.component,
+        config.selector,
+        config.transform
+      )
     );
   }
 

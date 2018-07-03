@@ -3,9 +3,8 @@ import {EditDialogData} from '../store/Sling';
 import {AemComponent} from './AemComponent';
 
 export interface EditDialogProps {
-  readonly path: string;
-  readonly resourceType: string;
   readonly className?: string;
+  readonly dialog?: EditDialogData;
 }
 
 function createAuthorElement(dialog: EditDialogData): React.ReactElement<any> {
@@ -30,10 +29,7 @@ function createAuthorElement(dialog: EditDialogData): React.ReactElement<any> {
 
 export class EditDialog extends AemComponent<EditDialogProps, any> {
   public render(): React.ReactElement<any> {
-    const dialog: EditDialogData = this.getContainer().sling.renderDialogScript(
-      this.props.path,
-      this.props.resourceType
-    );
+    const {dialog} = this.props;
 
     if (dialog) {
       return this.createWrapperElement(dialog);

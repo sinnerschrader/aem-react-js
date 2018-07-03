@@ -6,21 +6,29 @@ import {replaceFactory, reviveFactory} from '../TextUtils';
 describe('TextUtils', () => {
   it('should revive text', () => {
     const textPool = new TextPool();
-    const text = 'Hi';
-    const id = textPool.put('Hi', '1');
-    const doc = new JSDOM(
-      `<body><div><span id=${id}>${text}</span></div></body>`
-    ).window.document;
-    const reviver = reviveFactory(doc);
+    const text = 'A012345678901234567890123';
+    const id = textPool.put(text, '1');
+    const text1 = 'B012345678901234567890123';
+    const id1 = textPool.put(text1, '1');
 
-    const parsed = JSON.parse(`{"$innerHTML": "${id}"}`, reviver);
+    const body = `<body><div><span data-react-text=${id}>${text}</span>
+<span data-react-text=${id1}>${text1}</span></div></body>`;
+    const doc = new JSDOM(body).window.document;
+    const reviver = reviveFactory(doc.body);
 
-    expect(parsed).to.equal('Hi');
+    const state = {
+      a: {$innerHTML: id},
+      b: {$innerHTML: id1}
+    };
+    const parsed = JSON.parse(JSON.stringify(state), reviver);
+
+    expect(parsed.a).to.equal(text);
+    expect(parsed.b).to.equal(text1);
   });
   it('should throw error if text not found', () => {
     const doc = new JSDOM('<body><div><span>Hi</span></div></body>').window
       .document;
-    const reviver = reviveFactory(doc);
+    const reviver = reviveFactory(doc.body);
 
     let error: Error;
     try {
@@ -31,10 +39,10 @@ describe('TextUtils', () => {
 
     expect(error.message).to.not.eq('');
   });
-  it('should create innerHTML prop', () => {
+  it('should create innerHTML prop ', () => {
     const textPool = new TextPool();
-    const text = 'Hi';
-    const id = textPool.put('Hi', '1');
+    const text = 'Moin';
+    const id = textPool.put(text, '1');
     const json = JSON.stringify({mytext: text}, replaceFactory(textPool));
 
     expect(JSON.parse(json).mytext.$innerHTML).to.eq(id);

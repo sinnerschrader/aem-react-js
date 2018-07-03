@@ -1,6 +1,6 @@
 import * as Enzyme from 'enzyme';
+import * as ReactSixteenAdapter from 'enzyme-adapter-react-16';
 import {JSDOM} from 'jsdom';
-import ReactSixteenAdapter = require('enzyme-adapter-react-16');
 
 Enzyme.configure({adapter: new ReactSixteenAdapter()});
 

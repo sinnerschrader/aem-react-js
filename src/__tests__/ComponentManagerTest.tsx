@@ -4,11 +4,12 @@ import {expect} from 'chai';
 import {JSDOM} from 'jsdom';
 import * as React from 'react';
 import {ComponentManager, ComponentTreeConfig} from '../ComponentManager';
-import {ResourceComponent} from '../component/ResourceComponent';
+import {ResourceComponent, ResourceRef} from '../component/ResourceComponent';
+import {reviveFactory} from '../component/text/TextUtils';
 import {Container} from '../di/Container';
 import {identity} from '../rootDecorator';
 import {Cache} from '../store/Cache';
-import {SlingResourceOptions} from '../store/Sling';
+import {LoadComponentCallback, LoadComponentOptions} from '../store/Sling';
 import {MockSling} from '../test/MockSling';
 
 describe('ComponentManager', () => {
@@ -24,19 +25,19 @@ describe('ComponentManager', () => {
     };
 
     const doc: Document = new JSDOM(
-      "<html><div data-react-id='1'></div><textarea id='1'>" +
+      '<html><div data-react></div><textarea>' +
         `${JSON.stringify(data)}</textarea></html>`
     ).window.document;
 
     const container = new Container(cache, new MockSling(cache));
-    const cm: ComponentManager = new ComponentManager(null, container, doc);
-    const element: Element = doc.querySelector('div');
+    const cm: ComponentManager = new ComponentManager(null, container);
+    const element: Element = doc.querySelector('[data-react]');
 
-    cm.initReactComponent(element, {}, 'a');
+    cm.initReactComponent(element, {}, reviveFactory(doc.body), '1');
   });
 
   it('should instantiate react components', () => {
-    class Test extends ResourceComponent<any, any, any> {
+    class Test extends ResourceComponent<any, any> {
       public renderBody(): React.ReactElement<any> {
         return <span>test</span>;
       }
@@ -55,32 +56,31 @@ describe('ComponentManager', () => {
     const container = new Container(
       cache,
       {
-        subscribe: (
-          listener: ResourceComponent<any, any, any>,
-          path: string,
-          options?: SlingResourceOptions
-        ) => {
-          listener.changedResource(path, {});
-        }
+        loadComponent: (
+          ref: ResourceRef,
+          callback: LoadComponentCallback,
+          options?: LoadComponentOptions
+        ) => callback({})
       } as any
     );
 
     const registry: any = {
       getComponent: (resourceType: string) => Test,
+      getResourceType: (component: any) => '/components/what',
       rootDecorator: identity
     };
 
     const doc: Document = new JSDOM(
-      "<html><div data-react data-react-id='1'></div><textarea id='1'>" +
+      "<html><div data-react></div>Shouldn't be here<textarea>" +
         `${JSON.stringify(data)}</textarea></html>`
     ).window.document;
 
-    const cm: ComponentManager = new ComponentManager(registry, container, doc);
-    const element: Element = doc.querySelector('div');
+    const cm: ComponentManager = new ComponentManager(registry, container);
+    const element: Element = doc.querySelector('[data-react]');
 
-    cm.initReactComponent(element, {}, 'a');
+    cm.initReactComponent(element, {}, reviveFactory(doc.body), '1');
 
-    const count: number = cm.initReactComponents();
+    const count: number = cm.initReactComponents(doc.body);
 
     expect(count).to.equal(1);
   });

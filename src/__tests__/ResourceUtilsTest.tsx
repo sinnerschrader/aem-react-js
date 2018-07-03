@@ -1,8 +1,7 @@
 /* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
-import {ResourceUtils} from '../ResourceUtils';
-import {PathResult} from '../ResourceUtils';
+import {PathResult, ResourceUtils} from '../ResourceUtils';
 
 describe('ResourceUtils', () => {
   it('should return the containing page path', () => {
@@ -60,5 +59,21 @@ describe('ResourceUtils', () => {
 
     expect(value.path).to.equal('/a');
     expect(value.subPath).to.deep.equal(['c', 'b']);
+  });
+
+  it('should create same path', () => {
+    const value = ResourceUtils.createPath('/content/a', '.');
+
+    expect(value).to.equal('/content/a');
+  });
+  it('should create relative path', () => {
+    const value = ResourceUtils.createPath('/content/a', 'x');
+
+    expect(value).to.equal('/content/a/x');
+  });
+  it('should create absolute path', () => {
+    const value = ResourceUtils.createPath('/content/a', '/content/b/x');
+
+    expect(value).to.equal('/content/b/x');
   });
 });

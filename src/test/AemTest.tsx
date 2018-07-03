@@ -4,6 +4,7 @@ import * as React from 'react';
 import {AemContext} from '../AemContext';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {RootComponentRegistry} from '../RootComponentRegistry';
+import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 import {RootComponent} from '../component/RootComponent';
 import {Container} from '../di/Container';
 import {Cache} from '../store/Cache';
@@ -14,7 +15,7 @@ enzyme.configure({adapter: new Adapter()});
 export class AemTest {
   public currentAemContext: AemContext;
 
-  private registry: RootComponentRegistry = new RootComponentRegistry();
+  private readonly registry: RootComponentRegistry = new RootComponentRegistry();
 
   public init(): void {
     this.registry.init();
@@ -32,23 +33,34 @@ export class AemTest {
     this.registry.add(registry);
   }
 
-  public addResource(path: string, resource: any, depth?: number): void {
+  public addResource(ref: ResourceRef, resource: any): void {
     const cache = this.currentAemContext.container.cache;
 
-    cache.put(path, resource, depth);
+    cache.putComponentData({
+      dialog: {element: 'dialog'},
+      id: ref,
+      transformData: resource
+    });
+  }
+
+  public addComponentData(data: ComponentData): void {
+    const cache = this.currentAemContext.container.cache;
+    cache.putComponentData(data);
   }
 
   public render(
-    resource: any,
-    path: string = '/',
-    selectors: string[] = []
+    resource: any = null,
+    ref: ResourceRef = {
+      path: '/',
+      selectors: [],
+      type: ''
+    }
   ): any {
-    this.addResource(path, resource);
+    if (resource !== null) {
+      this.addResource(ref, resource);
+    }
 
-    const component: any = this.registry.getComponent(
-      resource.resourceType,
-      selectors
-    );
+    const component: any = this.registry.getComponent(ref.type, ref.selectors);
 
     if (!component) {
       throw new Error(
@@ -60,10 +72,10 @@ export class AemTest {
       <RootComponent
         component={component}
         id="root"
-        path={path || '/'}
+        path={ref.path || '/'}
         wcmmode="disabled"
         aemContext={this.currentAemContext}
-        selectors={selectors}
+        selectors={ref.selectors}
       />
     );
   }

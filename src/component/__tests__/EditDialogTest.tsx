@@ -7,8 +7,12 @@ import * as React from 'react';
 import {RootComponentRegistry} from '../../RootComponentRegistry';
 import {Container} from '../../di/Container';
 import {Cache} from '../../store/Cache';
+import {EditDialogData} from '../../store/Sling';
 import {MockSling} from '../../test/MockSling';
-import {EditDialog} from '../EditDialog';
+import {EditDialog, EditDialogProps} from '../EditDialog';
+
+/*tslint:disable-next-line*/
+import '../../test/setup';
 
 describe('EditDialog', () => {
   class Wrapper extends React.Component<any, any> {
@@ -31,13 +35,21 @@ describe('EditDialog', () => {
     }
   }
 
+  let dialogData: EditDialogData;
+  beforeEach(() => {
+    dialogData = {element: 'div', attributes: {className: 'dialog'}};
+  });
+
   it('should render wrapper element', () => {
     const cache = new Cache();
     const container = new Container(cache, new MockSling(cache));
+    const props: EditDialogProps = {
+      dialog: dialogData
+    };
 
     const item = enzyme.mount(
       <Wrapper aemContext={{container, registry: new RootComponentRegistry()}}>
-        <EditDialog path="/test" resourceType="components/test" />
+        <EditDialog {...props} />
       </Wrapper>
     );
 
@@ -47,14 +59,9 @@ describe('EditDialog', () => {
   it('should render wrapper element with extra className', () => {
     const cache = new Cache();
     const container = new Container(cache, new MockSling(cache));
-
     const item = enzyme.mount(
       <Wrapper aemContext={{container, registry: new RootComponentRegistry()}}>
-        <EditDialog
-          className="hi"
-          path="/test"
-          resourceType="components/test"
-        />
+        <EditDialog className="hi" dialog={dialogData} />
       </Wrapper>
     );
 
@@ -66,23 +73,20 @@ describe('EditDialog', () => {
       'with extra className and existing className',
     () => {
       const cache = new Cache();
-
-      const container = new Container(
-        cache,
-        new MockSling(cache, {
-          child: {
-            element: 'script',
-            html: 'Cq.makeEditable()'
-          },
-          element: 'ul'
-        })
-      );
+      dialogData = {
+        child: {
+          element: 'script',
+          html: 'Cq.makeEditable()'
+        },
+        element: 'ul'
+      };
+      const container = new Container(cache, new MockSling(cache));
 
       const item = enzyme.mount(
         <Wrapper
           aemContext={{container, registry: new RootComponentRegistry()}}
         >
-          <EditDialog path="/test" resourceType="components/test" />
+          <EditDialog dialog={dialogData} />
         </Wrapper>
       );
 
@@ -94,29 +98,26 @@ describe('EditDialog', () => {
 
   it('should render classic ui', () => {
     const cache = new Cache();
-
-    const container = new Container(
-      cache,
-      new MockSling(cache, {
+    dialogData = {
+      attributes: {
+        className: 'more react-parsys'
+      },
+      child: {
         attributes: {
-          className: 'more react-parsys'
+          type: 'text/javascript'
         },
-        child: {
-          attributes: {
-            type: 'text/javascript'
-          },
-          child: null,
-          element: 'script',
-          html: 'CQ.WCM.edit();'
-        },
-        element: 'div',
-        html: null
-      })
-    );
+        child: null,
+        element: 'script',
+        html: 'CQ.WCM.edit();'
+      },
+      element: 'div',
+      html: null
+    };
+    const container = new Container(cache, new MockSling(cache));
 
     const item = enzyme.mount(
       <Wrapper aemContext={{container, registry: new RootComponentRegistry()}}>
-        <EditDialog path="/test" resourceType="components/test" />
+        <EditDialog dialog={dialogData} />
       </Wrapper>
     );
 
@@ -128,27 +129,24 @@ describe('EditDialog', () => {
 
   it('should render touch ui', () => {
     const cache = new Cache();
-
-    const container = new Container(
-      cache,
-      new MockSling(cache, {
-        child: {
-          attributes: {
-            'data-config': '{"path":"/content"}',
-            'data-path': '/content/'
-          },
-          child: null,
-          element: 'cq',
-          html: ''
+    dialogData = {
+      child: {
+        attributes: {
+          'data-config': '{"path":"/content"}',
+          'data-path': '/content/'
         },
-        element: 'div',
-        html: null
-      })
-    );
+        child: null,
+        element: 'cq',
+        html: ''
+      },
+      element: 'div',
+      html: null
+    };
+    const container = new Container(cache, new MockSling(cache));
 
     const item = enzyme.mount(
       <Wrapper aemContext={{container, registry: new RootComponentRegistry()}}>
-        <EditDialog path="/test" resourceType="components/test" />
+        <EditDialog dialog={dialogData} />
       </Wrapper>
     );
 

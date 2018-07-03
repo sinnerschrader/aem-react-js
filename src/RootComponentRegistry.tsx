@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {ComponentRegistry} from './ComponentRegistry';
+import {TransformFunc} from './component/WrapperFactory';
 import {identity, rootDecorator} from './rootDecorator';
 
 export class Mapping {
@@ -7,17 +8,20 @@ export class Mapping {
   public readonly vanillaClass: React.ComponentClass<any>;
   public readonly componentClass: React.ComponentClass<any>;
   public readonly selector: string;
+  public readonly transform: TransformFunc;
 
   public constructor(
     resourceType: string,
     componentClass: React.ComponentClass<any>,
     vanillaClass: React.ComponentClass<any>,
-    selector: string
+    selector: string,
+    transform?: TransformFunc
   ) {
     this.resourceType = resourceType;
     this.componentClass = componentClass;
     this.vanillaClass = vanillaClass;
     this.selector = selector || '';
+    this.transform = transform;
   }
 }
 
@@ -36,6 +40,10 @@ export class RootComponentRegistry {
 
   private readonly vanillaToWrapper: {
     [componentClassName: string]: React.ComponentClass<any>;
+  } = {};
+
+  private readonly resourceTypeToTransform: {
+    [name: string]: {[selector: string]: TransformFunc};
   } = {};
 
   public constructor() {
@@ -87,6 +95,25 @@ export class RootComponentRegistry {
     return undefined;
   }
 
+  public getTransform(
+    resourceType: string,
+    selectors: string[]
+  ): TransformFunc | undefined {
+    const componentsBySelector = this.resourceTypeToTransform[resourceType];
+
+    if (componentsBySelector !== undefined) {
+      const matchingSelectors = selectors.filter(
+        selector => componentsBySelector[selector] !== undefined
+      );
+
+      return componentsBySelector[
+        matchingSelectors.length === 1 ? matchingSelectors[0] : ''
+      ];
+    }
+
+    return undefined;
+  }
+
   public register(mapping: Mapping): void {
     const componentClassName = mapping.componentClass.name;
 
@@ -104,6 +131,11 @@ export class RootComponentRegistry {
     }
     this.resourceTypeToComponent[mapping.resourceType][mapping.selector || ''] =
       mapping.componentClass;
+    if (this.resourceTypeToTransform[mapping.resourceType] === undefined) {
+      this.resourceTypeToTransform[mapping.resourceType] = {};
+    }
+    this.resourceTypeToTransform[mapping.resourceType][mapping.selector || ''] =
+      mapping.transform;
   }
 
   public init(): void {

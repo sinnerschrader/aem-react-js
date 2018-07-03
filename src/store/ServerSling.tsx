@@ -1,11 +1,18 @@
-import {ResourceComponent} from '../component/ResourceComponent';
+import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 import {Cache} from './Cache';
 import {
   AbstractSling,
   EditDialogData,
   IncludeOptions,
-  SlingResourceOptions
+  LoadComponentCallback,
+  LoadComponentOptions
 } from './Sling';
+
+export interface ContainerExporter {
+  ':items'?: {[key: string]: ContainerExporter};
+  ':itemsOrder'?: string[];
+  ':type': string;
+}
 
 export interface JavaSling {
   includeResource(
@@ -17,6 +24,7 @@ export interface JavaSling {
   ): string;
   currentResource(depth: number): any;
   getResource(path: string, depth: number): any;
+  getModel(path: string): any;
   renderDialogScript(path: string, resourceType: string): string;
   getPagePath(): string;
 }
@@ -25,44 +33,43 @@ export class ServerSling extends AbstractSling {
   private readonly sling: JavaSling;
   private readonly cache: Cache;
 
-  public constructor(cache: Cache, sling: JavaSling) {
+  public constructor(options: {cache: Cache; javaSling: JavaSling}) {
     super();
 
-    this.cache = cache;
-    this.sling = sling;
+    this.cache = options.cache;
+    this.sling = options.javaSling;
   }
 
-  public subscribe(
-    listener: ResourceComponent<any, any, any>,
-    path: string,
-    options: SlingResourceOptions = {selectors: []}
+  public loadComponent(
+    ref: ResourceRef,
+    callback: LoadComponentCallback,
+    options?: LoadComponentOptions
   ): void {
-    const depth: number =
-      typeof options.depth !== 'number' ? -1 : options.depth;
+    const componentData = this.cache.getComponentData(ref.path, ref.selectors);
 
-    const skipData = !!options.skipData;
+    if (!componentData) {
+      callback(this.getComponentData(ref, options));
 
-    let resource: any = this.cache.get(path, depth);
-
-    if (!resource) {
-      resource = JSON.parse(this.sling.getResource(path, depth));
-
-      if (!resource) {
-        resource = {};
-      }
-
-      if (!skipData) {
-        this.cache.put(path, resource, depth);
-      }
+      return;
     }
 
-    listener.changedResource(path, resource);
+    callback(componentData);
   }
 
-  public renderDialogScript(
-    path: string,
-    resourceType: string
-  ): EditDialogData {
+  public getComponentData(
+    ref: ResourceRef,
+    options: LoadComponentOptions = {}
+  ): ComponentData {
+    const data = this.getTransform(ref, true);
+
+    if (!data) {
+      return null;
+    }
+
+    return data;
+  }
+
+  public getDialog(path: string, resourceType: string): EditDialogData {
     const script: string = this.sling.renderDialogScript(path, resourceType);
 
     let dialog: EditDialogData = null;
@@ -70,8 +77,6 @@ export class ServerSling extends AbstractSling {
     if (script) {
       dialog = JSON.parse(script);
     }
-
-    this.cache.putScript(path, dialog);
 
     return dialog;
   }
@@ -100,5 +105,76 @@ export class ServerSling extends AbstractSling {
 
   public getRequestPath(): string {
     return this.sling.getPagePath();
+  }
+
+  private getTransform(ref: ResourceRef, cache: boolean): ComponentData {
+    const dialog = this.getDialog(ref.path, ref.type);
+
+    const data: ContainerExporter = JSON.parse(
+      // todo remove join
+      // may or may not return children
+      this.sling.getModel(ref.path)
+    );
+    if (!data) {
+      return null;
+    }
+
+    const children = this.tranformsModelToComponentData(
+      data,
+      ref.path,
+      ref.selectors,
+      cache
+    );
+    const child = {
+      children,
+      childrenOrder: data[':itemsOrder'],
+      dialog,
+      id: ref,
+      transformData: data
+    };
+    if (cache) {
+      this.cache.putComponentData(child);
+    }
+
+    return child;
+  }
+
+  private tranformsModelToComponentData(
+    exporter: ContainerExporter,
+    path: string,
+    selectors: string[],
+    cache: boolean
+  ): {[key: string]: ComponentData} {
+    const children: {[key: string]: ComponentData} = {};
+    if (exporter[':items']) {
+      exporter[':itemsOrder'].forEach((key: string) => {
+        const subPath = `${path}/${key}`;
+        const item = exporter[':items'][key];
+        const type = item[':type'];
+        const childDialog = this.getDialog(subPath, type);
+
+        const child = {
+          children: this.tranformsModelToComponentData(
+            item,
+            subPath,
+            selectors,
+            cache
+          ),
+          childrenOrder: item[':itemsOrder'],
+          dialog: childDialog,
+          id: {
+            path: subPath,
+            selectors: [] as string[],
+            type
+          },
+          transformData: item
+        };
+        this.cache.putComponentData(child);
+
+        children[key] = child;
+      });
+    }
+
+    return children;
   }
 }

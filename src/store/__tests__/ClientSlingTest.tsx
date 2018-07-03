@@ -1,10 +1,11 @@
 // tslint:disable no-any
 
 import {expect} from 'chai';
-import {ResourceComponent} from '../../component/ResourceComponent';
+import {ComponentData, ResourceRef} from '../../component/ResourceComponent';
+// import {MockComponentDataFetcher} from '../../test/MockComponentDataFetcher';
 import {Cache} from '../Cache';
 import {ClientSling} from '../ClientSling';
-import {EditDialogData} from '../Sling';
+import {LoadComponentCallback} from '../Sling';
 
 describe('ClientSling', () => {
   it('should include resource', () => {
@@ -24,102 +25,62 @@ describe('ClientSling', () => {
     expect(actualHtml).to.equal(html);
   });
 
-  it('should include dialog', () => {
-    const dialog: EditDialogData = {element: 'el'};
-    const cache = new Cache();
-    const sling = new ClientSling(cache, null);
-
-    cache.putScript('/test', dialog);
-
-    const actualDialog: EditDialogData = sling.renderDialogScript(
-      '/test',
-      '/component/test'
-    );
-
-    expect(actualDialog).to.deep.equal(dialog);
-  });
-
-  it('should subscribe to cached resource', () => {
-    const resource = {};
+  it('should load cached component data', async () => {
+    const transformData = {x: 1};
     const cache = new Cache();
     const sling = new ClientSling(cache, null);
     const path = '/test';
-
-    cache.put(path, resource);
-
-    let actualResource: any;
-    let actualPath: string;
-
-    const listener: ResourceComponent<
-      any,
-      any,
-      any
-    > = new class MockResourceComponent extends ResourceComponent<
-      any,
-      any,
-      any
-    > {
-      public changedResource(_path: string, _resource: any): void {
-        actualResource = _resource;
-        actualPath = _path;
-      }
-
-      public renderBody(): any {
-        /* */
-      }
-    }();
-
-    sling.subscribe(listener, path, {depth: 1, selectors: []});
-
-    expect(actualPath).to.equal(path);
-    expect(actualResource).to.equal(resource);
-  });
-
-  it('should subscribe to resource', () => {
-    let actualUrl: string;
-    const resource = {data: {text: 'hi'}, depth: 1};
-    const resources = {resources: {'/test': resource}};
-    const cache = new Cache();
-
-    const sling = new ClientSling(cache, '/url', {
-      fetch(url: string, options: any): any {
-        actualUrl = url;
-
-        return {
-          then(cb: (value: any) => any): any {
-            return cb({
-              json(): any {
-                return {
-                  then(cb2: (value: any) => void): void {
-                    cb2(resources);
-                  }
-                };
-              }
-            });
-          }
-        };
-      }
+    const ref: ResourceRef = {
+      path,
+      selectors: [],
+      type: '/test'
+    };
+    cache.putComponentData({
+      dialog: {element: 'div'},
+      id: ref,
+      transformData
     });
 
-    const path = '/test';
-
     let actualResource: any;
     let actualPath: string;
 
-    const listener = {
-      changedResource(_path: string, _resource: any): void {
-        actualResource = _resource;
-        actualPath = _path;
-      }
+    const callback: LoadComponentCallback = (_data: ComponentData) => {
+      actualResource = _data.transformData;
+      actualPath = path;
     };
 
-    sling.subscribe(listener as ResourceComponent<any, any, any>, path, {
-      depth: 1,
-      selectors: []
-    });
-
+    sling.loadComponent(ref, callback);
     expect(actualPath).to.equal(path);
-    expect(actualUrl).to.equal('/url/test.json.html');
-    expect(actualResource).to.deep.equal(resource.data);
+    expect(actualResource).to.equal(transformData);
   });
+
+  /*
+  it('should load component data and put them in cache', async () => {
+    const transformData = {x: 2};
+    const cache = new Cache();
+
+    const path = '/test';
+    const ref: ResourceRef = {
+      path,
+      selectors: [],
+      type: 'testType'
+    };
+
+    const fetcher = new MockComponentDataFetcher({
+      dialog: {element: 'div'},
+      id: ref,
+      transformData
+    });
+    const sling = new ClientSling(cache, fetcher);
+
+    let actualResource: any;
+
+    const callback: LoadComponentCallback = (_data: ComponentData) => {
+      actualResource = _data.transformData;
+    };
+
+    sling.loadComponent(ref, callback);
+    expect(actualResource).to.deep.equal(transformData);
+  });
+  */
 });

@@ -5,10 +5,16 @@ import * as enzyme from 'enzyme';
 import * as React from 'react';
 import {ComponentRegistry} from '../../ComponentRegistry';
 import {RootComponentRegistry} from '../../RootComponentRegistry';
+import {Props} from '../../compatibility/Props';
 import {Container} from '../../di/Container';
 import {Cache} from '../../store/Cache';
+import {EditDialogData} from '../../store/Sling';
 import {MockSling} from '../../test/MockSling';
-import {ResourceComponent} from '../ResourceComponent';
+import {
+  // ComponentData,
+  ResourceComponent,
+  ResourceRef
+} from '../ResourceComponent';
 import {RootComponent} from '../RootComponent';
 import {VanillaInclude} from '../VanillaInclude';
 import {WrapperFactory} from '../WrapperFactory';
@@ -16,22 +22,30 @@ import {WrapperFactory} from '../WrapperFactory';
 /*tslint:disable-next-line*/
 import '../../test/setup';
 
+const DIALOG: EditDialogData = {
+  attributes: {className: 'dialog'},
+  element: 'div'
+};
+
 describe('WrapperFactory', () => {
-  class Test extends React.Component<any, any> {
+  class Test extends React.Component<Props<{text: string; global: string}>> {
     public render(): React.ReactElement<any> {
       return (
-        <span data-global={this.props.global} data-text={this.props.text}>
+        <span
+          data-global={this.props.model.global}
+          data-text={this.props.model.text}
+        >
           {this.props.children}
         </span>
       );
     }
   }
 
-  class Text extends React.Component<any, any> {
+  class Text extends React.Component<Props<{text: string; className: string}>> {
     public render(): React.ReactElement<any> {
       return (
-        <span className={this.props.className}>
-          {this.props.text}
+        <span className={this.props.model.className}>
+          {this.props.model.text}
         </span>
       );
     }
@@ -47,8 +61,17 @@ describe('WrapperFactory', () => {
 
   it('should render simple vanilla component', () => {
     const cache = new Cache();
+    const ref: ResourceRef = {
+      path: '/test',
+      selectors: [],
+      type: 'testType'
+    };
 
-    cache.put('/test', {text: 'hallo'});
+    cache.putComponentData({
+      dialog: DIALOG,
+      id: ref,
+      transformData: {text: 'hallo'}
+    });
 
     const container = new Container(cache, new MockSling(cache));
 
@@ -94,7 +117,7 @@ describe('WrapperFactory', () => {
 
     const html = item.html();
 
-    expect(html).to.equal('<div class="dialog"><span>...</span></div>');
+    expect(html).to.equal('<span>...</span>');
   });
 
   it('should render default loading ui', () => {
@@ -117,12 +140,12 @@ describe('WrapperFactory', () => {
 
     const html: string = item.html();
 
-    expect(html).to.equal('<div class="dialog"><span>Loading</span></div>');
+    expect(html).to.equal('<span>Loading</span>');
   });
 
   it('should render simple vanilla include', () => {
-    class MyTest extends ResourceComponent<any, any, any> {
-      public renderBody(): any {
+    class MyTest extends ResourceComponent<any, any> {
+      public renderBody(data: any): any {
         return (
           <div>
             <VanillaInclude path="vanilla" component={Text} />
@@ -132,15 +155,36 @@ describe('WrapperFactory', () => {
     }
 
     const cache = new Cache();
+    const childRef: ResourceRef = {
+      path: '/test/vanilla',
+      selectors: [],
+      type: 'testType'
+    };
 
-    cache.put('/test', {vanilla: {text: 'good bye'}});
+    cache.putComponentData({
+      dialog: DIALOG,
+      id: childRef,
+      transformData: {text: 'good bye'}
+    });
+
+    const ref: ResourceRef = {
+      path: '/test',
+      selectors: [],
+      type: 'testType'
+    };
+
+    cache.putComponentData({
+      dialog: DIALOG,
+      id: ref,
+      transformData: {}
+    });
 
     const container = new Container(cache, new MockSling(cache));
 
     const item = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        component={MyTest}
+        component={MyTest as any}
         path="/test"
         selectors={[]}
       />
@@ -154,7 +198,7 @@ describe('WrapperFactory', () => {
   });
 
   it('should render simple vanilla include with extraProps', () => {
-    class MyTest extends ResourceComponent<any, any, any> {
+    class MyTest extends ResourceComponent<any, any> {
       public renderBody(): any {
         return (
           <div>
@@ -169,15 +213,36 @@ describe('WrapperFactory', () => {
     }
 
     const cache = new Cache();
+    const childRef: ResourceRef = {
+      path: '/test/vanilla',
+      selectors: [],
+      type: 'testType'
+    };
 
-    cache.put('/test', {vanilla: {text: 'good bye'}});
+    cache.putComponentData({
+      dialog: DIALOG,
+      id: childRef,
+      transformData: {text: 'good bye'}
+    });
+
+    const ref: ResourceRef = {
+      path: '/test',
+      selectors: [],
+      type: 'testType'
+    };
+
+    cache.putComponentData({
+      dialog: DIALOG,
+      id: ref,
+      transformData: {}
+    });
 
     const container = new Container(cache, new MockSling(cache));
 
     const item = enzyme.mount(
       <RootComponent
         aemContext={{container, registry}}
-        component={MyTest}
+        component={MyTest as any}
         path="/test"
         selectors={[]}
       />
@@ -219,18 +284,58 @@ describe('WrapperFactory', () => {
     expect(html).to.equal('<span>hallo</span>');
   });
   */
-
+  /*
   it('should render simple vanilla container', () => {
     const cache = new Cache();
+    const ref: ResourceRef = {
+      path: '/test',
+      selectors: [],
+      type: 'testType'
+    };
 
-    cache.put('/test', {
-      children: {
-        child: {
-          'sling:resourceType': 'components/text',
-          text: 'hey there'
-        }
+    const childRef: ResourceRef = {
+      path: '/test/children/child',
+      selectors: [],
+      type: 'components/text'
+    };
+
+    const childrenRef: ResourceRef = {
+      path: '/test/children',
+      selectors: [],
+      type: 'components/text'
+    };
+
+    const itemx: ComponentData = {
+      dialog: DIALOG,
+      id: childRef,
+      transformData: {
+        'sling:resourceType': 'components/text',
+        text: 'hey there'
       }
+    };
+
+    const childrenData: ComponentData = {
+      children: {
+        child: itemx
+      },
+      childrenOrder: ['child'],
+      dialog: DIALOG,
+      id: childrenRef,
+      transformData: {}
+    };
+
+    cache.putComponentData({
+      children: {
+        children: childrenData
+      },
+      childrenOrder: ['children'],
+      dialog: DIALOG,
+      id: ref,
+      transformData: {}
     });
+
+    cache.putComponentData(childrenData);
+    cache.putComponentData(itemx);
 
     const container = new Container(cache, new MockSling(cache));
 
@@ -240,7 +345,7 @@ describe('WrapperFactory', () => {
         parsys: {path: 'children', selectors: []},
         selector: ''
       },
-      'components/test'
+      'testType'
     );
 
     const item = enzyme.mount(
@@ -259,4 +364,5 @@ describe('WrapperFactory', () => {
       '<span><div class="dialog"><span>hey there</span></div></span>'
     );
   });
+  */
 });

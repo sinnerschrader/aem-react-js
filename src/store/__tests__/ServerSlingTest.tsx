@@ -1,17 +1,17 @@
 /* tslint:disable no-any no-unused-expression */
 
 import {expect} from 'chai';
-import {ResourceComponent} from '../../component/ResourceComponent';
+import {ComponentData, ResourceRef} from '../../component/ResourceComponent';
 import {Cache} from '../Cache';
 import {JavaSling, ServerSling} from '../ServerSling';
-import {EditDialogData} from '../Sling';
+import {EditDialogData, LoadComponentCallback} from '../Sling';
 
 describe('ServerSling', () => {
   it('should include resource', () => {
     const html = '<div></div>';
     const cache = new Cache();
 
-    const javaSling = {
+    const javaSling: Partial<JavaSling> = {
       includeResource(
         path: string,
         resourceType: string,
@@ -23,7 +23,10 @@ describe('ServerSling', () => {
       }
     };
 
-    const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
+    const sling: ServerSling = new ServerSling({
+      cache,
+      javaSling: javaSling as JavaSling
+    });
     const actualHtml = sling.includeResource(
       '/test',
       null,
@@ -35,41 +38,105 @@ describe('ServerSling', () => {
     expect(cache.getIncluded('/test', null)).to.equal(html);
   });
 
-  it('should subscribe to resource', () => {
-    const resource = {text: 'hi'};
+  it('should load model without children', async () => {
+    const model = {text: 'hi'};
     const path = '/test';
 
     let actualResource: any;
     let actualPath: string;
 
     const cache = new Cache();
-
-    const javaSling = {
-      getResource(_path: string, depth?: number): string {
-        if (_path === path && depth === 3) {
-          return JSON.stringify(resource);
+    const javaSling: Partial<JavaSling> = {
+      getModel(_path: string): any {
+        if (_path === path) {
+          return JSON.stringify(model);
         } else {
           return null;
         }
+      },
+      renderDialogScript(): any {
+        return '{}';
       }
     };
 
-    const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
+    const sling: ServerSling = new ServerSling({
+      cache,
+      javaSling: javaSling as JavaSling
+    });
 
-    const component: ResourceComponent<any, any, any> = ({
-      changedResource(_path: string, _resource: any): void {
-        actualResource = _resource;
-        actualPath = _path;
-      }
-    } as any) as ResourceComponent<any, any, any>;
+    const callback: LoadComponentCallback = (data: ComponentData): void => {
+      actualResource = data.transformData;
+      actualPath = path;
+    };
 
-    sling.subscribe(component, path, {depth: 3, selectors: []});
+    const ref: ResourceRef = {
+      path,
+      selectors: [],
+      type: 'testType'
+    };
+
+    sling.loadComponent(ref, callback);
 
     expect(actualPath).to.equal(path);
-    expect(actualResource).to.deep.equal(resource);
+    expect(actualResource).to.deep.equal(model);
   });
 
-  it('should include dialog', () => {
+  it('should load model with children', async () => {
+    const model = {
+      ':items': {x: {text: 'ho'}},
+      ':itemsOrder': ['x'],
+      text: 'hi'
+    };
+    const path = '/test';
+
+    let actualResource: ComponentData;
+
+    const cache = new Cache();
+    const javaSling: Partial<JavaSling> = {
+      getModel(_path: string): any {
+        if (_path === path) {
+          return JSON.stringify(model);
+        } else {
+          return null;
+        }
+      },
+      renderDialogScript(): any {
+        return '{}';
+      }
+    };
+
+    const sling: ServerSling = new ServerSling({
+      cache,
+      javaSling: javaSling as JavaSling
+    });
+
+    const callback: LoadComponentCallback = (data: ComponentData): void => {
+      actualResource = data.children[data.childrenOrder[0]];
+    };
+
+    const ref: ResourceRef = {
+      path,
+      selectors: [],
+      type: 'testType'
+    };
+
+    sling.loadComponent(ref, callback);
+
+    expect(actualResource.id.path).to.equal('/test/x');
+    expect(actualResource.transformData.text).to.equal('ho');
+
+    sling.loadComponent(
+      {path: '/test/x', type: 'testType', selectors: []},
+      (data: ComponentData): void => {
+        actualResource = data;
+      }
+    );
+
+    expect(actualResource.id.path).to.equal('/test/x');
+    expect(actualResource.transformData.text).to.equal('ho');
+  });
+
+  /*  it('should include dialog', () => {
     const dialog: EditDialogData = {element: 'el'};
     const cache = new Cache();
 
@@ -79,16 +146,24 @@ describe('ServerSling', () => {
       }
     };
 
-    const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
+    const apiFactory = {};
+    const registry = {};
 
-    const actualDialog: EditDialogData = sling.renderDialogScript(
+    const sling: ServerSling = new ServerSling({
+      apiFactory: apiFactory as JavaApiFactory,
+      cache,
+      javaSling: javaSling as JavaSling,
+      registry: registry as RootComponentRegistry
+    });
+
+    const actualDialog: EditDialogData = sling.getDialog(
       '/test',
       '/component/test'
     );
 
     expect(actualDialog).to.deep.equal(dialog);
-    expect(cache.getScript('/test')).to.deep.equal(dialog);
-  });
+    expect(cache.getDialogData('/test')).to.deep.equal(dialog);
+  });*/
 
   it('should include null dialog', () => {
     const cache = new Cache();
@@ -99,9 +174,12 @@ describe('ServerSling', () => {
       }
     };
 
-    const sling: ServerSling = new ServerSling(cache, javaSling as JavaSling);
+    const sling: ServerSling = new ServerSling({
+      cache,
+      javaSling: javaSling as JavaSling
+    });
 
-    const actualDialog: EditDialogData = sling.renderDialogScript(
+    const actualDialog: EditDialogData = sling.getDialog(
       '/test',
       '/component/test'
     );
@@ -118,7 +196,12 @@ describe('ServerSling', () => {
       }
     };
 
-    const sling: ServerSling = new ServerSling(null, javaSling as JavaSling);
+    const cache = {};
+
+    const sling: ServerSling = new ServerSling({
+      cache: cache as Cache,
+      javaSling: javaSling as JavaSling
+    });
     const actualPath: string = sling.getRequestPath();
 
     expect(actualPath).to.equal(path);

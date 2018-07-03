@@ -1,11 +1,18 @@
 import {ResourceUtils} from '../ResourceUtils';
-import {ResourceComponent} from '../component/ResourceComponent';
+import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 
 export interface SlingResourceOptions {
   readonly depth?: number;
   readonly skipData?: boolean;
   readonly selectors: string[];
 }
+
+export interface LoadComponentOptions {
+  readonly skipData?: boolean;
+  errorCallback?(error: Error): void;
+}
+
+export type LoadComponentCallback = (data: ComponentData | {}) => void;
 
 export interface EditDialogData {
   readonly element: string;
@@ -39,33 +46,23 @@ const calculateSelectors = (
 export {calculateSelectors};
 
 /**
- * interface that provides standard aem featres for the resource components.
+ * interface that provides standard aem features for the resource components.
  */
 export interface Sling {
   /**
    * Request a resource.
-   * @param listener the component that needs the resource
-   * @param path resource path
+   * @param resourceRef resource reference
+   * @param callback callback function
    * @param options options like level depth of resource tree
    */
-  subscribe(
-    listener: ResourceComponent<any, any, any>,
-    path: string,
-    options?: SlingResourceOptions
+  loadComponent(
+    resourceRef: ResourceRef,
+    callback: LoadComponentCallback,
+    options?: LoadComponentOptions
   ): void;
 
   /**
-   * get the aem wrapper element for the component
-   * of the given resourceType at the given resource path.
-   * @param path
-   * @param resourceType
-   */
-  renderDialogScript(path: string, resourceType: string): EditDialogData;
-
-  /**
    * Include a component's html.
-   * @param path
-   * @param resourceType
    */
   includeResource(
     path: string,
@@ -79,21 +76,19 @@ export interface Sling {
 }
 
 export abstract class AbstractSling implements Sling {
-  public abstract subscribe(
-    listener: ResourceComponent<any, any, any>,
-    path: string,
-    options?: SlingResourceOptions
+  public abstract loadComponent(
+    ref: ResourceRef,
+    callback: LoadComponentCallback,
+    options?: LoadComponentOptions
   ): void;
-  public abstract renderDialogScript(
-    path: string,
-    resourceType: string
-  ): EditDialogData;
+
   public abstract includeResource(
     path: string,
     selectors: string[],
     resourceType: string,
     options: IncludeOptions
   ): string;
+
   public abstract getRequestPath(): string;
 
   public getContainingPagePath(): string {

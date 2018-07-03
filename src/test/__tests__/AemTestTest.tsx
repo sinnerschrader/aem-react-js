@@ -8,10 +8,10 @@ import {ResourceComponent} from '../../component/ResourceComponent';
 import {AemTest} from '../AemTest';
 
 describe('AemTest', () => {
-  class Text extends ResourceComponent<any, any, any> {
+  class Text extends ResourceComponent<any, any> {
     public renderBody(): React.ReactElement<any> {
-      const text: string = this.getResource()
-        ? this.getResource().text
+      const text: string = this.getTransformData()
+        ? this.getTransformData().text
         : 'unknown';
 
       return (
@@ -33,10 +33,14 @@ describe('AemTest', () => {
   aemTest.init();
 
   it('should render Text', () => {
-    const wrapper = aemTest.render({
-      resourceType: '/components/text',
-      text: 'Hallo'
-    });
+    const wrapper = aemTest.render(
+      {text: 'Hallo'},
+      {
+        path: '/content/test',
+        selectors: [],
+        type: '/components/text'
+      }
+    );
 
     expect(wrapper.html()).to.equal('Hallo');
   });

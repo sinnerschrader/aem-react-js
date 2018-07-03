@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {IncludeOptions} from '../store/Sling';
-import {Resource, ResourceComponent, ResourceProps} from './ResourceComponent';
+import {ResourceComponent, ResourceProps} from './ResourceComponent';
 
 export interface ReactParsysProps extends ResourceProps {
   readonly className?: string;
@@ -10,11 +10,7 @@ export interface ReactParsysProps extends ResourceProps {
   readonly includeOptions?: IncludeOptions;
 }
 
-export class ReactParsys extends ResourceComponent<
-  Resource,
-  ReactParsysProps,
-  any
-> {
+export class ReactParsys extends ResourceComponent<ReactParsysProps, any> {
   public renderBody(): React.ReactElement<any> {
     const children: React.ReactElement<any>[] = this.renderChildren(
       null,

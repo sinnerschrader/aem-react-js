@@ -1,11 +1,11 @@
 export class ResourceUtils {
-  public static readonly ABSOLUTE_PATH_PATTERN: RegExp = /^\//;
+  public static readonly ABSOLUTE_PATH_PATTERN: RegExp = /^(\/|https?:\/\/)/;
 
   /**
    * returns only the properties of the given object
    * whoe have a property named sling:resourceType
    * @param resource the resource
-   * @returns {any} the sub object
+   * @returns the sub object
    */
   public static getChildren(resource: any): any {
     const children: any = {};
@@ -70,6 +70,18 @@ export class ResourceUtils {
       requestPath.substring(0, index - 1) +
       requestPath.substring(dot, requestPath.length)
     );
+  }
+
+  public static isSamePath(path: string): boolean {
+    return path === '.';
+  }
+
+  public static createPath(contextPath: string, path: string): string {
+    return ResourceUtils.isAbsolutePath(path)
+      ? path
+      : ResourceUtils.isSamePath(path)
+        ? contextPath
+        : `${contextPath}/` + String(path);
   }
 }
 

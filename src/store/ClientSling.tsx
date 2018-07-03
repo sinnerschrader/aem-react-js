@@ -1,15 +1,61 @@
-import {ResourceComponent} from '../component/ResourceComponent';
+import {CqModel} from '@adobe/cq-react-editable-components';
+import {ComponentData, ResourceRef} from '../component/ResourceComponent';
 import {Cache} from './Cache';
+import {ComponentDataFetcher} from './ComponentDataFetcher';
 import {
   AbstractSling,
-  EditDialogData,
   IncludeOptions,
-  SlingResourceOptions
+  LoadComponentCallback,
+  LoadComponentOptions
 } from './Sling';
 
-export interface FetchWindow {
-  fetch(url: string, options: any): any;
-}
+const transformChildren = (
+  dataPath: string,
+  items: {[key: string]: CqModel}
+): {[key: string]: ComponentData} => {
+  const datas: {[key: string]: ComponentData} = {};
+
+  if (items) {
+    Object.keys(items).forEach((key: string) => {
+      const childModel = items[key];
+      const data: ComponentData = {
+        children: transformChildren(dataPath, childModel[':items']),
+        childrenOrder: childModel[':itemsOrder'],
+        dialog: {element: 'div'},
+        id: {
+          path: `${dataPath}/${key}`,
+          type: childModel[':type'],
+          selectors: []
+        },
+        transformData: childModel
+      };
+
+      datas[key] = data;
+    });
+  }
+
+  return datas;
+};
+
+const transformModel = (dataPath: string, model: CqModel): ComponentData => {
+  let items: {[key: string]: ComponentData} = {};
+
+  if (model[':items']) {
+    items = transformChildren(dataPath, model[':items']);
+  }
+
+  return {
+    children: items,
+    childrenOrder: model[':itemsOrder'],
+    dialog: {element: 'div'},
+    id: {
+      path: dataPath,
+      type: model[':type'],
+      selectors: []
+    },
+    transformData: model
+  };
+};
 
 /**
  * ClientSling gets all data from the cache.
@@ -18,103 +64,42 @@ export interface FetchWindow {
  */
 export class ClientSling extends AbstractSling {
   private readonly cache: Cache;
-  private readonly origin: string;
-  private readonly fetchWindow: FetchWindow;
-  private readonly delayInMillis: number;
+  private readonly fetcher: ComponentDataFetcher;
 
-  public constructor(
-    cache: Cache,
-    origin: string,
-    fetchWindow?: FetchWindow,
-    delayInMillis?: number
-  ) {
+  public constructor(cache: Cache, fetcher: ComponentDataFetcher) {
     super();
-
     this.cache = cache;
-    this.origin = origin;
-
-    this.fetchWindow = !fetchWindow
-      ? (window as any) as FetchWindow
-      : fetchWindow;
+    this.fetcher = fetcher;
   }
 
-  public subscribe(
-    listener: ResourceComponent<any, any, any>,
-    path: string,
-    options: SlingResourceOptions = {selectors: []}
+  public loadComponent(
+    ref: ResourceRef,
+    callback: LoadComponentCallback,
+    options?: LoadComponentOptions
   ): void {
-    if (options.skipData) {
-      listener.changedResource(path, {});
+    if (options && options.skipData) {
+      callback({});
 
       return;
     }
-    const depth =
-      !options || typeof options.depth === 'undefined' || options.depth === null
-        ? 0
-        : options.depth;
+    const componentData = this.cache.getComponentData(ref.path, ref.selectors);
 
-    const resource: any = this.cache.get(path, depth);
-
-    if (resource === null || typeof resource === 'undefined') {
-      // const depthAsString = depth < 0 ? 'infinity' : options.depth + '';
-
-      // TODO what about depth as string??
-      let url = `${this.origin}${path}.json.html`;
-      // + depthAsString + ".json";
-
-      const serverRenderingParam = 'serverRendering=disabled';
-
-      const serverRendering: boolean =
-        window.location.search.indexOf(serverRenderingParam) >= 0;
-
-      if (serverRendering) {
-        url += '?' + serverRenderingParam;
-      }
-
-      return this.fetchWindow
-        .fetch(url, {credentials: 'same-origin'})
-        .then((response: any) => {
-          if (response.status === 404) {
-            return {};
-          } else {
-            /* istanbul ignore if  */
-            if (this.delayInMillis) {
-              const promise = new Promise(
-                (
-                  resolve: (value?: any | PromiseLike<any>) => void,
-                  reject: (error?: any) => void
-                ) => {
-                  window.setTimeout(() => {
-                    resolve(response.json());
-                  }, this.delayInMillis);
-                }
-              );
-
-              return promise;
-            }
-
-            return response.json();
-          }
+    if (!componentData) {
+      this.fetcher
+        .fetch(ref)
+        .then((json: CqModel): void => {
+          const data = transformModel(ref.path, json);
+          this.cache.putComponentData(data);
+          callback(data);
         })
-        .then((json: any) => {
-          this.cache.mergeCache(json);
-
-          listener.changedResource(path, this.cache.get(path, depth));
+        .catch(e => {
+          console.error(e);
         });
-    } else {
-      listener.changedResource(path, resource);
-    }
-  }
 
-  public renderDialogScript(
-    path: string,
-    resourceType: string
-  ): EditDialogData {
-    // TODO Can we get the script from the server too?.
-    // This will probably not work as the returned script is
-    // not executed as in the initial server rendering case.
-    // For react router we need to do a reload anyways.
-    return this.cache.getScript(path);
+      return;
+    }
+
+    callback(componentData);
   }
 
   public includeResource(

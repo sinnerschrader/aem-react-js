@@ -3,14 +3,14 @@ import * as React from 'react';
 import {ResourceInclude} from '../ResourceInclude';
 import {ResourceUtils} from '../ResourceUtils';
 import {RootComponentRegistry} from '../RootComponentRegistry';
-import {IncludeOptions, calculateSelectors} from '../store/Sling';
+import {
+  EditDialogData,
+  IncludeOptions,
+  calculateSelectors
+} from '../store/Sling';
 import {shallowEqual} from '../utils/compare';
-import {AemComponent} from './AemComponent';
+import {AemComponent, AemComponentContext} from './AemComponent';
 import {EditDialog} from './EditDialog';
-
-export interface Resource {
-  readonly 'sling:resourceType': string;
-}
 
 export enum STATE {
   LOADING,
@@ -20,8 +20,22 @@ export enum STATE {
 
 export interface ResourceState {
   readonly absolutePath: string;
-  readonly resource?: any;
   readonly state: STATE;
+  readonly data: ComponentData;
+}
+
+export interface ResourceRef {
+  readonly path: string;
+  readonly selectors: string[];
+  readonly type: string;
+}
+
+export interface ComponentData {
+  readonly id: ResourceRef;
+  readonly dialog: EditDialogData | null;
+  transformData: any;
+  readonly children?: {[name: string]: ComponentData};
+  readonly childrenOrder?: string[];
 }
 
 export interface ResourceProps {
@@ -37,15 +51,17 @@ export interface ResourceProps {
  * Provides base functionality for components that are
  */
 export abstract class ResourceComponent<
-  C extends Resource,
   P extends ResourceProps,
-  S extends ResourceState
+  S = {}
 > extends AemComponent<P, S> {
   public static readonly childContextTypes: any = {
     path: PropTypes.string.isRequired,
     selectors: PropTypes.arrayOf(PropTypes.string),
     wcmmode: PropTypes.string
   };
+
+  private loadingState: STATE;
+  private componentData: ComponentData;
 
   public getChildContext(): any {
     return {
@@ -55,34 +71,63 @@ export abstract class ResourceComponent<
     };
   }
 
-  public shouldComponentUpdate(nextProps: P, nextState: S): boolean {
+  public shouldComponentUpdate(
+    nextProps: P,
+    nextState: {},
+    nextCtx: AemComponentContext
+  ): boolean {
     return (
       !shallowEqual(this.props, nextProps) ||
-      !shallowEqual(this.state, nextState)
+      !shallowEqual(this.state, nextState) ||
+      !shallowEqual(this.context.path, nextCtx.path)
+    );
+  }
+
+  public componentWillUpdate(
+    newProps: P,
+    newState: S,
+    newContext: AemComponentContext
+  ): void {
+    this.loadIfNecessary(
+      this.createPath(newProps, newContext),
+      newProps.selectors
     );
   }
 
   public componentWillMount(): void {
-    this.initialize();
+    this.load(this.getPath(), this.getSelectors());
   }
 
-  public componentWillReceiveProps(): void {
-    this.initialize();
+  public loadIfNecessary(path: string, selectors: string[]): void {
+    if (path !== this.getPath()) {
+      // TODO compare selectors
+      this.loadingState = undefined;
+      this.load(this.getPath(), this.getSelectors());
+    }
   }
 
-  public initialize(): void {
-    const absolutePath = ResourceUtils.isAbsolutePath(this.props.path)
-      ? this.props.path
-      : `${this.context.path}/` + String(this.props.path);
+  public load(path: string, selectors: string[]): void {
+    this.loadingState = undefined;
+    this.getAemContext().container.sling.loadComponent(
+      {path, selectors, type: this.getResourceType()},
+      this.handleLoadComponentSuccess.bind(this),
+      {skipData: false}
+    );
+    if (this.loadingState !== STATE.LOADED) {
+      this.loadingState = STATE.LOADING;
+    }
+  }
 
-    if (absolutePath !== this.getPath()) {
-      this.setState({absolutePath, state: STATE.LOADING});
-
-      this.getAemContext().container.sling.subscribe(this, absolutePath, {
-        depth: this.getDepth(),
-        selectors: this.getSelectors(),
-        skipData: this.isSkipData() || false
-      });
+  public handleLoadComponentSuccess(data: ComponentData): void {
+    if (this.loadingState === STATE.LOADING) {
+      // assuming that load has only set the state to
+      // LOADING if the method was called asynchronuously after load.
+      this.loadingState = STATE.LOADED;
+      this.componentData = data;
+      this.forceUpdate();
+    } else {
+      this.loadingState = STATE.LOADED;
+      this.componentData = data;
     }
   }
 
@@ -95,28 +140,23 @@ export abstract class ResourceComponent<
   }
 
   public getPath(): string {
-    if (typeof this.state !== 'undefined' && this.state !== null) {
-      return this.state.absolutePath;
-    } else {
-      return null;
-    }
+    return this.createPath(this.props, this.context);
   }
 
   public render(): React.ReactElement<any> {
     let child: React.ReactElement<any>;
 
-    if (this.state.state === STATE.LOADING) {
-      child = this.renderLoading();
+    if (this.loadingState === STATE.LOADING) {
+      return this.renderLoading();
     } else if (!!this.props.skipRenderDialog) {
-      return this.renderBody();
+      return this.renderBody(this.componentData);
     } else {
-      child = this.renderBody();
+      child = this.renderBody(this.componentData);
     }
 
     return (
       <EditDialog
-        path={this.getPath()}
-        resourceType={this.getResourceType()}
+        dialog={this.componentData.dialog}
         className={this.props.className}
       >
         {child}
@@ -128,18 +168,14 @@ export abstract class ResourceComponent<
     return this.context.aemContext.registry;
   }
 
-  public abstract renderBody(): React.ReactElement<any>;
+  public abstract renderBody(data: ComponentData): React.ReactElement<any>;
 
-  public getResource(): C {
-    return this.state.resource as C;
+  public getTransformData(): any {
+    return this.componentData.transformData;
   }
 
   public getResourceType(): string {
     return this.context.aemContext.registry.getResourceType(this);
-  }
-
-  public changedResource(path: string, resource: C): void {
-    this.setState({state: STATE.LOADED, resource, absolutePath: path} as any);
   }
 
   protected renderLoading(): React.ReactElement<any> {
@@ -164,90 +200,89 @@ export abstract class ResourceComponent<
       throw new Error('path must be relative. was ' + path);
     }
 
-    const childrenResource: any = !!path
-      ? (this.getResource() as any)[path]
-      : this.getResource();
+    const parentData: ComponentData = !!path
+      ? this.componentData.children[path]
+      : this.componentData;
 
-    const children: any = ResourceUtils.getChildren(childrenResource);
     const childComponents: React.ReactElement<any>[] = [];
     const basePath: string = !!path ? path + '/' : '';
 
     // TODO alternatively create a div for each child
     // and set className/elementName there
 
-    Object.keys(children).forEach((nodeName: string, childIdx: number) => {
-      const resource: Resource = children[nodeName];
-      const resourceType: string = resource['sling:resourceType'];
-      const actualPath: string = basePath + nodeName;
+    if (parentData.childrenOrder) {
+      parentData.childrenOrder.forEach((nodeName: string) => {
+        const child: ComponentData = parentData.children[nodeName];
+        const resourceType: string = child.id.type;
+        const actualPath: string = child.id.path;
 
-      const componentType: React.ComponentClass<
-        any
-      > = this.getRegistry().getComponent(
-        resourceType,
-        calculateSelectors(this.getSelectors(), includeOptions)
-      );
+        const componentType: React.ComponentClass<
+          any
+        > = this.getRegistry().getComponent(
+          resourceType,
+          calculateSelectors(this.getSelectors(), includeOptions)
+        );
 
-      if (childElementName) {
-        if (componentType) {
-          const props: any = {
-            key: nodeName,
-            path: actualPath,
-            reactKey: path,
-            resource
-          };
+        if (childElementName) {
+          if (componentType) {
+            const props: any = {
+              key: nodeName,
+              path: actualPath,
+              reactKey: path
+            };
 
-          childComponents.push(
-            React.createElement(
-              childElementName as any,
-              {
-                className: childClassName,
-                key: nodeName
-              },
-              React.createElement(componentType, props)
-            )
-          );
+            childComponents.push(
+              React.createElement(
+                childElementName as any,
+                {
+                  className: childClassName,
+                  key: nodeName
+                },
+                React.createElement(componentType, props)
+              )
+            );
+          } else {
+            childComponents.push(
+              React.createElement(
+                childElementName as any,
+                {
+                  className: childClassName,
+                  key: nodeName
+                },
+                React.createElement(ResourceInclude, {
+                  key: nodeName,
+                  options: includeOptions,
+                  path: actualPath,
+                  resourceType
+                })
+              )
+            );
+          }
         } else {
-          childComponents.push(
-            React.createElement(
-              childElementName as any,
-              {
-                className: childClassName,
-                key: nodeName
-              },
-              React.createElement(ResourceInclude, {
-                key: nodeName,
-                options: includeOptions,
-                path: actualPath,
-                resourceType
-              })
-            )
-          );
-        }
-      } else {
-        if (componentType) {
-          const props: any = {
-            className: childClassName,
-            key: nodeName,
-            path: basePath + nodeName,
-            reactKey: path,
-            resource
-          };
+          if (componentType) {
+            const props: any = {
+              className: childClassName,
+              key: nodeName,
+              path: basePath + nodeName,
+              reactKey: path
+            };
 
-          childComponents.push(React.createElement(componentType, props));
-        } else {
-          childComponents.push(
-            <ResourceInclude
-              className={childClassName}
-              element={childElementName}
-              path={actualPath}
-              key={nodeName}
-              resourceType={resourceType}
-              options={includeOptions}
-            />
-          );
+            childComponents.push(React.createElement(componentType, props));
+          } else {
+            childComponents.push(
+              <ResourceInclude
+                className={childClassName}
+                element={childElementName}
+                path={actualPath}
+                key={nodeName}
+                resourceType={resourceType}
+                options={includeOptions}
+              />
+            );
+          }
         }
-      }
-    }, this);
+      }, this);
+    }
 
     let newZone: React.ReactElement<any> = null;
 
@@ -268,5 +303,12 @@ export abstract class ResourceComponent<
     }
 
     return childComponents;
+  }
+
+  private createPath(
+    props: ResourceProps,
+    context: AemComponentContext
+  ): string {
+    return ResourceUtils.createPath(context.path, props.path);
   }
 }

@@ -4,18 +4,22 @@ import {expect} from 'chai';
 import * as React from 'react';
 import {RootComponentRegistry} from '../RootComponentRegistry';
 import {ServerRenderer, ServerResponse} from '../ServerRenderer';
-import {ResourceComponent} from '../component/ResourceComponent';
+import {ResourceComponent, ResourceRef} from '../component/ResourceComponent';
 import {Container} from '../di/Container';
 import {identity} from '../rootDecorator';
 import {Cache} from '../store/Cache';
+import {LoadComponentCallback, LoadComponentOptions} from '../store/Sling';
+
+/*tslint:disable-next-line*/
+import '../test/setup';
 
 describe('ServerRenderer', () => {
   it('should render component', () => {
-    class Test extends ResourceComponent<any, any, any> {
+    class Test extends ResourceComponent<any, any> {
       public renderBody(): React.ReactElement<any> {
         return (
           <span>
-            {this.getResource().text}
+            {this.getTransformData().text}
           </span>
         );
       }
@@ -23,23 +27,29 @@ describe('ServerRenderer', () => {
 
     const cache = new Cache();
 
+    const props = {text: 'hi'};
     const container = new Container(
       cache,
       {
-        subscribe(
-          component: ResourceComponent<any, any, any>,
-          path: string
+        loadComponent(
+          resourceRef: ResourceRef,
+          callback: LoadComponentCallback,
+          options?: LoadComponentOptions
         ): void {
-          component.changedResource(path, {text: 'hi'});
+          callback({
+            dialog: null,
+            transformData: props
+          });
         }
       } as any
     );
 
     const registry: RootComponentRegistry = {
-      rootDecorator: identity,
       getComponent(resourceType: string): any {
         return Test;
-      }
+      },
+      getResourceType: () => 'bullshit',
+      rootDecorator: identity
     } as any;
 
     const renderer: ServerRenderer = new ServerRenderer(registry, container);
