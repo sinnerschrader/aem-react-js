@@ -9,54 +9,6 @@ import {
   LoadComponentOptions
 } from './Sling';
 
-const transformChildren = (
-  dataPath: string,
-  items: {[key: string]: CqModel}
-): {[key: string]: ComponentData} => {
-  const datas: {[key: string]: ComponentData} = {};
-
-  if (items) {
-    Object.keys(items).forEach((key: string) => {
-      const childModel = items[key];
-      const data: ComponentData = {
-        children: transformChildren(dataPath, childModel[':items']),
-        childrenOrder: childModel[':itemsOrder'],
-        dialog: {element: 'div'},
-        id: {
-          path: `${dataPath}/${key}`,
-          type: childModel[':type'],
-          selectors: []
-        },
-        transformData: childModel
-      };
-
-      datas[key] = data;
-    });
-  }
-
-  return datas;
-};
-
-const transformModel = (dataPath: string, model: CqModel): ComponentData => {
-  let items: {[key: string]: ComponentData} = {};
-
-  if (model[':items']) {
-    items = transformChildren(dataPath, model[':items']);
-  }
-
-  return {
-    children: items,
-    childrenOrder: model[':itemsOrder'],
-    dialog: {element: 'div'},
-    id: {
-      path: dataPath,
-      type: model[':type'],
-      selectors: []
-    },
-    transformData: model
-  };
-};
-
 /**
  * ClientSling gets all data from the cache.
  * If the data is not available then it will get the part of the cache which
@@ -88,7 +40,7 @@ export class ClientSling extends AbstractSling {
       this.fetcher
         .fetch(ref)
         .then((json: CqModel): void => {
-          const data = transformModel(ref.path, json);
+          const data = this.transformModel(ref.path, json);
           this.cache.putComponentData(data);
           callback(data);
         })
@@ -114,5 +66,55 @@ export class ClientSling extends AbstractSling {
 
   public getRequestPath(): string {
     return window.location.pathname;
+  }
+
+  private transformChildren(
+    dataPath: string,
+    items: {[key: string]: CqModel}
+  ): {[key: string]: ComponentData} {
+    const datas: {[key: string]: ComponentData} = {};
+
+    if (items) {
+      Object.keys(items).forEach((key: string) => {
+        const childModel = items[key];
+        const path = `${dataPath}/${key}`;
+        const data: ComponentData = {
+          children: this.transformChildren(path, childModel[':items']),
+          childrenOrder: childModel[':itemsOrder'],
+          dialog: {element: 'div'},
+          id: {
+            path,
+            type: childModel[':type'],
+            selectors: []
+          },
+          transformData: childModel
+        };
+
+        datas[key] = data;
+        this.cache.putComponentData(data);
+      });
+    }
+
+    return datas;
+  }
+
+  private transformModel(dataPath: string, model: CqModel): ComponentData {
+    let items: {[key: string]: ComponentData} = {};
+
+    if (model[':items']) {
+      items = this.transformChildren(dataPath, model[':items']);
+    }
+
+    return {
+      children: items,
+      childrenOrder: model[':itemsOrder'],
+      dialog: {element: 'div'},
+      id: {
+        path: dataPath,
+        type: model[':type'],
+        selectors: []
+      },
+      transformData: model
+    };
   }
 }

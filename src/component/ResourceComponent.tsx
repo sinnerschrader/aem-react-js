@@ -102,7 +102,7 @@ export abstract class ResourceComponent<
     if (path !== this.getPath()) {
       // TODO compare selectors
       this.loadingState = undefined;
-      this.load(this.getPath(), this.getSelectors());
+      this.load(path, this.getSelectors());
     }
   }
 
