@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.25.1"></a>
+## [0.25.1](https://github.com/sinnerschrader/aem-react-js/compare/v0.25.0...v0.25.1) (2018-07-29)
+
+
+### Bug Fixes
+
+* caching on clientside ([f71aa31](https://github.com/sinnerschrader/aem-react-js/commit/f71aa31))
+
+
+
 <a name="0.25.0"></a>
 # [0.25.0](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.4.2...v0.25.0) (2018-07-03)
 
