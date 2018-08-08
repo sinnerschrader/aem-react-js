@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.25.2"></a>
+## [0.25.2](https://github.com/sinnerschrader/aem-react-js/compare/v0.25.1...v0.25.2) (2018-08-08)
+
+
+### Bug Fixes
+
+* absolute paths in <Include> for spa ([d6dd8a0](https://github.com/sinnerschrader/aem-react-js/commit/d6dd8a0))
+
+
+
 <a name="0.25.1"></a>
 ## [0.25.1](https://github.com/sinnerschrader/aem-react-js/compare/v0.25.0...v0.25.1) (2018-07-29)
 
