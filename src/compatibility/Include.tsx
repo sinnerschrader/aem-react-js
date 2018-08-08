@@ -22,15 +22,27 @@ export class Include extends React.Component<IncludeProps> {
     return (
       <ModelContext.Consumer>
         {(model: SpaComponentProps) => {
-          const page_path = model.cq_model_page_path;
-          const root = !model.cq_model_data_path;
-          const data_path = root
-            ? this.props.path
-            : `${model.cq_model_data_path}/${this.props.path}`;
+          let page_path = model.cq_model_page_path;
+          const absolutePath =
+            !model.cq_model_data_path || this.props.path.match(/^\//);
+
+          let path = this.props.path;
+          if (absolutePath && this.props.path.match(/jcr:content/)) {
+            const pathMatch = this.props.path.match(
+              /(.*)(\.[^\.]+)*jcr:content\/(.*)/
+            );
+            path = pathMatch[3];
+            page_path = pathMatch[1];
+          }
+          const data_path = absolutePath
+            ? path
+            : `${model.cq_model_data_path}/${path}`;
+
+          // TODO cqModel isn't valid if path is absolute and page is different from root page
           const cq_model: CqModel =
             (model.cq_model &&
               model.cq_model[':items'] &&
-              model.cq_model[':items'][this.props.path]) ||
+              model.cq_model[':items'][path]) ||
             null;
 
           return (
