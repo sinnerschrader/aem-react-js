@@ -3,19 +3,12 @@ import * as ReactDom from 'react-dom/server';
 import {AemContext} from './AemContext';
 import {RootComponentRegistry} from './RootComponentRegistry';
 import {RootComponent} from './component/RootComponent';
-import {TextPool} from './component/text/TextPool';
 import {replaceFactory} from './component/text/TextUtils';
 import {Container} from './di/Container';
 
 export interface ServerResponse {
   readonly html: string;
   readonly state: string;
-  readonly reactContext: any;
-}
-
-export interface ReactContext {
-  textPool: TextPool;
-  rootNo: number;
 }
 
 export class ServerRenderer {
@@ -30,9 +23,9 @@ export class ServerRenderer {
   public renderReactComponent(
     path: string,
     resourceType: string,
+    rootNo: string,
     wcmmode: string,
     renderAsJson: boolean = false,
-    reactContext: ReactContext = {rootNo: 1, textPool: new TextPool()},
     selectors: string[] = []
   ): ServerResponse {
     const component = this.registry.getComponent(resourceType, selectors);
@@ -49,7 +42,7 @@ export class ServerRenderer {
     };
 
     // TODO we must safe this value in reactContext and increment it everytime
-    const id = String(reactContext.rootNo);
+    const id = rootNo;
 
     const root: JSX.Element = this.registry.rootDecorator(
       <RootComponent
@@ -71,6 +64,6 @@ export class ServerRenderer {
           replaceFactory(this.container.textPool)
         );
 
-    return {html, state, reactContext};
+    return {html, state};
   }
 }

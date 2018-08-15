@@ -43,6 +43,7 @@ describe('ServerRenderer', () => {
 
     const response: ServerResponse = renderer.renderReactComponent(
       '/test',
+      '1',
       '/components/test',
       'disabled'
     );
@@ -63,7 +64,12 @@ describe('ServerRenderer', () => {
     let error = false;
 
     try {
-      renderer.renderReactComponent('/test', '/components/test', 'disabled');
+      renderer.renderReactComponent(
+        '/test',
+        '/components/test',
+        '1',
+        'disabled'
+      );
     } catch (e) {
       error = true;
     }
