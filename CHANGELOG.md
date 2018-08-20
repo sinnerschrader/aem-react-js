@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.25.3"></a>
+## [0.25.3](https://github.com/sinnerschrader/aem-react-js/compare/v0.25.2...v0.25.3) (2018-08-20)
+
+
+### Bug Fixes
+
+* make typings compatible with newer TS versions ([466d88c](https://github.com/sinnerschrader/aem-react-js/commit/466d88c))
+
+
+
 <a name="0.25.2"></a>
 ## [0.25.2](https://github.com/sinnerschrader/aem-react-js/compare/v0.25.1...v0.25.2) (2018-08-08)
 
