@@ -1,3 +1,4 @@
+/// <reference path="../../typings/adobe.d.ts" />
 import {CqModel} from '@adobe/cq-react-editable-components';
 import {ResourceRef} from '../component/ResourceComponent';
 

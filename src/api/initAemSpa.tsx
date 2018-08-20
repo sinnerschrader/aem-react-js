@@ -42,8 +42,8 @@ export class AemSpaCompatibility implements Compatibility {
     ReactDom.render(<SpaPage {...props} />, el);
   }
 
-  public startComponent(
-    Component: React.ComponentClass,
+  public startComponent<P>(
+    Component: React.ComponentClass<P>,
     el: HTMLElement
   ): void {
     const C = MapTo('anonymuous root')(SpaPage, null);
