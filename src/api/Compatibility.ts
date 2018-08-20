@@ -1,9 +1,11 @@
+/// <reference path="../../typings/adobe.d.ts" />
 import {CqModel} from '@adobe/cq-react-editable-components';
 import * as React from 'react';
 import {EditConfig} from '../compatibility/EditConfig';
+import {Props} from '../compatibility/Props';
 
 export interface Config<P> {
-  componentClass: React.ComponentClass<P>;
+  componentClass: React.ComponentClass<Props<P>>;
   editConfig?: EditConfig<P>;
 }
 

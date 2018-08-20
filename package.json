@@ -20,7 +20,8 @@
     "url": "http://www.github.com/sinnerschrader/aem-react-js"
   },
   "files": [
-    "lib"
+    "lib",
+    "typings/adobe.d.ts"
   ],
   "config": {
     "commitizen": {
