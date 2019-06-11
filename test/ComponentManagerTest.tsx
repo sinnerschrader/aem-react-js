@@ -22,7 +22,7 @@ describe("ComponentManager", () => {
             resourceType: "/components/test"
         };
 
-        let doc: Document = jsdom.jsdom("<html><div data-react-id='1'></div><textarea id='1'>" + JSON.stringify(data) + "</textarea></html>")
+        let doc: Document = jsdom.jsdom("<html><div data-react-id='1'></div><script id='1' type='application/json'>" + JSON.stringify(data) + "</script></html>");
 
         let cm: ComponentManager = new ComponentManager(null, null, doc);
 
@@ -63,7 +63,7 @@ describe("ComponentManager", () => {
             }
         }
 
-        let doc: Document = jsdom.jsdom("<html><div data-react data-react-id='1'></div><textarea id='1'>" + JSON.stringify(data) + "</textarea></html>")
+        let doc: Document = jsdom.jsdom("<html><div data-react data-react-id='1'></div><script id='1' type='application/json'>" + JSON.stringify(data) + "</script></html>");
 
         let cm: ComponentManager = new ComponentManager(registry, container, doc);
 

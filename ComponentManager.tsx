@@ -38,9 +38,9 @@ export default class ComponentManager {
      * @param item
      */
         public initReactComponent(item: any, forceHydrate: boolean = false): void {
-        let textarea = this.document.getElementById(item.getAttribute("data-react-id")) as HTMLTextAreaElement;
-        if (textarea) {
-            let props: ComponentTreeConfig = JSON.parse(textarea.value);
+        let dataElement = this.document.getElementById(item.getAttribute("data-react-id"));
+        if (dataElement) {
+            let props: ComponentTreeConfig = JSON.parse(dataElement.innerHTML);
             if (forceHydrate || props.wcmmode === "disabled") {
                 let comp = this.registry.getComponent(props.resourceType);
                 if (comp === null) {
@@ -54,7 +54,7 @@ export default class ComponentManager {
                 }
             }
         } else {
-            console.error("React config with id '" + item.getAttribute("data-react-id") + "' has no corresponding textarea element.");
+            console.error("React config with id '" + item.getAttribute("data-react-id") + "' has no corresponding data script element.");
         }
     }
 
