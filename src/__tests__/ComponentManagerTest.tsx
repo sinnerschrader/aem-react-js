@@ -25,8 +25,8 @@ describe('ComponentManager', () => {
     };
 
     const doc: Document = new JSDOM(
-      '<html><div data-react></div><textarea>' +
-        `${JSON.stringify(data)}</textarea></html>`
+      '<html><div data-react></div><script type="application/json">' +
+        `${JSON.stringify(data)}</script></html>`
     ).window.document;
 
     const container = new Container(cache, new MockSling(cache));
@@ -72,8 +72,9 @@ describe('ComponentManager', () => {
     };
 
     const doc: Document = new JSDOM(
-      "<html><div data-react></div>Shouldn't be here<textarea>" +
-        `${JSON.stringify(data)}</textarea></html>`
+      "<html><div data-react></div>Shouldn't be here" +
+        '<script type="application/json">' +
+        `${JSON.stringify(data)}</script></html>`
     ).window.document;
 
     const cm: ComponentManager = new ComponentManager(registry, container);
