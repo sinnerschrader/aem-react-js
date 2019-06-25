@@ -44,16 +44,19 @@ export class ComponentManager {
     id: string
   ): void {
     let nextItem = item.nextSibling;
-    while (nextItem && nextItem.nodeName.toLocaleLowerCase() !== 'textarea') {
+    while (nextItem && nextItem.nodeName.toLocaleLowerCase() !== 'script') {
       nextItem = nextItem.nextSibling;
     }
     if (!nextItem) {
-      throw new Error('cannot find textarea for component');
+      throw new Error('cannot find script for component');
     }
-    const textarea = nextItem as HTMLTextAreaElement;
+    const scriptElement = nextItem as HTMLScriptElement;
 
-    if (textarea) {
-      const props: ComponentTreeConfig = JSON.parse(textarea.value, reviverFn);
+    if (scriptElement) {
+      const props: ComponentTreeConfig = JSON.parse(
+        scriptElement.text,
+        reviverFn
+      );
 
       this.container.cache.mergeCache(props.cache);
 
@@ -93,7 +96,7 @@ export class ComponentManager {
     } else {
       console.error(
         `React config with id '${item.getAttribute('data-react-id')}' ` +
-          'has no corresponding textarea element.'
+          'has no corresponding script element.'
       );
     }
   }
