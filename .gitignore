@@ -1,4 +1,5 @@
 .idea
+*.iml
 .nyc_output
 coverage
 lib
