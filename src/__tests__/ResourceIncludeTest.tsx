@@ -106,7 +106,7 @@ describe('ResourceInclude', () => {
     expect(wrapper.html()).to.equal(
       '<div data-react-text="text_root_0">' +
         '<include resourcetype="/components/something" ' +
-        'selectors="" path="//embed">' +
+        'selectors path="//embed">' +
         '</include>' +
         '</div>'
     );
