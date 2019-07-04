@@ -100,18 +100,6 @@ describe('ResourceInclude', () => {
   aemTest.addRegistry(registry);
   aemTest.init();
 
-  it('should render included resource', () => {
-    const wrapper = aemTest.render({resourceType: '/components/test'});
-
-    expect(wrapper.html()).to.equal(
-      '<div data-react-text="text_root_0">' +
-        '<include resourcetype="/components/something" ' +
-        'selectors path="//embed">' +
-        '</include>' +
-        '</div>'
-    );
-  });
-
   it('should render included vanilla resource', () => {
     const wrapper = aemTest.render(
       {
