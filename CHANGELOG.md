@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.24.2"></a>
+## [0.24.2](https://github.com/sinnerschrader/aem-react-js/compare/v0.24.1...v0.24.2) (2019-07-04)
+
+
+### Bug Fixes
+
+* move JSON data from textarea to script ([84d7b46](https://github.com/sinnerschrader/aem-react-js/commit/84d7b46))
+* selectors attribute is emitted as name only / without empty value, changed expected value accordingly ([64492f2](https://github.com/sinnerschrader/aem-react-js/commit/64492f2))
+
+
+
 <a name="0.24.1"></a>
 ## [0.24.1](http://www.github.com/sinnerschrader/aem-react-js/compare/v0.24.0...v0.24.1) (2018-05-15)
 
