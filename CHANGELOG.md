@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.24.3"></a>
+## [0.24.3](https://github.com/sinnerschrader/aem-react-js/compare/v0.24.2...v0.24.3) (2019-07-04)
+
+
+### Bug Fixes
+
+* remove test which fails on Mac ([4201bcd](https://github.com/sinnerschrader/aem-react-js/commit/4201bcd))
+
+
+
 <a name="0.24.2"></a>
 ## [0.24.2](https://github.com/sinnerschrader/aem-react-js/compare/v0.24.1...v0.24.2) (2019-07-04)
 
