@@ -52,7 +52,7 @@
     "espower-typescript": "8.0.0",
     "jsdom": "9.8.3",
     "mocha": "3.1.2",
-    "nyc": "11.0.2",
+    "nyc": "11.9.0",
     "power-assert": "1.2.0",
     "react": "16.x.x",
     "react-dom": "16.x.x",
